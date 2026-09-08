@@ -36,7 +36,7 @@ function Home() {
         {/* Footer  */}
         <div className="fixed bottom-0 left-0 right-0 p-4 flex items-center justify-between bg-emerald-900">
           <a
-            href="https://github.com/kimmykokonut"
+            href="https://github.com/kimmykokonut/sweeper"
             target="_blank"
             rel="noopener noreferrer"
             className="text-white font-semibold"
@@ -44,12 +44,12 @@ function Home() {
             GitHub
           </a>
           <a
-            href="https://venmo.com/robinsonkim"
+            href="https://kimmykokonut.github.io/"
             target="_blank"
             rel="noopener noreferrer"
             className="text-white font-semibold"
           >
-            Venmo
+            Portfolio
           </a>
         </div>
       </div>
