@@ -24,9 +24,9 @@ function Primiera() {
   });
 
   const primieraPageClasses =
-    "mx-auto min-h-[calc(100svh-4rem)] w-full max-w-4xl flex flex-col items-center gap-6 px-4 py-4 bg-gradient-to-br from-emerald-700 to-emerald-800";
+    "mx-auto min-h-[calc(100svh-4rem)] w-full max-w-4xl flex flex-col items-center gap-6 px-4 py-4";
   const calculatorPageClasses =
-    "mx-auto min-h-[calc(100svh-4rem)] w-full max-w-4xl flex flex-col items-center gap-2 px-4 py-2 bg-gradient-to-br from-emerald-700 to-emerald-800";
+    "mx-auto min-h-[calc(100svh-4rem)] w-full max-w-4xl flex flex-col items-center gap-2 px-4 py-2";
   const playerSelectBtnClasses =
     "bg-white text-green-800 font-bold py-4 px-8 rounded-lg shadow-lg hover:bg-gray-200 hover:scale-105 transition-all text-xl flex items-center justify-center gap-3";
 
