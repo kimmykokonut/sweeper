@@ -8,7 +8,7 @@ import {
   primieraValues,
 } from "../utils/primieraCalculator";
 import { CARD_DATA, getCardImage } from "../utils/cardData";
-import type { CardSelections, Suits } from "../types";
+import type { CardSelections, CardValue, Suits } from "../types";
 
 function Primiera() {
   const [currentScore, setCurrentScore] = useState<number | null>(null);
@@ -22,6 +22,7 @@ function Primiera() {
     swords: null,
     clubs: null,
   });
+  const [usedCards, setUsedCards] = useState<Set<string>>(new Set());
 
   const primieraPageClasses =
     "mx-auto min-h-[calc(100svh-4rem)] w-full max-w-4xl flex flex-col items-center gap-6 px-4 py-4";
@@ -53,6 +54,15 @@ function Primiera() {
       setCurrentPlayer(currentPlayer + 1);
     }
   };
+
+  // assign selected card to player, remove chosen card to prevent dupe for next player, reset activeSuit
+  const handleCardSelect = (suit: Suits, value: CardValue) => {
+    console.log("card selected:", suit, value);
+    setCardSelections((prev) => ({ ...prev, [suit]: value }));
+    setUsedCards((prev) => new Set([...prev, `${suit}-${value}`]));
+    setActiveSuit(null);
+  };
+  console.log("card selections state", cardSelections);
 
   const resetCardSelections = () => {
     setCardSelections({
@@ -197,10 +207,8 @@ function Primiera() {
             <CardSelector
               activeSuit={activeSuit}
               onClose={() => setActiveSuit(null)}
-              onCardSelect={(suit, value) => {
-                setCardSelections((prev) => ({ ...prev, [suit]: value }));
-                setActiveSuit(null);
-              }}
+              onCardSelect={handleCardSelect}
+              usedCards={usedCards}
             />
           )}
           {/* Calculate button - hidden until 4 cards chosen  */}
