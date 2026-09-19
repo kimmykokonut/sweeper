@@ -5,6 +5,7 @@ interface CardSelectorProps {
   activeSuit: Suits | null;
   onClose: () => void;
   onCardSelect: (suit: Suits, value: CardValue) => void;
+  usedCards?: Set<string>;
 }
 
 // Modal that covers Calc Screen for user to select card by suit
@@ -44,13 +45,19 @@ function CardSelector({
           </button>
         </div>
 
-        <div className="grid grid-cols-3 gap-3 md:grid-cols-4">
+        <div className="grid grid-cols-3 gap-2 sm:gap-3">
           {CARD_DATA[activeSuit].cards.map((card) => (
             <button
               key={card.value}
               type="button"
               onClick={() => onCardSelect(activeSuit, card.value)}
-              className="flex aspect-[2/3] items-center justify-center overflow-hidden rounded-lg border border-emerald-100 bg-white p-2 shadow-md transition hover:scale-[1.02] hover:ring-2 hover:ring-emerald-800 last:col-start-2"
+              // disabled={usedCards.has(`${activeSuit}-${card.value}`)}
+              // className={
+              //   usedCards.has(`${activeSuit}-${card.value}`)
+              //     ? "opacity-30 grayscale"
+              //     : ""
+              // }
+              className="flex aspect-[2/3] items-center justify-center overflow-hidden rounded-lg border border-emerald-100 bg-white p-2 shadow-md transition hover:scale-[1.02] hover:ring-2 hover:ring-emerald-800"
             >
               <img
                 src={card.image}
@@ -59,6 +66,13 @@ function CardSelector({
               />
             </button>
           ))}
+        </div>
+        <div className="bg-yellow-100 p-2 mt-2 rounded text-sm">
+          <p>
+            <strong>Primiera values:</strong> 7=21, 6=18, A=16, 5=15, 4=14,
+            3=13, 2=12, Face=10
+          </p>
+          <p>Choose your best card from each suit!</p>
         </div>
       </div>
     </div>
