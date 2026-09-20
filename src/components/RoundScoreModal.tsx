@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { Player, RoundEntry, RoundRawCounts } from "../types";
 import setteBelloImg from "../assets/7-denari.jpg";
 import coinIcon from "../assets/denare.png";
@@ -56,6 +56,18 @@ export default function RoundScoreModal({
 
   // Optional Count Helper mode
   const [showCountHelper, setShowCountHelper] = useState(false);
+
+  // Close on Escape key press (only if nested Primiera calc is not open)
+  useEffect(() => {
+    if (showPrimieraCalc) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [showPrimieraCalc, onClose]);
   const [rawCounts, setRawCounts] = useState<Record<string, RoundRawCounts>>(() => {
     if (existingRound?.rawCounts) return { ...existingRound.rawCounts };
     const initial: Record<string, RoundRawCounts> = {};
@@ -158,11 +170,19 @@ export default function RoundScoreModal({
 
   return (
     <div
-      className="fixed inset-0 z-40 flex items-center justify-center overflow-y-auto bg-black/75 p-2 sm:p-4 backdrop-blur-xs"
+      className="fixed inset-0 z-40 flex items-center justify-center overflow-y-auto bg-black/75 p-2 sm:p-4 backdrop-blur-xs cursor-pointer"
       role="dialog"
       aria-modal="true"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          onClose();
+        }
+      }}
     >
-      <div className="relative flex max-h-[94vh] w-full max-w-xl flex-col rounded-2xl bg-emerald-900 border border-emerald-700 shadow-2xl text-white overflow-hidden">
+      <div
+        className="relative flex max-h-[94vh] w-full max-w-xl flex-col rounded-2xl bg-emerald-900 border border-emerald-700 shadow-2xl text-white overflow-hidden cursor-default"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
         <div className="flex items-center justify-between border-b border-emerald-800 bg-emerald-950/80 px-4 py-3 sm:px-6">
           <div className="flex items-center gap-2">
@@ -174,7 +194,8 @@ export default function RoundScoreModal({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-1.5 text-emerald-300 hover:bg-emerald-800 hover:text-white"
+            aria-label="Close dialog"
+            className="rounded-lg p-1.5 text-emerald-300 hover:bg-emerald-800 hover:text-white transition-colors cursor-pointer"
           >
             ✕
           </button>
@@ -514,34 +535,25 @@ export default function RoundScoreModal({
         </div>
 
         {/* Footer Actions */}
-        <div className="flex items-center justify-between border-t border-emerald-800 bg-emerald-950/80 px-4 py-3 sm:px-6">
+        <div className="border-t border-emerald-800 bg-emerald-950/80 px-4 py-3 sm:px-6 space-y-1.5">
+          {!isRoundComplete && (
+            <p className="text-center text-xs text-emerald-300/80 italic">
+              Select all 4 categories to save
+            </p>
+          )}
           <button
             type="button"
-            onClick={onClose}
-            className="rounded-xl px-4 py-2 font-semibold text-emerald-200 hover:bg-emerald-800 transition-colors text-sm"
+            onClick={handleSave}
+            disabled={!isRoundComplete}
+            className={`w-full rounded-xl py-2.5 font-bold shadow-lg transition-all text-sm flex items-center justify-center gap-1.5 ${
+              isRoundComplete
+                ? "bg-yellow-400 text-emerald-950 hover:bg-yellow-300 hover:scale-[1.01] cursor-pointer"
+                : "bg-emerald-950 border border-emerald-800 text-emerald-500 cursor-not-allowed opacity-50"
+            }`}
           >
-            Cancel
+            <span>{existingRound ? "Update Round" : "Save Round"}</span>
+            <span>✓</span>
           </button>
-          <div className="flex items-center gap-3">
-            {!isRoundComplete && (
-              <span className="text-xs text-emerald-300 italic hidden sm:inline">
-                Select all 4 categories to save
-              </span>
-            )}
-            <button
-              type="button"
-              onClick={handleSave}
-              disabled={!isRoundComplete}
-              className={`rounded-xl px-6 py-2.5 font-bold shadow-lg transition-all text-sm flex items-center gap-1.5 ${
-                isRoundComplete
-                  ? "bg-yellow-400 text-emerald-950 hover:bg-yellow-300 hover:scale-105 cursor-pointer"
-                  : "bg-emerald-950 border border-emerald-800 text-emerald-500 cursor-not-allowed opacity-50"
-              }`}
-            >
-              <span>{existingRound ? "Update Round" : "Save Round"}</span>
-              <span>✓</span>
-            </button>
-          </div>
         </div>
       </div>
 

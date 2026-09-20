@@ -16,15 +16,16 @@ export default function PrimieraModal({
   onApplyWinner,
   onClose,
 }: PrimieraModalProps) {
-  // Close on Escape key press
+  // Close on Escape key press (stops propagation to parent modal)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
+        e.stopPropagation();
         onClose();
       }
     };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown, true);
+    return () => window.removeEventListener("keydown", handleKeyDown, true);
   }, [onClose]);
 
   return (
@@ -34,6 +35,7 @@ export default function PrimieraModal({
       aria-modal="true"
       onClick={(e) => {
         if (e.target === e.currentTarget) {
+          e.stopPropagation();
           onClose();
         }
       }}
