@@ -24,8 +24,8 @@ export default defineConfig({
         name: "Sweeper - Scopa Scorecard",
         short_name: "Sweeper",
         description: "Scopa card game scoring calculator",
-        theme_color: "#10b981", // emerald
-        background_color: "#ffffff",
+        theme_color: "#022c22",
+        background_color: "#064e3b",
         display: "standalone",
         icons: [
           {
