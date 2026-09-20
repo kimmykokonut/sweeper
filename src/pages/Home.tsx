@@ -89,25 +89,25 @@ function Home() {
 
         {/* Main Playing Cards (Equal 50/50 Grid with Dark Green Pill Buttons) */}
         <div className="grid grid-cols-2 gap-3.5 sm:gap-5 w-full">
-          {/* Card 1: Scopa Scorecard */}
+          {/* Card 1: Scorecard */}
           <Link
-            to="/score"
+            to={activeGame && !activeGame.isFinished ? "/score?new=true" : "/score"}
             className="group flex flex-col items-center cursor-pointer transition-transform hover:-translate-y-1 active:scale-98"
           >
             <img
               src={assoDenari}
-              alt="Ace of coins - Scopa Scorecard"
+              alt="Ace of coins - Scorecard"
               className="w-full aspect-[250/413] object-contain rounded-xl shadow-xl shadow-black/40 ring-1 ring-black/15 group-hover:ring-2 group-hover:ring-yellow-400/80 group-hover:shadow-2xl transition-all duration-200 group-hover:scale-102"
             />
             <div className="mt-2.5 w-full rounded-xl bg-emerald-950/90 border border-emerald-800/80 p-2 sm:p-2.5 text-center group-hover:bg-emerald-900 group-hover:border-yellow-400 group-hover:ring-1 group-hover:ring-yellow-400/30 transition-all shadow-md">
               <h2 className="text-xs sm:text-sm font-extrabold text-white leading-tight">
-                Scopa Scorecard
+                Scorecard
               </h2>
               <span className="mt-0.5 flex items-center justify-center gap-1 text-[10px] sm:text-xs font-bold text-yellow-300">
                 <span>
                   {activeGame && !activeGame.isFinished
-                    ? "Resume Scorecard"
-                    : "Keep Score"}
+                    ? "New Game"
+                    : "Start Game"}
                 </span>
                 <span className="transition-transform group-hover:translate-x-0.5">
                   →
@@ -116,19 +116,19 @@ function Home() {
             </div>
           </Link>
 
-          {/* Card 2: Primiera Calculator */}
+          {/* Card 2: Primiera */}
           <Link
             to="/primiera"
             className="group flex flex-col items-center cursor-pointer transition-transform hover:-translate-y-1 active:scale-98"
           >
             <img
               src={setteBello}
-              alt="Settebello - Primiera Calculator"
+              alt="Settebello Card"
               className="w-full aspect-[250/413] object-contain rounded-xl shadow-xl shadow-black/40 ring-1 ring-black/15 group-hover:ring-2 group-hover:ring-yellow-400/80 group-hover:shadow-2xl transition-all duration-200 group-hover:scale-102"
             />
             <div className="mt-2.5 w-full rounded-xl bg-emerald-950/90 border border-emerald-800/80 p-2 sm:p-2.5 text-center group-hover:bg-emerald-900 group-hover:border-yellow-400 group-hover:ring-1 group-hover:ring-yellow-400/30 transition-all shadow-md">
               <h2 className="text-xs sm:text-sm font-extrabold text-white leading-tight">
-                Primiera Calculator
+                Primiera
               </h2>
               <span className="mt-0.5 flex items-center justify-center gap-1 text-[10px] sm:text-xs font-bold text-yellow-300">
                 <span>Calculate Hand</span>
