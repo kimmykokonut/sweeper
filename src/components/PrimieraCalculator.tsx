@@ -288,10 +288,10 @@ export default function PrimieraCalculator({
         )
       )}
 
-      {/* Player Selector Tabs (Shown if 2+ players) */}
+      {/* Player Selector Comparison Cards */}
       {activePlayers.length > 1 && (
         <div
-          className={`grid w-full border-b border-emerald-800 bg-emerald-950/40 p-1.5 sm:p-2 gap-1.5 sm:gap-2 ${
+          className={`grid w-full border-b border-emerald-800 bg-emerald-950/40 p-2 gap-2 ${
             activePlayers.length === 2
               ? "grid-cols-2"
               : activePlayers.length === 3
@@ -303,37 +303,52 @@ export default function PrimieraCalculator({
             const score = playerRunningScores[p.id] || 0;
             const suitsCount = playerSuitCounts[p.id] || 0;
             const isSelected = p.id === effectiveSelectedPlayerId;
+            const isLeader =
+              winnerId === p.id ||
+              (allCalculated &&
+                score === Math.max(...Object.values(playerScores)));
 
             return (
               <button
                 key={p.id}
                 type="button"
                 onClick={() => setSelectedPlayerId(p.id)}
-                className={`w-full min-w-0 flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1.5 px-1 sm:px-2.5 py-1.5 sm:py-2 rounded-lg font-semibold text-xs sm:text-sm transition-all text-center ${
+                className={`w-full min-w-0 flex flex-col items-center justify-center p-2 rounded-xl border transition-all text-center cursor-pointer ${
                   isSelected
-                    ? "bg-emerald-600 text-white shadow-md ring-1 ring-emerald-400"
-                    : "bg-emerald-900/60 text-emerald-200 hover:bg-emerald-800"
+                    ? "bg-emerald-700 border-yellow-400 ring-2 ring-yellow-400/80 shadow-lg"
+                    : isLeader && score > 0
+                    ? "bg-emerald-800/80 border-yellow-400/70 hover:bg-emerald-800"
+                    : "bg-emerald-950/60 border-emerald-800 hover:bg-emerald-800/50"
                 }`}
               >
-                <span className="truncate max-w-full flex items-center justify-center gap-1">
+                <div className="flex items-center gap-1 text-xs font-semibold truncate max-w-full text-emerald-100">
                   {allCalculated && winnerId === p.id && (
-                    <span className="text-yellow-300 text-xs">⭐</span>
+                    <span className="text-yellow-300">⭐</span>
                   )}
-                  <span>{p.name}</span>
-                </span>
-                <span
-                  className={`px-1 sm:px-1.5 py-0.5 rounded text-[10px] sm:text-xs font-bold shrink-0 whitespace-nowrap ${
-                    isSelected
-                      ? "bg-emerald-800 text-yellow-300"
-                      : "bg-emerald-950 text-emerald-300"
-                  }`}
-                >
+                  <span className="truncate">{p.name}</span>
+                </div>
+
+                <div className="text-lg sm:text-xl font-extrabold text-white leading-tight mt-0.5">
                   {suitsCount === 4
                     ? `${score} pts`
                     : suitsCount > 0
-                    ? `${score} (${suitsCount}/4)`
+                    ? `${score}`
                     : "—"}
-                </span>
+                </div>
+
+                <div className="text-[10px] sm:text-[11px] font-bold h-4 flex items-center justify-center">
+                  {allCalculated && winnerId === p.id ? (
+                    <span className="text-yellow-300">Winner</span>
+                  ) : isLeader && score > 0 ? (
+                    <span className="text-yellow-300/90">👑 Highest</span>
+                  ) : suitsCount < 4 && suitsCount > 0 ? (
+                    <span className="text-emerald-400">{suitsCount}/4 suits</span>
+                  ) : (
+                    <span className="text-emerald-500/70">
+                      {isSelected ? "Active" : "Tap to edit"}
+                    </span>
+                  )}
+                </div>
               </button>
             );
           })}
@@ -348,7 +363,7 @@ export default function PrimieraCalculator({
             {winnerId ? (
               <span>
                 ⭐ {activePlayers.find((p) => p.id === winnerId)?.name} wins
-                the Primiera point! ({playerScores[winnerId]} pts)
+                the Primiera point!
               </span>
             ) : isTie ? (
               <span className="text-amber-200">
@@ -418,58 +433,6 @@ export default function PrimieraCalculator({
               </button>
             );
           })}
-        </div>
-
-        {/* Outcome Summary Box */}
-        <div className="rounded-xl bg-emerald-950/80 border border-emerald-700/80 p-3">
-          <h4 className="text-xs uppercase tracking-wider font-bold text-emerald-400 mb-2">
-            Current Comparison
-          </h4>
-          <div
-            className={`grid gap-2 text-center ${
-              activePlayers.length === 2
-                ? "grid-cols-2"
-                : activePlayers.length === 3
-                ? "grid-cols-3"
-                : "grid-cols-4"
-            }`}
-          >
-            {activePlayers.map((p) => {
-              const score = playerRunningScores[p.id] || 0;
-              const suitsCount = playerSuitCounts[p.id] || 0;
-              const isLeader =
-                winnerId === p.id ||
-                (allCalculated &&
-                  score === Math.max(...Object.values(playerScores)));
-
-              return (
-                <div
-                  key={p.id}
-                  className={`rounded-lg p-2 border transition-all ${
-                    isLeader && score > 0
-                      ? "bg-emerald-800/90 border-yellow-400 ring-1 ring-yellow-400"
-                      : "bg-emerald-900/40 border-emerald-800"
-                  }`}
-                >
-                  <div className="truncate text-xs font-medium text-emerald-200">
-                    {p.name}
-                  </div>
-                  <div className="text-lg font-bold text-white">
-                    {score}
-                  </div>
-                  {isLeader && score > 0 ? (
-                    <span className="inline-block mt-0.5 text-[11px] font-bold text-yellow-300">
-                      👑 Highest
-                    </span>
-                  ) : suitsCount < 4 && suitsCount > 0 ? (
-                    <span className="inline-block mt-0.5 text-[10px] text-emerald-300 font-medium">
-                      {suitsCount}/4 suits
-                    </span>
-                  ) : null}
-                </div>
-              );
-            })}
-          </div>
         </div>
       </div>
 
