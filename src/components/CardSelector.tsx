@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import type { Suits, CardValue } from "../types";
 import { CARD_DATA } from "../utils/cardData";
 
@@ -14,12 +15,28 @@ function CardSelector({
   onClose,
   onCardSelect,
 }: CardSelectorProps) {
+  // Close card selector on Escape key press without closing parent modal
+  useEffect(() => {
+    if (!activeSuit) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.stopPropagation();
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown, true);
+    return () => window.removeEventListener("keydown", handleKeyDown, true);
+  }, [activeSuit, onClose]);
+
   if (!activeSuit) return null;
 
   return (
     <div
-      className="fixed inset-x-0 bottom-0 top-16 z-40 overflow-y-auto bg-black/60 p-3"
-      onClick={onClose}
+      className="fixed inset-x-0 bottom-0 top-16 z-50 overflow-y-auto bg-black/60 p-3"
+      onClick={(e) => {
+        e.stopPropagation();
+        onClose();
+      }}
       role="dialog"
       aria-modal="true"
       aria-labelledby="card-selector-title"

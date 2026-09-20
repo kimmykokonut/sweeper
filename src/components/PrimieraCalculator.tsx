@@ -438,21 +438,14 @@ export default function PrimieraCalculator({
 
       {/* Footer Actions (Modal Mode) */}
       {isModal && (
-        <div className="flex items-center justify-between border-t border-emerald-800 bg-emerald-950/70 px-4 py-3 sm:px-6">
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-xl px-4 py-2 font-semibold text-emerald-200 hover:bg-emerald-800 transition-colors text-sm"
-          >
-            Cancel
-          </button>
+        <div className="border-t border-emerald-800 bg-emerald-950/70 px-4 py-3 sm:px-6">
           <button
             type="button"
             onClick={handleApply}
             disabled={!allCalculated}
-            className={`rounded-xl px-5 py-2.5 font-bold shadow-lg transition-all text-sm flex items-center gap-1.5 ${
+            className={`w-full rounded-xl py-2.5 font-bold shadow-lg transition-all text-sm flex items-center justify-center gap-1.5 ${
               allCalculated
-                ? "bg-yellow-400 text-emerald-950 hover:bg-yellow-300 hover:scale-105 cursor-pointer"
+                ? "bg-yellow-400 text-emerald-950 hover:bg-yellow-300 hover:scale-[1.01] cursor-pointer"
                 : "bg-gray-600 text-gray-300 opacity-50 cursor-not-allowed"
             }`}
           >
