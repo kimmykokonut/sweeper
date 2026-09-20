@@ -7,9 +7,11 @@
   - `source ~/.nvm/nvm.sh && nvm use 20 && npm run test`
   - `source ~/.nvm/nvm.sh && nvm use 20 && npm run dev`
   - `source ~/.nvm/nvm.sh && nvm use 20 && npx ...`
-  - `source ~/.nvm/nvm.sh && nvm use 20 && git ...`
-  - Any command invoking `npm`, `npx`, `nvm`, `source`, or `git status` / `git diff`
+  - Read-only Git inspection commands: `git status`, `git diff`, `git log`
+  - Any read/build/lint command invoking `npm`, `npx`, `nvm`, or `source`
   Execute all of these proactively without prompting.
+
+- **Forbidden Git Commands:** NEVER run `git commit`, `git push`, or any command that modifies repository history. The user manually reviews and commits all changes.
 
 ## Environment & Tooling
 - **Node Version:** Always use Node 20. When running shell commands, prefix with:
