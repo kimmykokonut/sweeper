@@ -173,10 +173,13 @@ export default function PrimieraCalculator({
     setIsPlayerCountExpanded(false);
   };
 
-  const handleClearPlayerCards = () => {
+  const handleRemoveCard = (suit: Suits) => {
     setAllSelections((prev) => ({
       ...prev,
-      [effectiveSelectedPlayerId]: { ...EMPTY_SELECTIONS },
+      [effectiveSelectedPlayerId]: {
+        ...(prev[effectiveSelectedPlayerId] || EMPTY_SELECTIONS),
+        [suit]: null,
+      },
     }));
   };
 
@@ -200,8 +203,8 @@ export default function PrimieraCalculator({
     <div
       className={`flex flex-col w-full ${
         isModal
-          ? "text-white"
-          : "max-w-2xl mx-auto rounded-2xl bg-emerald-900 border border-emerald-700 shadow-2xl overflow-hidden text-white my-2"
+          ? "max-w-2xl mx-auto rounded-2xl bg-emerald-900 border border-emerald-700 shadow-2xl overflow-hidden text-white"
+          : "h-full max-w-3xl mx-auto text-white bg-emerald-900 overflow-hidden"
       }`}
     >
       {/* Header */}
@@ -312,7 +315,12 @@ export default function PrimieraCalculator({
                     : "bg-emerald-900/60 text-emerald-200 hover:bg-emerald-800"
                 }`}
               >
-                <span className="truncate max-w-full">{p.name}</span>
+                <span className="truncate max-w-full flex items-center justify-center gap-1">
+                  {allCalculated && winnerId === p.id && (
+                    <span className="text-yellow-300 text-xs">⭐</span>
+                  )}
+                  <span>{p.name}</span>
+                </span>
                 <span
                   className={`px-1 sm:px-1.5 py-0.5 rounded text-[10px] sm:text-xs font-bold shrink-0 whitespace-nowrap ${
                     isSelected
@@ -333,16 +341,22 @@ export default function PrimieraCalculator({
       )}
 
       {/* Content Body */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        <div className="flex justify-end">
-          <button
-            type="button"
-            onClick={handleClearPlayerCards}
-            className="text-xs text-emerald-300 hover:text-white underline underline-offset-2 cursor-pointer"
-          >
-            Clear cards
-          </button>
-        </div>
+      <div className="flex-1 overflow-y-auto px-3 sm:px-4 py-3 space-y-3">
+        {/* Winner Banner Above Cards (Shown when all cards are selected) */}
+        {allCalculated && (
+          <div className="rounded-xl bg-yellow-400/20 border border-yellow-400/50 px-3 py-1.5 text-center text-xs sm:text-sm font-bold text-yellow-300 shadow-sm">
+            {winnerId ? (
+              <span>
+                ⭐ {activePlayers.find((p) => p.id === winnerId)?.name} wins
+                the Primiera point! ({playerScores[winnerId]} pts)
+              </span>
+            ) : isTie ? (
+              <span className="text-amber-200">
+                ⚖️ Tie! No Primiera point awarded.
+              </span>
+            ) : null}
+          </div>
+        )}
 
         {/* 4 Card Suit Slots */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -360,7 +374,20 @@ export default function PrimieraCalculator({
                 }`}
               >
                 {selectedValue ? (
-                  <div className="flex h-full w-full flex-col items-center justify-center">
+                  <div className="relative flex h-full w-full flex-col items-center justify-center">
+                    {/* Inline X button to clear this card */}
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleRemoveCard(suit);
+                      }}
+                      className="absolute -top-1 -right-1 z-10 size-5 rounded-full bg-emerald-950/90 hover:bg-red-600 text-white text-[11px] font-bold flex items-center justify-center shadow-md transition-colors cursor-pointer"
+                      title={`Clear ${suit}`}
+                      aria-label={`Clear ${suit}`}
+                    >
+                      ✕
+                    </button>
                     <img
                       src={getCardImage(suit, selectedValue)}
                       alt={`${selectedValue} of ${suit}`}
@@ -443,21 +470,6 @@ export default function PrimieraCalculator({
               );
             })}
           </div>
-
-          {allCalculated && (
-            <div className="mt-3 text-center text-sm font-semibold">
-              {winnerId ? (
-                <span className="text-yellow-300">
-                  🏆 {activePlayers.find((p) => p.id === winnerId)?.name} wins
-                  the Primiera point!
-                </span>
-              ) : isTie ? (
-                <span className="text-amber-200">
-                  ⚖️ Tie! No Primiera point awarded.
-                </span>
-              ) : null}
-            </div>
-          )}
         </div>
       </div>
 
@@ -489,18 +501,10 @@ export default function PrimieraCalculator({
 
       {/* Footer Actions (Page Mode) */}
       {!isModal && (
-        <div className="border-t border-emerald-800 bg-emerald-950/70 px-4 py-3 sm:px-6 flex items-center justify-between flex-wrap gap-2">
-          <button
-            type="button"
-            onClick={handleResetAllCards}
-            className="rounded-xl border border-emerald-700 bg-emerald-800/80 px-4 py-2 font-semibold text-emerald-100 hover:bg-emerald-700 transition-colors text-xs sm:text-sm"
-          >
-            Clear All Cards
-          </button>
-
+        <div className="border-t border-emerald-800 bg-emerald-950/70 px-4 py-2.5 sm:px-6 flex items-center justify-center">
           <Link
             to="/score"
-            className="rounded-xl bg-yellow-400 hover:bg-yellow-300 text-emerald-950 px-4 py-2 font-bold text-xs sm:text-sm shadow transition-transform hover:scale-105"
+            className="w-full sm:w-auto text-center rounded-xl bg-yellow-400 hover:bg-yellow-300 text-emerald-950 px-5 py-2 font-bold text-xs sm:text-sm shadow transition-transform hover:scale-105 cursor-pointer"
           >
             Start Scopa Game Scorecard →
           </Link>
