@@ -2,7 +2,7 @@ import PrimieraCalculator from "../components/PrimieraCalculator";
 
 function Primiera() {
   return (
-    <div className="mx-auto min-h-[calc(100svh-4rem)] w-full max-w-4xl px-3 sm:px-4 py-4 sm:py-6 flex flex-col items-center justify-start">
+    <div className="w-full h-[calc(100svh-4rem)] flex flex-col overflow-hidden bg-emerald-900">
       <PrimieraCalculator mode="page" />
     </div>
   );
