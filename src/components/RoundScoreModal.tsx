@@ -442,7 +442,6 @@ export default function RoundScoreModal({
                 onClick={() => setShowPrimieraCalc(true)}
                 className="flex items-center gap-1.5 bg-yellow-400 text-emerald-950 font-bold px-3 py-1.5 rounded-lg text-xs hover:bg-yellow-300 transition-transform active:scale-95 shadow-md"
               >
-                <span>🎴</span>
                 <span>Open Calculator</span>
               </button>
             </div>
