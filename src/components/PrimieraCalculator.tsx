@@ -204,7 +204,7 @@ export default function PrimieraCalculator({
       className={`flex flex-col w-full ${
         isModal
           ? "max-w-2xl mx-auto rounded-2xl bg-emerald-900 border border-emerald-700 shadow-2xl overflow-hidden text-white"
-          : "h-full max-w-3xl mx-auto text-white bg-emerald-900 overflow-hidden"
+          : "h-full max-w-3xl mx-auto text-white overflow-hidden"
       }`}
     >
       {/* Header */}
