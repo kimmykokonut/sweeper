@@ -1,13 +1,13 @@
 import { Outlet } from "react-router";
-import Header from "./Header";
+import BottomNav from "./BottomNav";
 
 function Layout() {
   return (
     <>
-      <Header />
-      <main>
+      <main className="flex-1 flex flex-col min-h-[100svh] pb-16">
         <Outlet />
       </main>
+      <BottomNav />
     </>
   );
 }
