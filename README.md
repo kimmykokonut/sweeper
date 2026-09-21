@@ -4,6 +4,15 @@
 
 _by [Kim Robinson](https://github.com/kimmykokonut)_
 
+| Home                            | Calculator                            | Scorecard                                             |
+| ------------------------------- | ------------------------------------- | ----------------------------------------------------- |
+| ![Home](src/assets/ss-home.png) | ![Calculator](src/assets/ss-calc.png) | ![Scorecard page screenshot](src/assets/ss-score.png) |
+
+See app [live](https://kimmykokonut.github.io/sweeper/)
+_In Browser, choose `Add to Home Screen` to have a mobile experience_
+
+---
+
 📝 No more hunting for scrap paper and a pen to keep score while playing Scopa!
 
 🤯 Discover your Primiera total without a headache.
@@ -11,11 +20,6 @@ _by [Kim Robinson](https://github.com/kimmykokonut)_
 🧮 Let the smart count assistant balance your cards and coins automatically.
 
 🌞 Save your mental energy for that Settebello swipe.
-
-See app [live](https://kimmykokonut.github.io/sweeper/)
-_In Browser, choose `Add to Home Screen` to make app have a mobile feel and quick access_
-
-![Settebello card](src/assets/7-denari.jpg)
 
 ## Jump around
 
@@ -45,6 +49,7 @@ What started as a handy little Phase 1 tool to calculate Primiera has evolved in
 Here is what Sweeper brings to your game table:
 
 ### 🏆 Full Scopa Scorecard (2–4 Players)
+
 - Set up matches for 2, 3, or 4 players with custom player names and target scores (11 pts or custom).
 - Score rounds with live point previews across all 5 official Scopa scoring categories:
   - **Scope (Sweeps)**: Quick-increment counter buttons for every sweep during play.
@@ -55,6 +60,7 @@ Here is what Sweeper brings to your game table:
 - Real-time score summaries, round-by-round point breakdown, and a victory banner when a player crosses the target score!
 
 ### ⚡ Smart Count Verification Assistant
+
 - When tallying cards and coins at the end of a round, pop open the Count Helper:
   - **Instant Two-Way Auto-Fill**: In a 2-player game, entering 23 cards for Player 1 immediately auto-balances Player 2 to 17 cards (out of 40 total). Change your mind and type 25 into Player 2? Player 1 updates to 15 instantly!
   - **3+ Player Remainder Balancing**: Enter counts for all players except the last one, and the remainder auto-fills automatically.
@@ -63,32 +69,38 @@ Here is what Sweeper brings to your game table:
   - **Auto-Winner Detection**: Automatically identifies and highlights the Carte and Denari winners (or ties) based on your counts.
 
 ### 🃏 Authentic Primiera Calculator (Standalone & Embedded)
+
 - Available as a standalone tool in the bottom navigation or embedded right inside the round scoring modal.
-- Authentic Neapolitan card imagery for all four suits (*Denari / Coins*, *Spade / Swords*, *Coppe / Cups*, *Bastoni / Clubs*).
+- Authentic Neapolitan card imagery for all four suits (_Denari / Coins_, _Spade / Swords_, _Coppe / Cups_, _Bastoni / Clubs_).
 - Accurate Scopa Primiera point values ($7=21, 6=18, \text{Ace}=16, 5=15, 4=14, 3=13, 2=12, \text{Face}=10$).
 - Live point calculations for each player and automatic tie/winner determination.
 
 ### 🔒 Physical Deck Uniqueness (No Duplicate Cards!)
+
 - In real Scopa, there is only one 7 of Coins in the entire deck!
 - When Player 1 claims a card in the Primiera picker, that card is automatically locked out for Player 2, 3, and 4 with a clear `🔒 Taken by Player 1` badge.
 - Player 1 can still swap or deselect their card, which instantly frees it up for everyone else.
 
 ### 🚀 Direct Hand Transfer
+
 - Ran a standalone Primiera calculation before starting your match?
 - Once all hands are calculated, click **"Transfer to Scorecard"** to automatically initialize a fresh match and launch the Round 1 scorecard with the Primiera winner already pre-selected!
 
 ### 📱 Mobile-First Emerald Felt Table Design
+
 - Styled with an immersive emerald-green card table aesthetic (`emerald-800`, `emerald-900`, `yellow-300`, `yellow-400`).
 - **Dynamic Flexbox Viewports (`dvh`)**: Designed to stretch and breathe dynamically across compact 320px screens and ultra-tall 20:9 mobile displays without dead space or static pixel cutoffs.
 - **Thumb-Friendly Bottom Navigation**: Easily hop between Home, Scorecard, and Primiera with a persistent bottom tab bar.
 - **Safe-Area Aware**: Accounts for mobile home indicators and browser address bars so action buttons are never trapped or covered.
 
 ### 💾 Match Persistence & Game Resume
+
 - Never lose your game if you accidentally refresh or close your browser!
 - Active matches are automatically persisted to `localStorage`.
 - The home screen greets you with a handy "Scoring in Progress" resume card so you can jump right back into the action.
 
 ### 📲 Progressive Web App (PWA)
+
 - Install Sweeper directly to your phone's home screen via Safari or Chrome.
 - Works offline, loads instantly, and runs full-screen without URL bars or browser chrome.
 
@@ -213,12 +225,13 @@ npm run preview
 ## Contact and Support
 
 If you have any feedback or concerns:
+
 - [Report Bug](https://github.com/kimmykokonut/sweeper/issues)
 - [Request Feature](https://github.com/kimmykokonut/sweeper/issues)
 
 ## License
 
-TBD
+[GNU GENERAL PUBLIC LICENSE](/LICENSE)
 
 ## Acknowledgements
 
