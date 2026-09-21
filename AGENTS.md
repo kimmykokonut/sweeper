@@ -13,6 +13,10 @@
 
 - **Forbidden Git Commands:** NEVER run `git commit`, `git push`, or any command that modifies repository history. The user manually reviews and commits all changes.
 
+## Chunked Development & Review Workflow
+- **Atomic Work Chunks:** Divide tasks into small, self-contained logical chunks rather than batching multiple distinct changes together.
+- **Review & Manual Commit Pause:** After completing each logical chunk, run linting and build validation, present a concise diff to the user, and pause. Allow the user to review `git diff` and manually commit before proceeding to subsequent chunks.
+
 ## Environment & Tooling
 - **Node Version:** Always use Node 20. When running shell commands, prefix with:
   ```bash
