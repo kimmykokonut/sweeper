@@ -38,7 +38,7 @@ function CardSelector({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/75 p-3 sm:p-4 backdrop-blur-xs cursor-pointer"
+      className="fixed inset-0 z-70 flex items-center justify-center overflow-y-auto bg-black/75 p-3 sm:p-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-xs cursor-pointer"
       onClick={(e) => {
         if (e.target === e.currentTarget) {
           e.stopPropagation();
@@ -50,11 +50,11 @@ function CardSelector({
       aria-labelledby="card-selector-title"
     >
       <div
-        className="relative flex w-full max-w-xl sm:max-w-2xl max-h-[92vh] flex-col rounded-2xl bg-emerald-900 border border-emerald-700 shadow-2xl text-white overflow-hidden cursor-default"
+        className="relative flex w-full max-w-xl sm:max-w-2xl max-h-[calc(100dvh-1.5rem)] sm:max-h-[92vh] flex-col rounded-2xl bg-emerald-900 border border-emerald-700 shadow-2xl text-white overflow-hidden cursor-default"
         onClick={(event) => event.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-emerald-800 bg-emerald-950/80 px-4 py-2.5 sm:py-3">
+        <div className="flex shrink-0 items-center justify-between border-b border-emerald-800 bg-emerald-950/80 px-4 py-2.5 sm:py-3">
           <div className="flex items-center gap-2">
             <img
               src={CARD_DATA[activeSuit].icon}
@@ -83,7 +83,7 @@ function CardSelector({
         </div>
 
         {/* Body */}
-        <div className="flex-1 overflow-y-auto p-2.5 sm:p-3 flex flex-col gap-2 sm:gap-2.5">
+        <div className="flex-1 min-h-0 overflow-y-auto p-2.5 sm:p-3 flex flex-col gap-2 sm:gap-2.5">
           {/* Top Hero: 7 (Best Card in Suit) */}
           {sevenCard && (() => {
             const takenBy = takenCards?.[sevenCard.value];
