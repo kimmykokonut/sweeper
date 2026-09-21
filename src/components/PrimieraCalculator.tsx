@@ -1,12 +1,13 @@
 import { useState, useMemo } from "react";
-import type { CardSelections, CardValue, Player, Suits } from "../types";
+import { useNavigate } from "react-router";
+import type { CardSelections, CardValue, GameState, Player, Suits } from "../types";
 import { CARD_DATA, getCardImage } from "../utils/cardData";
 import {
   calculatePrimieraScore,
   primieraValues,
 } from "../utils/primieraCalculator";
 import CardSelector from "./CardSelector";
-import { Link } from "react-router";
+import { saveGameState } from "../utils/scorecardHelpers";
 
 export interface PrimieraCalculatorProps {
   /**
@@ -194,6 +195,32 @@ export default function PrimieraCalculator({
     setIsPlayerCountExpanded(false);
   };
 
+  const navigate = useNavigate();
+
+  const handleTransferToScorecard = () => {
+    const newGame: GameState = {
+      id: `game_${Date.now()}`,
+      createdAt: Date.now(),
+      players: activePlayers,
+      settings: {
+        targetScore: 11,
+        isTeams: false,
+      },
+      rounds: [],
+      isFinished: false,
+      winnerId: null,
+    };
+    saveGameState(newGame);
+
+    const primieraResult = isTie ? "tie" : (winnerId || "tie");
+    navigate(`/score?round=1&primiera=${primieraResult}`, {
+      state: {
+        autoOpenRound1: true,
+        initialPrimieraChoice: primieraResult,
+      },
+    });
+  };
+
   const handleApply = () => {
     if (onApplyWinner) {
       onApplyWinner(winnerId, playerScores);
@@ -205,11 +232,17 @@ export default function PrimieraCalculator({
       className={`flex flex-col w-full ${
         isModal
           ? "max-w-2xl mx-auto rounded-2xl bg-emerald-900 border border-emerald-700 shadow-2xl overflow-hidden text-white"
-          : "flex-1 flex flex-col w-full max-w-3xl mx-auto text-white min-h-0"
+          : "flex-1 flex flex-col w-full max-w-3xl mx-auto text-white min-h-0 bg-transparent"
       }`}
     >
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-emerald-800 bg-emerald-950/70 px-4 py-3 sm:px-6">
+      <div
+        className={`flex items-center justify-between ${
+          isModal
+            ? "border-b border-emerald-800 bg-emerald-950/70 px-4 py-3 sm:px-6"
+            : "px-4 pt-3 pb-2 sm:px-6 bg-transparent"
+        }`}
+      >
         <div>
           <h2 className="text-lg sm:text-xl font-bold text-white leading-tight">
             Primiera Calculator
@@ -226,7 +259,7 @@ export default function PrimieraCalculator({
             type="button"
             onClick={onClose}
             aria-label="Close calculator"
-            className="rounded-lg p-1.5 text-emerald-300 hover:bg-emerald-800 hover:text-white transition-colors"
+            className="rounded-lg p-1.5 text-emerald-300 hover:bg-emerald-800 hover:text-white transition-colors cursor-pointer"
           >
             ✕
           </button>
@@ -236,7 +269,7 @@ export default function PrimieraCalculator({
           <button
             type="button"
             onClick={handleResetAllCards}
-            className="text-xs rounded-lg bg-emerald-800 hover:bg-emerald-700 text-emerald-200 hover:text-white px-2.5 py-1.5 font-medium transition-colors"
+            className="text-xs rounded-lg bg-emerald-800 hover:bg-emerald-700 text-emerald-200 hover:text-white px-2.5 py-1.5 font-medium transition-colors cursor-pointer"
           >
             Reset Hand
           </button>
@@ -246,8 +279,9 @@ export default function PrimieraCalculator({
       {/* Standalone Player Count Selector (Page Mode only) */}
       {!isModal &&
         !playersProp &&
+        !allCalculated &&
         (isPlayerCountExpanded ? (
-          <div className="w-full border-b border-emerald-800 bg-emerald-950/40 p-2">
+          <div className="w-full px-4 py-2 bg-transparent">
             <div className="grid grid-cols-3 w-full gap-2">
               {[2, 3, 4].map((count) => {
                 const isActive = standalonePlayerCount === count;
@@ -269,7 +303,7 @@ export default function PrimieraCalculator({
             </div>
           </div>
         ) : (
-          <div className="flex items-center justify-between border-b border-emerald-800 bg-emerald-950/40 px-4 py-2 text-xs">
+          <div className="flex items-center justify-between px-4 py-1.5 text-xs bg-transparent">
             <div className="flex items-center gap-2">
               <span className="text-emerald-400 font-semibold uppercase tracking-wider text-[11px]">
                 Players:
@@ -290,9 +324,13 @@ export default function PrimieraCalculator({
         ))}
 
       {/* Player Selector Comparison Cards */}
-      {activePlayers.length > 1 && (
+      {activePlayers.length > 1 && (!allCalculated || isModal) && (
         <div
-          className={`grid w-full border-b border-emerald-800 bg-emerald-950/40 p-2 gap-2 ${
+          className={`grid w-full gap-2 ${
+            isModal
+              ? "border-b border-emerald-800 bg-emerald-950/40 p-2"
+              : "px-3 sm:px-4 py-2 bg-transparent"
+          } ${
             activePlayers.length === 2
               ? "grid-cols-2"
               : activePlayers.length === 3
@@ -319,7 +357,7 @@ export default function PrimieraCalculator({
                     ? "bg-emerald-700 border-yellow-400 ring-2 ring-yellow-400/80 shadow-lg"
                     : isLeader && score > 0
                       ? "bg-emerald-800/80 border-yellow-400/70 hover:bg-emerald-800"
-                      : "bg-emerald-950/60 border-emerald-800 hover:bg-emerald-800/50"
+                      : "bg-emerald-900/60 border-emerald-700/60 hover:bg-emerald-800/60"
                 }`}
               >
                 <div className="flex items-center gap-1 text-xs font-semibold truncate max-w-full text-emerald-100">
@@ -360,19 +398,64 @@ export default function PrimieraCalculator({
 
       {/* Content Body */}
       <div className="flex-1 overflow-y-auto px-3 sm:px-4 py-3 space-y-3">
-        {/* Winner Banner Above Cards (Shown when all cards are selected) */}
+        {/* Celebration / Action Card (Shown when all cards are selected) */}
         {allCalculated && (
-          <div className="rounded-xl bg-yellow-400/20 border border-yellow-400/50 px-3 py-1.5 text-center text-xs sm:text-sm font-bold text-yellow-300 shadow-sm">
-            {winnerId ? (
-              <span>
-                ⭐ {activePlayers.find((p) => p.id === winnerId)?.name} wins the
-                Primiera point!
-              </span>
-            ) : isTie ? (
-              <span className="text-amber-200">
-                ⚖️ Tie! No Primiera point awarded.
-              </span>
-            ) : null}
+          <div className="rounded-2xl bg-gradient-to-b from-yellow-400/20 via-emerald-900/60 to-emerald-950/80 border border-yellow-400/50 p-3 sm:p-4 text-center shadow-lg">
+            {/* Winner Announcement */}
+            <div className="flex items-center justify-center gap-2 text-sm sm:text-base font-extrabold text-yellow-300 mb-1">
+              {winnerId ? (
+                <>
+                  <span className="text-lg">⭐</span>
+                  <span>
+                    {activePlayers.find((p) => p.id === winnerId)?.name} wins the
+                    Primiera point!
+                  </span>
+                </>
+              ) : isTie ? (
+                <>
+                  <span className="text-lg">⚖️</span>
+                  <span className="text-amber-200">
+                    Tie! No Primiera point awarded.
+                  </span>
+                </>
+              ) : null}
+            </div>
+
+            {/* Score summary chips */}
+            <div className="flex flex-wrap items-center justify-center gap-2 my-2">
+              {activePlayers.map((p) => (
+                <span
+                  key={p.id}
+                  className={`text-xs px-2.5 py-1 rounded-lg font-bold ${
+                    winnerId === p.id
+                      ? "bg-yellow-400 text-emerald-950 shadow"
+                      : "bg-emerald-950/70 border border-emerald-700/60 text-emerald-200"
+                  }`}
+                >
+                  {p.name}: {playerScores[p.id]} pts
+                </span>
+              ))}
+            </div>
+
+            {/* Action buttons (Page Mode only) */}
+            {!isModal && (
+              <div className="grid grid-cols-2 gap-2 mt-3 pt-2 border-t border-yellow-400/30 w-full">
+                <button
+                  type="button"
+                  onClick={handleResetAllCards}
+                  className="w-full py-2 px-2 sm:px-3 rounded-xl bg-emerald-800 hover:bg-emerald-700 text-emerald-100 font-semibold text-xs sm:text-sm transition-colors cursor-pointer text-center"
+                >
+                  Reset Hand
+                </button>
+                <button
+                  type="button"
+                  onClick={handleTransferToScorecard}
+                  className="w-full py-2 px-2 sm:px-3 rounded-xl bg-yellow-400 hover:bg-yellow-300 text-emerald-950 font-bold text-xs sm:text-sm shadow-md transition-all hover:scale-[1.02] cursor-pointer text-center truncate"
+                >
+                  Transfer to Scorecard →
+                </button>
+              </div>
+            )}
           </div>
         )}
 
@@ -455,18 +538,6 @@ export default function PrimieraCalculator({
             <span>Apply to Round</span>
             <span>✓</span>
           </button>
-        </div>
-      )}
-
-      {/* Footer Actions (Page Mode) */}
-      {!isModal && (
-        <div className="border-t border-emerald-800 bg-emerald-950/70 px-4 py-2.5 sm:px-6 flex items-center justify-center">
-          <Link
-            to="/score"
-            className="w-full sm:w-auto text-center rounded-xl bg-yellow-400 hover:bg-yellow-300 text-emerald-950 px-5 py-2 font-bold text-xs sm:text-sm shadow transition-transform hover:scale-105 cursor-pointer"
-          >
-            Start Scopa Game Scorecard →
-          </Link>
         </div>
       )}
 
