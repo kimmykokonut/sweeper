@@ -37,22 +37,29 @@ export default function RoundScoreModal({
     return existingRound.carteWinnerId ?? "tie";
   });
 
-  const [denariChoice, setDenariChoice] = useState<string | "tie" | null>(() => {
-    if (!existingRound) return null;
-    return existingRound.denariWinnerId ?? "tie";
-  });
-
-  const [settebelloWinnerId, setSettebelloWinnerId] = useState<string | null>(
-    existingRound?.settebelloWinnerId ?? null
+  const [denariChoice, setDenariChoice] = useState<string | "tie" | null>(
+    () => {
+      if (!existingRound) return null;
+      return existingRound.denariWinnerId ?? "tie";
+    },
   );
 
-  const [primieraChoice, setPrimieraChoice] = useState<string | "tie" | null>(() => {
-    if (existingRound) return existingRound.primieraWinnerId ?? "tie";
-    if (initialPrimieraChoice !== undefined && initialPrimieraChoice !== null) {
-      return initialPrimieraChoice;
-    }
-    return null;
-  });
+  const [settebelloWinnerId, setSettebelloWinnerId] = useState<string | null>(
+    existingRound?.settebelloWinnerId ?? null,
+  );
+
+  const [primieraChoice, setPrimieraChoice] = useState<string | "tie" | null>(
+    () => {
+      if (existingRound) return existingRound.primieraWinnerId ?? "tie";
+      if (
+        initialPrimieraChoice !== undefined &&
+        initialPrimieraChoice !== null
+      ) {
+        return initialPrimieraChoice;
+      }
+      return null;
+    },
+  );
 
   // Primiera modal visibility
   const [showPrimieraCalc, setShowPrimieraCalc] = useState(false);
@@ -76,16 +83,26 @@ export default function RoundScoreModal({
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [showPrimieraCalc, onClose]);
-  const [rawCounts, setRawCounts] = useState<Record<string, RoundRawCounts>>(() => {
-    if (existingRound?.rawCounts) return { ...existingRound.rawCounts };
-    const initial: Record<string, RoundRawCounts> = {};
-    for (const p of players) initial[p.id] = { cards: undefined, coins: undefined };
-    return initial;
-  });
+  const [rawCounts, setRawCounts] = useState<Record<string, RoundRawCounts>>(
+    () => {
+      if (existingRound?.rawCounts) return { ...existingRound.rawCounts };
+      const initial: Record<string, RoundRawCounts> = {};
+      for (const p of players)
+        initial[p.id] = { cards: undefined, coins: undefined };
+      return initial;
+    },
+  );
+
+  const [autoFilledCardsPlayerId, setAutoFilledCardsPlayerId] = useState<
+    string | null
+  >(null);
+  const [autoFilledCoinsPlayerId, setAutoFilledCoinsPlayerId] = useState<
+    string | null
+  >(null);
 
   // Round completion check: all 4 main categories must have a choice
   const isRoundComplete = Boolean(
-    carteChoice && denariChoice && settebelloWinnerId && primieraChoice
+    carteChoice && denariChoice && settebelloWinnerId && primieraChoice,
   );
 
   // Scope counters handler
@@ -99,44 +116,267 @@ export default function RoundScoreModal({
 
   // Count helper handlers
   const handleCardCountChange = (playerId: string, val: string) => {
-    const num = val === "" ? undefined : parseInt(val, 10);
-    const updated = {
+    // 1. If user deletes the value (empty string):
+    if (val === "") {
+      const updated: Record<string, RoundRawCounts> = { ...rawCounts };
+      updated[playerId] = { ...updated[playerId], cards: undefined };
+
+      // In a 2-player game, clearing one player also clears the other so user starts fresh
+      if (players.length === 2) {
+        const otherPlayer = players.find((p) => p.id !== playerId);
+        if (otherPlayer) {
+          updated[otherPlayer.id] = {
+            ...updated[otherPlayer.id],
+            cards: undefined,
+          };
+        }
+        setAutoFilledCardsPlayerId(null);
+      } else {
+        // In 3+ player game, if there was an auto-filled player, clear it because counts are no longer complete
+        if (autoFilledCardsPlayerId) {
+          updated[autoFilledCardsPlayerId] = {
+            ...updated[autoFilledCardsPlayerId],
+            cards: undefined,
+          };
+          setAutoFilledCardsPlayerId(null);
+        }
+      }
+
+      setRawCounts(updated);
+
+      // Re-evaluate Carte winner based on remaining counts
+      const counts: Record<string, number> = {};
+      for (const p of players) {
+        if (updated[p.id]?.cards !== undefined) {
+          counts[p.id] = updated[p.id].cards!;
+        }
+      }
+      if (Object.keys(counts).length > 0) {
+        setCarteChoice(determineWinnerFromCounts(counts) ?? "tie");
+      } else {
+        setCarteChoice(null);
+      }
+      return;
+    }
+
+    // 2. User entered a numeric value:
+    const parsed = parseInt(val, 10);
+    if (isNaN(parsed)) return;
+
+    if (players.length === 2) {
+      // 2-Player Game: Directly clamp to 40, and update the other player to (40 - clamped)
+      const clamped = Math.min(40, Math.max(0, parsed));
+      const otherPlayer = players.find((p) => p.id !== playerId)!;
+      const otherRemainder = 40 - clamped;
+
+      const updated: Record<string, RoundRawCounts> = {
+        ...rawCounts,
+        [playerId]: { ...rawCounts[playerId], cards: clamped },
+        [otherPlayer.id]: {
+          ...rawCounts[otherPlayer.id],
+          cards: otherRemainder,
+        },
+      };
+
+      setAutoFilledCardsPlayerId(otherPlayer.id);
+      setRawCounts(updated);
+
+      const counts: Record<string, number> = {
+        [playerId]: clamped,
+        [otherPlayer.id]: otherRemainder,
+      };
+      setCarteChoice(determineWinnerFromCounts(counts) ?? "tie");
+      return;
+    }
+
+    // 3+ Player Game:
+    // Exclude the current playerId and any currently auto-filled player from manual sum
+    const otherManualCards = players
+      .filter((p) => p.id !== playerId && p.id !== autoFilledCardsPlayerId)
+      .reduce((sum, p) => sum + (rawCounts[p.id]?.cards || 0), 0);
+
+    const maxAllowed = Math.max(0, 40 - otherManualCards);
+    const clamped = Math.min(maxAllowed, Math.max(0, parsed));
+
+    const updated: Record<string, RoundRawCounts> = {
       ...rawCounts,
-      [playerId]: { ...rawCounts[playerId], cards: isNaN(num!) ? undefined : num },
+      [playerId]: { ...rawCounts[playerId], cards: clamped },
     };
+
+    // If another player was auto-filled, clear it before re-checking
+    let newAutoFilledId: string | null = null;
+    if (autoFilledCardsPlayerId && autoFilledCardsPlayerId !== playerId) {
+      updated[autoFilledCardsPlayerId] = {
+        ...updated[autoFilledCardsPlayerId],
+        cards: undefined,
+      };
+    }
+
+    const filledManualPlayers = players.filter(
+      (p) => updated[p.id]?.cards !== undefined,
+    );
+
+    // If exactly (players.length - 1) players have counts, auto-fill the remaining one
+    if (filledManualPlayers.length === players.length - 1) {
+      const unfilledPlayer = players.find(
+        (p) => updated[p.id]?.cards === undefined,
+      );
+      if (unfilledPlayer) {
+        const sumManual = filledManualPlayers.reduce(
+          (sum, p) => sum + (updated[p.id]?.cards || 0),
+          0,
+        );
+        const remainder = Math.max(0, 40 - sumManual);
+        updated[unfilledPlayer.id] = {
+          ...updated[unfilledPlayer.id],
+          cards: remainder,
+        };
+        newAutoFilledId = unfilledPlayer.id;
+      }
+    }
+
+    setAutoFilledCardsPlayerId(newAutoFilledId);
     setRawCounts(updated);
 
-    // Auto calculate Carte winner or tie
     const counts: Record<string, number> = {};
     for (const p of players) {
       if (updated[p.id]?.cards !== undefined) {
         counts[p.id] = updated[p.id].cards!;
       }
     }
-    const winner = determineWinnerFromCounts(counts);
     if (Object.keys(counts).length > 0) {
-      setCarteChoice(winner ?? "tie");
+      setCarteChoice(determineWinnerFromCounts(counts) ?? "tie");
+    } else {
+      setCarteChoice(null);
     }
   };
 
   const handleCoinCountChange = (playerId: string, val: string) => {
-    const num = val === "" ? undefined : parseInt(val, 10);
-    const updated = {
+    // 1. If user deletes the value (empty string):
+    if (val === "") {
+      const updated: Record<string, RoundRawCounts> = { ...rawCounts };
+      updated[playerId] = { ...updated[playerId], coins: undefined };
+
+      if (players.length === 2) {
+        const otherPlayer = players.find((p) => p.id !== playerId);
+        if (otherPlayer) {
+          updated[otherPlayer.id] = {
+            ...updated[otherPlayer.id],
+            coins: undefined,
+          };
+        }
+        setAutoFilledCoinsPlayerId(null);
+      } else {
+        if (autoFilledCoinsPlayerId) {
+          updated[autoFilledCoinsPlayerId] = {
+            ...updated[autoFilledCoinsPlayerId],
+            coins: undefined,
+          };
+          setAutoFilledCoinsPlayerId(null);
+        }
+      }
+
+      setRawCounts(updated);
+
+      const counts: Record<string, number> = {};
+      for (const p of players) {
+        if (updated[p.id]?.coins !== undefined) {
+          counts[p.id] = updated[p.id].coins!;
+        }
+      }
+      if (Object.keys(counts).length > 0) {
+        setDenariChoice(determineWinnerFromCounts(counts) ?? "tie");
+      } else {
+        setDenariChoice(null);
+      }
+      return;
+    }
+
+    // 2. User entered a numeric value:
+    const parsed = parseInt(val, 10);
+    if (isNaN(parsed)) return;
+
+    if (players.length === 2) {
+      const clamped = Math.min(10, Math.max(0, parsed));
+      const otherPlayer = players.find((p) => p.id !== playerId)!;
+      const otherRemainder = 10 - clamped;
+
+      const updated: Record<string, RoundRawCounts> = {
+        ...rawCounts,
+        [playerId]: { ...rawCounts[playerId], coins: clamped },
+        [otherPlayer.id]: {
+          ...rawCounts[otherPlayer.id],
+          coins: otherRemainder,
+        },
+      };
+
+      setAutoFilledCoinsPlayerId(otherPlayer.id);
+      setRawCounts(updated);
+
+      const counts: Record<string, number> = {
+        [playerId]: clamped,
+        [otherPlayer.id]: otherRemainder,
+      };
+      setDenariChoice(determineWinnerFromCounts(counts) ?? "tie");
+      return;
+    }
+
+    // 3+ Player Game:
+    const otherManualCoins = players
+      .filter((p) => p.id !== playerId && p.id !== autoFilledCoinsPlayerId)
+      .reduce((sum, p) => sum + (rawCounts[p.id]?.coins || 0), 0);
+
+    const maxAllowed = Math.max(0, 10 - otherManualCoins);
+    const clamped = Math.min(maxAllowed, Math.max(0, parsed));
+
+    const updated: Record<string, RoundRawCounts> = {
       ...rawCounts,
-      [playerId]: { ...rawCounts[playerId], coins: isNaN(num!) ? undefined : num },
+      [playerId]: { ...rawCounts[playerId], coins: clamped },
     };
+
+    let newAutoFilledId: string | null = null;
+    if (autoFilledCoinsPlayerId && autoFilledCoinsPlayerId !== playerId) {
+      updated[autoFilledCoinsPlayerId] = {
+        ...updated[autoFilledCoinsPlayerId],
+        coins: undefined,
+      };
+    }
+
+    const filledManualPlayers = players.filter(
+      (p) => updated[p.id]?.coins !== undefined,
+    );
+
+    if (filledManualPlayers.length === players.length - 1) {
+      const unfilledPlayer = players.find(
+        (p) => updated[p.id]?.coins === undefined,
+      );
+      if (unfilledPlayer) {
+        const sumManual = filledManualPlayers.reduce(
+          (sum, p) => sum + (updated[p.id]?.coins || 0),
+          0,
+        );
+        const remainder = Math.max(0, 10 - sumManual);
+        updated[unfilledPlayer.id] = {
+          ...updated[unfilledPlayer.id],
+          coins: remainder,
+        };
+        newAutoFilledId = unfilledPlayer.id;
+      }
+    }
+
+    setAutoFilledCoinsPlayerId(newAutoFilledId);
     setRawCounts(updated);
 
-    // Auto calculate Denari winner or tie
     const counts: Record<string, number> = {};
     for (const p of players) {
       if (updated[p.id]?.coins !== undefined) {
         counts[p.id] = updated[p.id].coins!;
       }
     }
-    const winner = determineWinnerFromCounts(counts);
     if (Object.keys(counts).length > 0) {
-      setDenariChoice(winner ?? "tie");
+      setDenariChoice(determineWinnerFromCounts(counts) ?? "tie");
+    } else {
+      setDenariChoice(null);
     }
   };
 
@@ -169,11 +409,11 @@ export default function RoundScoreModal({
   // Card count verification helper
   const totalCardsCounted = Object.values(rawCounts).reduce(
     (sum, c) => sum + (c.cards || 0),
-    0
+    0,
   );
   const totalCoinsCounted = Object.values(rawCounts).reduce(
     (sum, c) => sum + (c.coins || 0),
-    0
+    0,
   );
 
   return (
@@ -196,7 +436,9 @@ export default function RoundScoreModal({
           <div className="flex items-center gap-2">
             <span className="text-xl">📝</span>
             <h2 className="text-lg sm:text-xl font-bold text-white">
-              {existingRound ? `Edit Round ${roundNumber}` : `Score Round ${roundNumber}`}
+              {existingRound
+                ? `Edit Round ${roundNumber}`
+                : `Score Round ${roundNumber}`}
             </h2>
           </div>
           <button
@@ -333,26 +575,63 @@ export default function RoundScoreModal({
             {showCountHelper && (
               <div className="mb-3 p-2.5 rounded-lg bg-emerald-900/90 border border-emerald-700 text-xs space-y-2">
                 <div className="flex justify-between text-emerald-300">
-                  <span>Enter cards captured (total 40):</span>
-                  <span className={totalCardsCounted === 40 ? "text-yellow-300 font-bold" : "text-emerald-400"}>
+                  <span>Enter cards captured:</span>
+                  <span
+                    className={
+                      totalCardsCounted === 40
+                        ? "text-yellow-300 font-bold"
+                        : "text-emerald-400"
+                    }
+                  >
                     {totalCardsCounted} / 40 cards
+                    {totalCardsCounted === 40
+                      ? " ✓"
+                      : ` (${40 - totalCardsCounted} left)`}
                   </span>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                  {players.map((p) => (
-                    <div key={p.id} className="flex flex-col">
-                      <label className="text-[11px] text-emerald-200 truncate">{p.name}</label>
-                      <input
-                        type="number"
-                        min="0"
-                        max="40"
-                        value={rawCounts[p.id]?.cards ?? ""}
-                        onChange={(e) => handleCardCountChange(p.id, e.target.value)}
-                        placeholder="0"
-                        className="mt-1 w-full rounded bg-emerald-950 border border-emerald-600 px-2 py-1 text-center font-bold text-yellow-300 text-sm focus:border-yellow-400 focus:outline-none"
-                      />
-                    </div>
-                  ))}
+                  {players.map((p) => {
+                    const isAutoFilled = autoFilledCardsPlayerId === p.id;
+                    const otherCards = players
+                      .filter(
+                        (other) =>
+                          other.id !== p.id &&
+                          other.id !== autoFilledCardsPlayerId,
+                      )
+                      .reduce(
+                        (sum, other) => sum + (rawCounts[other.id]?.cards || 0),
+                        0,
+                      );
+                    const maxPlayerCards = Math.max(0, 40 - otherCards);
+
+                    return (
+                      <div key={p.id} className="flex flex-col">
+                        <div className="flex items-center justify-between text-[11px] text-emerald-200">
+                          <span className="truncate">{p.name}</span>
+                          {isAutoFilled && (
+                            <span className="text-[10px] text-yellow-300 font-bold bg-emerald-950/80 px-1 rounded">
+                              Auto
+                            </span>
+                          )}
+                        </div>
+                        <input
+                          type="number"
+                          min="0"
+                          max={maxPlayerCards}
+                          value={rawCounts[p.id]?.cards ?? ""}
+                          onChange={(e) =>
+                            handleCardCountChange(p.id, e.target.value)
+                          }
+                          placeholder="0"
+                          className={`mt-1 w-full rounded border px-2 py-1 text-center font-bold text-sm focus:outline-none ${
+                            isAutoFilled
+                              ? "bg-emerald-950/90 border-yellow-400/70 text-yellow-300 focus:border-yellow-400"
+                              : "bg-emerald-950 border-emerald-600 text-yellow-300 focus:border-yellow-400"
+                          }`}
+                        />
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             )}
@@ -404,26 +683,63 @@ export default function RoundScoreModal({
             {showCountHelper && (
               <div className="mb-3 p-2.5 rounded-lg bg-emerald-900/90 border border-emerald-700 text-xs space-y-2">
                 <div className="flex justify-between text-emerald-300">
-                  <span>Enter coins captured (total 10):</span>
-                  <span className={totalCoinsCounted === 10 ? "text-yellow-300 font-bold" : "text-emerald-400"}>
+                  <span>Enter coins captured:</span>
+                  <span
+                    className={
+                      totalCoinsCounted === 10
+                        ? "text-yellow-300 font-bold"
+                        : "text-emerald-400"
+                    }
+                  >
                     {totalCoinsCounted} / 10 coins
+                    {totalCoinsCounted === 10
+                      ? " ✓"
+                      : ` (${10 - totalCoinsCounted} left)`}
                   </span>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                  {players.map((p) => (
-                    <div key={p.id} className="flex flex-col">
-                      <label className="text-[11px] text-emerald-200 truncate">{p.name}</label>
-                      <input
-                        type="number"
-                        min="0"
-                        max="10"
-                        value={rawCounts[p.id]?.coins ?? ""}
-                        onChange={(e) => handleCoinCountChange(p.id, e.target.value)}
-                        placeholder="0"
-                        className="mt-1 w-full rounded bg-emerald-950 border border-emerald-600 px-2 py-1 text-center font-bold text-yellow-300 text-sm focus:border-yellow-400 focus:outline-none"
-                      />
-                    </div>
-                  ))}
+                  {players.map((p) => {
+                    const isAutoFilled = autoFilledCoinsPlayerId === p.id;
+                    const otherCoins = players
+                      .filter(
+                        (other) =>
+                          other.id !== p.id &&
+                          other.id !== autoFilledCoinsPlayerId,
+                      )
+                      .reduce(
+                        (sum, other) => sum + (rawCounts[other.id]?.coins || 0),
+                        0,
+                      );
+                    const maxPlayerCoins = Math.max(0, 10 - otherCoins);
+
+                    return (
+                      <div key={p.id} className="flex flex-col">
+                        <div className="flex items-center justify-between text-[11px] text-emerald-200">
+                          <span className="truncate">{p.name}</span>
+                          {isAutoFilled && (
+                            <span className="text-[10px] text-yellow-300 font-bold bg-emerald-950/80 px-1 rounded">
+                              Auto
+                            </span>
+                          )}
+                        </div>
+                        <input
+                          type="number"
+                          min="0"
+                          max={maxPlayerCoins}
+                          value={rawCounts[p.id]?.coins ?? ""}
+                          onChange={(e) =>
+                            handleCoinCountChange(p.id, e.target.value)
+                          }
+                          placeholder="0"
+                          className={`mt-1 w-full rounded border px-2 py-1 text-center font-bold text-sm focus:outline-none ${
+                            isAutoFilled
+                              ? "bg-emerald-950/90 border-yellow-400/70 text-yellow-300 focus:border-yellow-400"
+                              : "bg-emerald-950 border-emerald-600 text-yellow-300 focus:border-yellow-400"
+                          }`}
+                        />
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             )}
