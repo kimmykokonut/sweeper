@@ -19,7 +19,6 @@ export default function ScoreBoard({
   onResetGame,
 }: ScoreBoardProps) {
   const [showRules, setShowRules] = useState(false);
-  const [confirmReset, setConfirmReset] = useState(false);
   const [deletingRoundNum, setDeletingRoundNum] = useState<number | null>(null);
 
   const { players, rounds, settings, isFinished, winnerId } = game;
@@ -54,7 +53,7 @@ export default function ScoreBoard({
   const winner = players.find((p) => p.id === winnerId);
 
   return (
-    <div className="mx-auto w-full max-w-4xl px-3 sm:px-6 py-4 space-y-6 text-white">
+    <div className="mx-auto w-full max-w-4xl flex-1 flex flex-col px-3 sm:px-6 py-3 sm:py-4 space-y-4 sm:space-y-6 text-white min-h-0">
       {/* Top Bar */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-emerald-800 pb-3">
         <div>
@@ -77,8 +76,8 @@ export default function ScoreBoard({
           </button>
           <button
             type="button"
-            onClick={() => setConfirmReset(true)}
-            className="rounded-lg bg-red-900/60 border border-red-700 px-3 py-1.5 text-xs font-semibold text-red-200 hover:bg-red-800 transition-colors"
+            onClick={onResetGame}
+            className="rounded-lg bg-emerald-800/80 border border-emerald-600 px-3 py-1.5 text-xs font-semibold text-emerald-100 hover:bg-emerald-700 hover:text-white transition-colors cursor-pointer"
           >
             New Game
           </button>
@@ -370,36 +369,6 @@ export default function ScoreBoard({
         </div>
       )}
 
-      {/* Reset Game Confirmation Modal */}
-      {confirmReset && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4">
-          <div className="w-full max-w-sm rounded-2xl bg-emerald-950 border border-emerald-700 p-5 shadow-2xl text-center space-y-4">
-            <h4 className="text-lg font-bold text-white">Start a New Game?</h4>
-            <p className="text-xs text-emerald-200">
-              This will reset the current game and score history. Are you sure?
-            </p>
-            <div className="flex gap-2 justify-center pt-2">
-              <button
-                type="button"
-                onClick={() => setConfirmReset(false)}
-                className="rounded-xl px-4 py-2 font-semibold text-emerald-200 hover:bg-emerald-800 text-sm"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setConfirmReset(false);
-                  onResetGame();
-                }}
-                className="rounded-xl bg-yellow-400 px-4 py-2 font-bold text-emerald-950 hover:bg-yellow-300 text-sm shadow-md"
-              >
-                Yes, Start New
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Rules Quick Reference Modal */}
       {showRules && (
