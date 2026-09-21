@@ -872,14 +872,13 @@ export default function RoundScoreModal({
             type="button"
             onClick={handleSave}
             disabled={!isRoundComplete}
-            className={`w-full rounded-xl py-2.5 font-bold shadow-lg transition-all text-sm flex items-center justify-center gap-1.5 ${
+            className={`w-full rounded-xl py-2.5 font-bold shadow-lg transition-all text-sm ${
               isRoundComplete
                 ? "bg-yellow-400 text-emerald-950 hover:bg-yellow-300 hover:scale-[1.01] cursor-pointer"
                 : "bg-emerald-950 border border-emerald-800 text-emerald-500 cursor-not-allowed opacity-50"
             }`}
           >
-            <span>{existingRound ? "Update Round" : "Save Round"}</span>
-            <span>✓</span>
+            {existingRound ? "Update Round" : "Save Round"}
           </button>
         </div>
       </div>

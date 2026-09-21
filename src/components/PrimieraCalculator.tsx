@@ -551,14 +551,13 @@ export default function PrimieraCalculator({
             type="button"
             onClick={handleApply}
             disabled={!allCalculated}
-            className={`w-full rounded-xl py-2.5 font-bold shadow-lg transition-all text-sm flex items-center justify-center gap-1.5 ${
+            className={`w-full rounded-xl py-2.5 font-bold shadow-lg transition-all text-sm ${
               allCalculated
                 ? "bg-yellow-400 text-emerald-950 hover:bg-yellow-300 hover:scale-[1.01] cursor-pointer"
                 : "bg-gray-600 text-gray-300 opacity-50 cursor-not-allowed"
             }`}
           >
-            <span>Apply to Round</span>
-            <span>✓</span>
+            Apply to Round
           </button>
         </div>
       )}
