@@ -26,7 +26,7 @@ export interface PrimieraCalculatorProps {
    */
   onApplyWinner?: (
     winnerId: string | null,
-    scores: Record<string, number>
+    scores: Record<string, number>,
   ) => void;
 
   /**
@@ -80,7 +80,8 @@ export default function PrimieraCalculator({
 
   // Standalone mode: player count configuration (2-4 players)
   const [standalonePlayerCount, setStandalonePlayerCount] = useState<number>(2);
-  const [isPlayerCountExpanded, setIsPlayerCountExpanded] = useState<boolean>(true);
+  const [isPlayerCountExpanded, setIsPlayerCountExpanded] =
+    useState<boolean>(true);
 
   // Standalone mode default players list
   const standalonePlayers: Player[] = useMemo(() => {
@@ -99,12 +100,12 @@ export default function PrimieraCalculator({
 
   // Selected player tab
   const [selectedPlayerId, setSelectedPlayerId] = useState<string>(
-    activePlayers[0]?.id || "p1"
+    activePlayers[0]?.id || "p1",
   );
 
   // Effective selected player ID (safely fallback if selectedPlayerId is no longer in list)
   const effectiveSelectedPlayerId = activePlayers.some(
-    (p) => p.id === selectedPlayerId
+    (p) => p.id === selectedPlayerId,
   )
     ? selectedPlayerId
     : activePlayers[0]?.id || "p1";
@@ -145,7 +146,7 @@ export default function PrimieraCalculator({
 
   if (allCalculated && activePlayers.length > 1) {
     const sorted = [...activePlayers].sort(
-      (a, b) => playerScores[b.id] - playerScores[a.id]
+      (a, b) => playerScores[b.id] - playerScores[a.id],
     );
     if (
       sorted.length > 1 &&
@@ -204,7 +205,7 @@ export default function PrimieraCalculator({
       className={`flex flex-col w-full ${
         isModal
           ? "max-w-2xl mx-auto rounded-2xl bg-emerald-900 border border-emerald-700 shadow-2xl overflow-hidden text-white"
-          : "h-full max-w-3xl mx-auto text-white overflow-hidden"
+          : "flex-1 flex flex-col w-full max-w-3xl mx-auto text-white min-h-0"
       }`}
     >
       {/* Header */}
@@ -243,8 +244,9 @@ export default function PrimieraCalculator({
       </div>
 
       {/* Standalone Player Count Selector (Page Mode only) */}
-      {!isModal && !playersProp && (
-        isPlayerCountExpanded ? (
+      {!isModal &&
+        !playersProp &&
+        (isPlayerCountExpanded ? (
           <div className="w-full border-b border-emerald-800 bg-emerald-950/40 p-2">
             <div className="grid grid-cols-3 w-full gap-2">
               {[2, 3, 4].map((count) => {
@@ -285,8 +287,7 @@ export default function PrimieraCalculator({
               <span className="text-[10px]">▾</span>
             </button>
           </div>
-        )
-      )}
+        ))}
 
       {/* Player Selector Comparison Cards */}
       {activePlayers.length > 1 && (
@@ -295,8 +296,8 @@ export default function PrimieraCalculator({
             activePlayers.length === 2
               ? "grid-cols-2"
               : activePlayers.length === 3
-              ? "grid-cols-3"
-              : "grid-cols-4"
+                ? "grid-cols-3"
+                : "grid-cols-4"
           }`}
         >
           {activePlayers.map((p) => {
@@ -317,8 +318,8 @@ export default function PrimieraCalculator({
                   isSelected
                     ? "bg-emerald-700 border-yellow-400 ring-2 ring-yellow-400/80 shadow-lg"
                     : isLeader && score > 0
-                    ? "bg-emerald-800/80 border-yellow-400/70 hover:bg-emerald-800"
-                    : "bg-emerald-950/60 border-emerald-800 hover:bg-emerald-800/50"
+                      ? "bg-emerald-800/80 border-yellow-400/70 hover:bg-emerald-800"
+                      : "bg-emerald-950/60 border-emerald-800 hover:bg-emerald-800/50"
                 }`}
               >
                 <div className="flex items-center gap-1 text-xs font-semibold truncate max-w-full text-emerald-100">
@@ -332,8 +333,8 @@ export default function PrimieraCalculator({
                   {suitsCount === 4
                     ? `${score} pts`
                     : suitsCount > 0
-                    ? `${score}`
-                    : "—"}
+                      ? `${score}`
+                      : "—"}
                 </div>
 
                 <div className="text-[10px] sm:text-[11px] font-bold h-4 flex items-center justify-center">
@@ -342,7 +343,9 @@ export default function PrimieraCalculator({
                   ) : isLeader && score > 0 ? (
                     <span className="text-yellow-300/90">👑 Highest</span>
                   ) : suitsCount < 4 && suitsCount > 0 ? (
-                    <span className="text-emerald-400">{suitsCount}/4 suits</span>
+                    <span className="text-emerald-400">
+                      {suitsCount}/4 suits
+                    </span>
                   ) : (
                     <span className="text-emerald-500/70">
                       {isSelected ? "Active" : "Tap to edit"}
@@ -362,8 +365,8 @@ export default function PrimieraCalculator({
           <div className="rounded-xl bg-yellow-400/20 border border-yellow-400/50 px-3 py-1.5 text-center text-xs sm:text-sm font-bold text-yellow-300 shadow-sm">
             {winnerId ? (
               <span>
-                ⭐ {activePlayers.find((p) => p.id === winnerId)?.name} wins
-                the Primiera point!
+                ⭐ {activePlayers.find((p) => p.id === winnerId)?.name} wins the
+                Primiera point!
               </span>
             ) : isTie ? (
               <span className="text-amber-200">
