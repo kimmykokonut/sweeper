@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { GameState, RoundEntry } from "../types";
 import setteBelloImg from "../assets/7-denari.jpg";
 import coinIcon from "../assets/denare.png";
+import aceCoinsImg from "../assets/1-denari.jpg";
 
 interface ScoreBoardProps {
   game: GameState;
@@ -363,15 +364,22 @@ export default function ScoreBoard({
                     🧹 Scope (Sweeps):{" "}
                   </span>
                   1 point each time a player captures all cards currently on the
-                  table during play.
+                  table during play. (except the final trick)
                 </div>
 
-                <div className="rounded-lg bg-emerald-950/70 p-2.5 border border-emerald-800">
-                  <span className="font-bold text-yellow-300">
-                    🃏 Carte (Cards):{" "}
-                  </span>
-                  1 point to the player who captured more than 20 cards (21+).
-                  If tied (20-20), no point.
+                <div className="rounded-lg bg-emerald-950/70 p-2.5 border border-emerald-800 flex items-start gap-2">
+                  <img
+                    src={aceCoinsImg}
+                    alt="Italian Ace of Coins"
+                    className="h-8 w-auto rounded border border-yellow-400 shrink-0"
+                  />
+                  <div>
+                    <span className="font-bold text-yellow-300">
+                      Carte (Cards):{" "}
+                    </span>
+                    1 point to the player who captured the most cards (21+ in 2
+                    Player game). If tied, no point awarded.
+                  </div>
                 </div>
 
                 <div className="rounded-lg bg-emerald-950/70 p-2.5 border border-emerald-800 flex items-start gap-2">
@@ -389,12 +397,19 @@ export default function ScoreBoard({
                   </div>
                 </div>
 
-                <div className="rounded-lg bg-emerald-950/70 p-2.5 border border-emerald-800">
-                  <span className="font-bold text-yellow-300">
-                    🪙 Denari (Coins):{" "}
-                  </span>
-                  1 point to the player who captured more than 5 coins (6+). If
-                  tied (5-5), no point.
+                <div className="rounded-lg bg-emerald-950/70 p-2.5 border border-emerald-800 flex items-start gap-2">
+                  <img
+                    src={coinIcon}
+                    alt="Coins suit"
+                    className="h-8 w-auto rounded border border-yellow-400 shrink-0"
+                  />
+                  <div>
+                    <span className="font-bold text-yellow-300">
+                      Denari (Coins):{" "}
+                    </span>
+                    1 point to the player who captured the most coins (6+ in 2
+                    player game). If tied, no point awarded.
+                  </div>
                 </div>
 
                 <div className="rounded-lg bg-emerald-950/70 p-2.5 border border-emerald-800">
