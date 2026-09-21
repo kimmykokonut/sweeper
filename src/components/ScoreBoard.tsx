@@ -19,6 +19,7 @@ export default function ScoreBoard({
   onResetGame,
 }: ScoreBoardProps) {
   const [showRules, setShowRules] = useState(false);
+  const [isHistoryCollapsed, setIsHistoryCollapsed] = useState(false);
 
   const { players, rounds, settings, isFinished, winnerId } = game;
   const currentTotals: Record<string, number> = {};
@@ -196,7 +197,11 @@ export default function ScoreBoard({
 
       {/* Round History Table */}
       <div className="rounded-2xl bg-emerald-900/90 border border-emerald-700 shadow-xl overflow-hidden">
-        <div className="flex items-center justify-between border-b border-emerald-800 bg-emerald-950/70 px-4 py-3 sm:px-6">
+        <div
+          className={`flex items-center justify-between bg-emerald-950/70 px-4 py-3 sm:px-6 ${
+            !isHistoryCollapsed ? "border-b border-emerald-800" : ""
+          }`}
+        >
           <div className="flex items-center gap-2">
             <span className="text-lg">📊</span>
             <h3 className="font-bold text-base sm:text-lg text-white">
@@ -206,9 +211,29 @@ export default function ScoreBoard({
               {rounds.length} {rounds.length === 1 ? "round" : "rounds"}
             </span>
           </div>
+
+          {rounds.length > 0 && (
+            <button
+              type="button"
+              onClick={() => setIsHistoryCollapsed(!isHistoryCollapsed)}
+              className="text-xs font-semibold text-emerald-300 hover:text-white px-2.5 py-1 rounded-lg bg-emerald-900/80 hover:bg-emerald-800 border border-emerald-700/60 transition-colors cursor-pointer flex items-center gap-1.5"
+              aria-expanded={!isHistoryCollapsed}
+              aria-label={
+                isHistoryCollapsed
+                  ? "Expand rounds history"
+                  : "Collapse rounds history"
+              }
+            >
+              <span>{isHistoryCollapsed ? "Show" : "Hide"}</span>
+              <span className="text-[10px] text-emerald-400">
+                {isHistoryCollapsed ? "▼" : "▲"}
+              </span>
+            </button>
+          )}
         </div>
 
-        {rounds.length === 0 ? (
+        {!isHistoryCollapsed && (
+          rounds.length === 0 ? (
           <div className="p-8 text-center text-emerald-300 space-y-2">
             <p className="text-lg">No rounds played yet!</p>
             <p className="text-xs text-emerald-400">
@@ -322,7 +347,7 @@ export default function ScoreBoard({
               </div>
             ))}
           </div>
-        )}
+        ))}
       </div>
 
       {/* Rules Quick Reference Modal */}
