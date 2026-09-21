@@ -30,7 +30,7 @@ export default function PrimieraModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/75 p-3 sm:p-4 backdrop-blur-xs cursor-pointer"
+      className="fixed inset-0 z-60 flex items-center justify-center overflow-y-auto bg-black/75 p-3 sm:p-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-xs cursor-pointer"
       role="dialog"
       aria-modal="true"
       onClick={(e) => {
@@ -41,7 +41,7 @@ export default function PrimieraModal({
       }}
     >
       <div
-        className="relative flex max-h-[92vh] w-full max-w-2xl flex-col rounded-2xl bg-emerald-900 border border-emerald-700 shadow-2xl overflow-hidden text-white cursor-default"
+        className="relative flex max-h-[calc(100dvh-1.5rem)] sm:max-h-[92vh] w-full max-w-2xl flex-col rounded-2xl bg-emerald-900 border border-emerald-700 shadow-2xl overflow-hidden text-white cursor-default"
         onClick={(e) => e.stopPropagation()}
       >
         <PrimieraCalculator

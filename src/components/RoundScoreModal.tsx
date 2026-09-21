@@ -418,7 +418,7 @@ export default function RoundScoreModal({
 
   return (
     <div
-      className="fixed inset-0 z-40 flex items-center justify-center overflow-y-auto bg-black/75 p-2 sm:p-4 backdrop-blur-xs cursor-pointer"
+      className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/75 p-2 sm:p-4 pb-[max(0.5rem,env(safe-area-inset-bottom))] backdrop-blur-xs cursor-pointer"
       role="dialog"
       aria-modal="true"
       onClick={(e) => {
@@ -428,11 +428,11 @@ export default function RoundScoreModal({
       }}
     >
       <div
-        className="relative flex max-h-[94vh] w-full max-w-xl flex-col rounded-2xl bg-emerald-900 border border-emerald-700 shadow-2xl text-white overflow-hidden cursor-default"
+        className="relative flex max-h-[calc(100dvh-1.5rem)] sm:max-h-[90vh] w-full max-w-xl flex-col rounded-2xl bg-emerald-900 border border-emerald-700 shadow-2xl text-white overflow-hidden cursor-default"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-emerald-800 bg-emerald-950/80 px-4 py-3 sm:px-6">
+        <div className="flex shrink-0 items-center justify-between border-b border-emerald-800 bg-emerald-950/80 px-4 py-3 sm:px-6">
           <div className="flex items-center gap-2">
             <span className="text-xl">📝</span>
             <h2 className="text-lg sm:text-xl font-bold text-white">
@@ -452,7 +452,7 @@ export default function RoundScoreModal({
         </div>
 
         {/* Form Body */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-5">
+        <div className="flex-1 min-h-0 overflow-y-auto p-4 space-y-5">
           {/* Section 1: Scope (Sweeps) */}
           <div className="rounded-xl bg-emerald-950/60 border border-emerald-800 p-3 sm:p-4">
             <div className="flex items-center justify-between mb-3">
@@ -862,7 +862,7 @@ export default function RoundScoreModal({
         </div>
 
         {/* Footer Actions */}
-        <div className="border-t border-emerald-800 bg-emerald-950/80 px-4 py-3 sm:px-6 space-y-1.5">
+        <div className="shrink-0 border-t border-emerald-800 bg-emerald-950/95 px-4 py-3 sm:px-6 space-y-1.5">
           {!isRoundComplete && (
             <p className="text-center text-xs text-emerald-300/80 italic">
               Select all 4 categories to save
