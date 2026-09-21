@@ -1,6 +1,12 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router";
-import type { CardSelections, CardValue, GameState, Player, Suits } from "../types";
+import type {
+  CardSelections,
+  CardValue,
+  GameState,
+  Player,
+  Suits,
+} from "../types";
 import { CARD_DATA, getCardImage } from "../utils/cardData";
 import {
   calculatePrimieraScore,
@@ -189,6 +195,21 @@ export default function PrimieraCalculator({
     setAllSelections({});
   };
 
+  // Map of cards taken by other players in the currently active suit
+  const takenCardsInActiveSuit = useMemo(() => {
+    if (!activeSuit) return {};
+    const map: Partial<Record<CardValue, string>> = {};
+    for (const p of activePlayers) {
+      if (p.id !== effectiveSelectedPlayerId) {
+        const val = allSelections[p.id]?.[activeSuit];
+        if (val) {
+          map[val] = p.name;
+        }
+      }
+    }
+    return map;
+  }, [activeSuit, activePlayers, effectiveSelectedPlayerId, allSelections]);
+
   const handleStandalonePlayerCountChange = (count: number) => {
     setStandalonePlayerCount(count);
     setSelectedPlayerId("p1");
@@ -212,7 +233,7 @@ export default function PrimieraCalculator({
     };
     saveGameState(newGame);
 
-    const primieraResult = isTie ? "tie" : (winnerId || "tie");
+    const primieraResult = isTie ? "tie" : winnerId || "tie";
     navigate(`/score?round=1&primiera=${primieraResult}`, {
       state: {
         autoOpenRound1: true,
@@ -407,8 +428,8 @@ export default function PrimieraCalculator({
                 <>
                   <span className="text-lg">⭐</span>
                   <span>
-                    {activePlayers.find((p) => p.id === winnerId)?.name} wins the
-                    Primiera point!
+                    {activePlayers.find((p) => p.id === winnerId)?.name} wins
+                    the Primiera point!
                   </span>
                 </>
               ) : isTie ? (
@@ -450,9 +471,9 @@ export default function PrimieraCalculator({
                 <button
                   type="button"
                   onClick={handleTransferToScorecard}
-                  className="w-full py-2 px-2 sm:px-3 rounded-xl bg-yellow-400 hover:bg-yellow-300 text-emerald-950 font-bold text-xs sm:text-sm shadow-md transition-all hover:scale-[1.02] cursor-pointer text-center truncate"
+                  className="w-full py-2 px-2 sm:px-3 rounded-xl bg-emerald-800 hover:bg-emerald-700 text-emerald-100 font-semibold text-xs sm:text-sm transition-colors cursor-pointer text-center"
                 >
-                  Transfer to Scorecard →
+                  Transfer to Scorecard
                 </button>
               </div>
             )}
@@ -547,6 +568,8 @@ export default function PrimieraCalculator({
           activeSuit={activeSuit}
           onClose={() => setActiveSuit(null)}
           onCardSelect={handleCardSelect}
+          takenCards={takenCardsInActiveSuit}
+          currentSelection={currentSelections[activeSuit]}
         />
       )}
     </div>
