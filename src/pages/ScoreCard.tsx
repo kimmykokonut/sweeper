@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useSearchParams } from "react-router";
 import type { GameSettings, GameState, Player, RoundEntry } from "../types";
 import GameSetup from "../components/GameSetup";
 import ScoreBoard from "../components/ScoreBoard";
@@ -11,8 +12,16 @@ import {
 } from "../utils/scorecardHelpers";
 
 export default function ScoreCard() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const isExplicitNew = searchParams.get("new") === "true";
   const [savedGame, setSavedGame] = useState<GameState | null>(() => loadGameState());
-  const [game, setGame] = useState<GameState | null>(null);
+  const [game, setGame] = useState<GameState | null>(() => {
+    const saved = loadGameState();
+    if (!isExplicitNew && saved && !saved.isFinished) {
+      return saved;
+    }
+    return null;
+  });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingRound, setEditingRound] = useState<RoundEntry | null>(null);
 
@@ -29,6 +38,9 @@ export default function ScoreCard() {
   };
 
   const handleStartNewGame = (players: Player[], settings: GameSettings) => {
+    if (isExplicitNew) {
+      setSearchParams({}, { replace: true });
+    }
     const newGame: GameState = {
       id: `game_${Date.now()}`,
       createdAt: Date.now(),
@@ -42,6 +54,9 @@ export default function ScoreCard() {
   };
 
   const handleResumeGame = () => {
+    if (isExplicitNew) {
+      setSearchParams({}, { replace: true });
+    }
     if (savedGame) {
       setGame(savedGame);
     }
@@ -106,7 +121,7 @@ export default function ScoreCard() {
   };
 
   const handleResetGame = () => {
-    setGame(null);
+    updateGame(null);
   };
 
   if (!game) {
