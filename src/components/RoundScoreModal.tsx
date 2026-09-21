@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import type { Player, RoundEntry, RoundRawCounts } from "../types";
 import setteBelloImg from "../assets/7-denari.jpg";
+import oneSpadesImg from "../assets/1-spade.jpg";
 import coinIcon from "../assets/denare.png";
 import PrimieraModal from "./PrimieraModal";
 import { determineWinnerFromCounts } from "../utils/scorecardHelpers";
@@ -272,9 +273,7 @@ export default function RoundScoreModal({
                   <h3 className="font-bold text-white text-sm sm:text-base">
                     Il Settebello (7 of Coins)
                   </h3>
-                  <p className="text-xs text-emerald-300">
-                    1 point to player who captured the 7 of Coins
-                  </p>
+                  <p className="text-xs text-emerald-300">1 point</p>
                 </div>
               </div>
             </div>
@@ -307,21 +306,26 @@ export default function RoundScoreModal({
           {/* Section 3: Carte (Cards) */}
           <div className="rounded-xl bg-emerald-950/60 border border-emerald-800 p-3 sm:p-4">
             <div className="flex items-center justify-between mb-2">
-              <div>
-                <h3 className="font-bold text-white text-sm sm:text-base flex items-center gap-1.5">
-                  <span>🃏</span>
-                  <span>Carte (Most Cards)</span>
-                </h3>
-                <p className="text-xs text-emerald-300">
-                  1 pt for capturing the most cards.
-                </p>
+              <div className="flex items-center gap-2">
+                <img
+                  src={oneSpadesImg}
+                  alt="One of spades card"
+                  className="h-7 w-auto rounded border border-yellow-400"
+                />
+
+                <div>
+                  <h3 className="font-bold text-white text-sm sm:text-base">
+                    Carte (Most Cards)
+                  </h3>
+                  <p className="text-xs text-emerald-300">1 point</p>
+                </div>
               </div>
               <button
                 type="button"
                 onClick={() => setShowCountHelper(!showCountHelper)}
                 className="text-xs text-yellow-300 hover:underline flex items-center gap-1 bg-emerald-900/90 border border-emerald-700 px-2 py-1 rounded"
               >
-                {showCountHelper ? "Hide Counts" : "🔢 Enter Exact Counts"}
+                {showCountHelper ? "Hide Counts" : "Enter Exact Counts"}
               </button>
             </div>
 
