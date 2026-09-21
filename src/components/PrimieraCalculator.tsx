@@ -224,6 +224,7 @@ export default function PrimieraCalculator({
       createdAt: Date.now(),
       players: activePlayers,
       settings: {
+        playerCount: activePlayers.length,
         targetScore: 11,
         isTeams: false,
       },
