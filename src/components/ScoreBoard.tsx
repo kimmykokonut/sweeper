@@ -206,16 +206,6 @@ export default function ScoreBoard({
               {rounds.length} {rounds.length === 1 ? "round" : "rounds"}
             </span>
           </div>
-
-          {rounds.length > 0 && !isFinished && (
-            <button
-              type="button"
-              onClick={onScoreNextRound}
-              className="text-xs font-bold text-yellow-300 hover:underline"
-            >
-              + Next Round
-            </button>
-          )}
         </div>
 
         {rounds.length === 0 ? (
