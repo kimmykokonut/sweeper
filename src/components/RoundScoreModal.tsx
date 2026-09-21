@@ -9,6 +9,7 @@ interface RoundScoreModalProps {
   players: Player[];
   roundNumber: number;
   existingRound?: RoundEntry | null;
+  initialPrimieraChoice?: string | "tie" | null;
   onSave: (round: Omit<RoundEntry, "cumulativeTotals">) => void;
   onClose: () => void;
 }
@@ -17,6 +18,7 @@ export default function RoundScoreModal({
   players,
   roundNumber,
   existingRound,
+  initialPrimieraChoice,
   onSave,
   onClose,
 }: RoundScoreModalProps) {
@@ -44,15 +46,20 @@ export default function RoundScoreModal({
   );
 
   const [primieraChoice, setPrimieraChoice] = useState<string | "tie" | null>(() => {
-    if (!existingRound) return null;
-    return existingRound.primieraWinnerId ?? "tie";
+    if (existingRound) return existingRound.primieraWinnerId ?? "tie";
+    if (initialPrimieraChoice !== undefined && initialPrimieraChoice !== null) {
+      return initialPrimieraChoice;
+    }
+    return null;
   });
 
   // Primiera modal visibility
   const [showPrimieraCalc, setShowPrimieraCalc] = useState(false);
-  const [primieraMethod, setPrimieraMethod] = useState<string | null>(
-    existingRound?.primieraWinnerId ? "manual" : null
-  );
+  const [primieraMethod, setPrimieraMethod] = useState<string | null>(() => {
+    if (existingRound?.primieraWinnerId) return "manual";
+    if (initialPrimieraChoice) return "calculated";
+    return null;
+  });
 
   // Optional Count Helper mode
   const [showCountHelper, setShowCountHelper] = useState(false);

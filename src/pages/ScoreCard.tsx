@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useSearchParams } from "react-router";
+import { useState, useEffect } from "react";
+import { useSearchParams, useLocation } from "react-router";
 import type { GameSettings, GameState, Player, RoundEntry } from "../types";
 import GameSetup from "../components/GameSetup";
 import ScoreBoard from "../components/ScoreBoard";
@@ -13,17 +13,45 @@ import {
 
 export default function ScoreCard() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
+
   const isExplicitNew = searchParams.get("new") === "true";
+  const autoRoundParam = searchParams.get("round") === "1";
+  const primieraParam = searchParams.get("primiera");
+
   const [savedGame, setSavedGame] = useState<GameState | null>(() => loadGameState());
   const [game, setGame] = useState<GameState | null>(() => {
     const saved = loadGameState();
+    if (autoRoundParam && saved) {
+      return saved;
+    }
     if (!isExplicitNew && saved && !saved.isFinished) {
       return saved;
     }
     return null;
   });
-  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [initialPrimieraChoice, setInitialPrimieraChoice] = useState<string | "tie" | null>(
+    () =>
+      primieraParam ||
+      (location.state as { initialPrimieraChoice?: string | "tie" | null } | null)
+        ?.initialPrimieraChoice ||
+      null
+  );
+
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(() => {
+    return (
+      autoRoundParam ||
+      Boolean((location.state as { autoOpenRound1?: boolean } | null)?.autoOpenRound1)
+    );
+  });
   const [editingRound, setEditingRound] = useState<RoundEntry | null>(null);
+
+  useEffect(() => {
+    if (autoRoundParam || primieraParam) {
+      setSearchParams({}, { replace: true });
+    }
+  }, [autoRoundParam, primieraParam, setSearchParams]);
 
   // Save to localStorage when game changes
   const updateGame = (newGame: GameState | null) => {
@@ -155,10 +183,15 @@ export default function ScoreCard() {
           players={game.players}
           roundNumber={editingRound ? editingRound.roundNumber : game.rounds.length + 1}
           existingRound={editingRound}
-          onSave={handleSaveRound}
+          initialPrimieraChoice={initialPrimieraChoice}
+          onSave={(roundData) => {
+            handleSaveRound(roundData);
+            setInitialPrimieraChoice(null);
+          }}
           onClose={() => {
             setIsModalOpen(false);
             setEditingRound(null);
+            setInitialPrimieraChoice(null);
           }}
         />
       )}
