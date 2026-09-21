@@ -28,6 +28,7 @@
   - Minimize scrolling wherever possible:
     - **No Horizontal Scroll:** Player tabs, count selectors, buttons, and card grids must fill the screen width (`w-full`) using responsive CSS grids (`grid-cols-2`, `grid-cols-3`, `grid-cols-4`, etc.) rather than unbounded horizontal scrolling rows.
     - **Minimize Vertical Scroll:** Keep interactive scoring elements compact and visible above the fold. Collapse setup or configuration button rows (such as player count selectors) once chosen so they do not take up valuable room once scoring starts.
+    - **Dynamic Flexbox Viewport Filling (No Static Pixel Heights):** Use responsive Flexbox (`flex-1 flex flex-col justify-between` with `min-h-0` and proportional distribution) on all pages and containers so content dynamically expands to fill available vertical space without leaving dead space at the bottom on tall mobile devices (e.g. 20:9 Android screens). Never use static hardcoded pixel-height containers or rigid margin blocks that fail to adapt to varying viewport heights.
 - **Scopa Rules:**
   - Standard Scopa scoring: Carte (most cards, 1 pt), Denari (most coins, 1 pt), Settebello (7 of coins, 1 pt), Primiera (highest primiera score, 1 pt), Scope (each sweep, 1 pt).
   - Standalone Primiera calculator must remain available and independent.
