@@ -40,9 +40,11 @@ _In Browser, choose `Add to Home Screen` to have a mobile experience_
 
 ## Introduction
 
-This project was originally inspired when teaching friends and family how to play Scopa—specifically the inevitable, collective headache when trying to figure out Primiera scoring at the end of a round.
+This project was originally inspired when teaching friends and family how to play Scopa, specifically the inevitable, collective headache when trying to figure out Primiera scoring at the end of a round.
 
-What started as a handy little Phase 1 tool to calculate Primiera has evolved into a complete, mobile-first Scopa scorekeeping companion! Along the way, I've used this project to strengthen my skills in React and TypeScript, craft responsive mobile UI with Tailwind CSS, and tap into Vite's Progressive Web App plugin so anyone can install Sweeper on their phone for an app-like experience without having to deal with app stores or native mobile code. (And less maintenence on my end!)
+I **greenfielded the initial project from scratch**—writing the core Primiera calculator logic, card data models, Neapolitan suit point rankings, and table layout by hand to sharpen my TypeScript and React skills. I also set up Vite's Progressive Web App (PWA) plugin on my own so I could have an installable, app-like experience on my phone without needing to manage native code or maintain a mobile app store presence. (And less maintenance on my end!)
+
+Once that foundation was humming, I decided to use the project as an opportunity to dive into **AI-assisted development with Google's Antigravity (AGY)** to ramp up velocity and explore modern agentic workflows. Pairing with AGY as an AI pair-programmer, I directed and reviewed the expansion of Sweeper into a complete Scopa scorekeeping companion: tackling complex multi-player two-way auto-fill math, persistent game state, and dynamic mobile viewports. Every chunk was reviewed, tested, and manually committed, combining handcrafted domain logic with prompt-driven engineering to build a polished, full-featured digital scorepad!
 
 ## Features
 
