@@ -323,7 +323,7 @@ export default function ScoreBoard({
                 <button
                   type="button"
                   onClick={() => onEditRound(round)}
-                  className="p-1.5 text-emerald-300 hover:text-white rounded-lg hover:bg-emerald-800 transition-colors text-sm"
+                  className="p-1.5 text-emerald-300 hover:text-white rounded-lg hover:bg-emerald-800 transition-colors text-sm hidden sm:block"
                   title="Edit Round"
                 >
                   ✏️
