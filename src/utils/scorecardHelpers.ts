@@ -7,7 +7,7 @@ const STORAGE_KEY = "sweeper_active_game";
  */
 export function calculateRoundTotals(
   round: Omit<RoundEntry, "roundTotals" | "cumulativeTotals">,
-  players: Player[]
+  players: Player[],
 ): Record<string, number> {
   const totals: Record<string, number> = {};
 
@@ -28,9 +28,12 @@ export function calculateRoundTotals(
  * and determines if a winner has been reached.
  */
 export function recalculateGame(
-  rounds: Array<Omit<RoundEntry, "roundTotals" | "cumulativeTotals"> & Partial<Pick<RoundEntry, "roundTotals" | "cumulativeTotals">>>,
+  rounds: Array<
+    Omit<RoundEntry, "roundTotals" | "cumulativeTotals"> &
+      Partial<Pick<RoundEntry, "roundTotals" | "cumulativeTotals">>
+  >,
   players: Player[],
-  targetScore: number
+  targetScore: number,
 ): {
   recalculatedRounds: RoundEntry[];
   isFinished: boolean;
@@ -49,7 +52,8 @@ export function recalculateGame(
     const roundTotals = calculateRoundTotals(rawRound, players);
 
     for (const player of players) {
-      currentCumulative[player.id] = (currentCumulative[player.id] || 0) + (roundTotals[player.id] || 0);
+      currentCumulative[player.id] =
+        (currentCumulative[player.id] || 0) + (roundTotals[player.id] || 0);
     }
 
     recalculatedRounds.push({
@@ -93,8 +97,12 @@ export function recalculateGame(
  * Determines winner from count entries (e.g. 21 cards vs 19 cards).
  * Returns playerId if one player strictly has more, or null if tie.
  */
-export function determineWinnerFromCounts(counts: Record<string, number>): string | null {
-  const entries = Object.entries(counts).filter(([, count]) => !isNaN(count) && count > 0);
+export function determineWinnerFromCounts(
+  counts: Record<string, number>,
+): string | null {
+  const entries = Object.entries(counts).filter(
+    ([, count]) => !isNaN(count) && count > 0,
+  );
   if (entries.length === 0) return null;
 
   entries.sort((a, b) => b[1] - a[1]);
