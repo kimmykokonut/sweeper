@@ -6,6 +6,9 @@ import {
   clearGameHistory,
   formatGameDate,
   formatGameTime,
+  groupHistoryByMatchup,
+  saveRecentPlayerNames,
+  loadRecentPlayerNames,
   HISTORY_STORAGE_KEY,
 } from "./scorecardHelpers";
 import type { GameState, Player } from "../types";
@@ -190,5 +193,127 @@ describe("historyStorage (sweeper_game_history)", () => {
       expect(typeof formattedTime).toBe("string");
     });
   });
+
+  describe("groupHistoryByMatchup", () => {
+    it("should aggregate games between the same players into a head-to-head rivalry summary", () => {
+      // Kim vs Matt - 3 games: Matt wins 2, Kim wins 1
+      const kimAndMatt: Player[] = [
+        { id: "p1", name: "Kim" },
+        { id: "p2", name: "Matt" },
+      ];
+
+      const g1: GameState = {
+        id: "g1",
+        createdAt: 1000,
+        players: kimAndMatt,
+        settings: { playerCount: 2, targetScore: 11 },
+        isFinished: true,
+        winnerId: "p2", // Matt won
+        rounds: [
+          {
+            roundNumber: 1,
+            scope: { p1: 1, p2: 2 },
+            carteWinnerId: "p2",
+            denariWinnerId: "p2",
+            settebelloWinnerId: "p2",
+            primieraWinnerId: "p1",
+            roundTotals: { p1: 2, p2: 5 },
+            cumulativeTotals: { p1: 2, p2: 5 },
+          },
+        ],
+      };
+
+      const g2: GameState = {
+        id: "g2",
+        createdAt: 2000,
+        players: kimAndMatt,
+        settings: { playerCount: 2, targetScore: 11 },
+        isFinished: true,
+        winnerId: "p1", // Kim won
+        rounds: [
+          {
+            roundNumber: 1,
+            scope: { p1: 3, p2: 0 },
+            carteWinnerId: "p1",
+            denariWinnerId: "p1",
+            settebelloWinnerId: "p1",
+            primieraWinnerId: "p1",
+            roundTotals: { p1: 7, p2: 0 },
+            cumulativeTotals: { p1: 7, p2: 0 },
+          },
+        ],
+      };
+
+      const g3: GameState = {
+        id: "g3",
+        createdAt: 3000,
+        players: kimAndMatt,
+        settings: { playerCount: 2, targetScore: 11 },
+        isFinished: true,
+        winnerId: "p2", // Matt won
+        rounds: [
+          {
+            roundNumber: 1,
+            scope: { p1: 0, p2: 1 },
+            carteWinnerId: "p2",
+            denariWinnerId: "p2",
+            settebelloWinnerId: "p2",
+            primieraWinnerId: "p2",
+            roundTotals: { p1: 0, p2: 5 },
+            cumulativeTotals: { p1: 0, p2: 5 },
+          },
+        ],
+      };
+
+      saveFinishedGame(g1);
+      saveFinishedGame(g2);
+      saveFinishedGame(g3);
+
+      const history = loadGameHistory();
+      const matchups = groupHistoryByMatchup(history);
+
+      expect(matchups).toHaveLength(1);
+      const m = matchups[0];
+      expect(m.totalGames).toBe(3);
+      // Matt has 2 wins, Kim has 1 win -> Matt is first in playerNames
+      expect(m.playerNames[0]).toBe("Matt");
+      expect(m.playerNames[1]).toBe("Kim");
+      expect(m.wins["Matt"]).toBe(2);
+      expect(m.wins["Kim"]).toBe(1);
+
+      // Total Scope: Kim (1 + 3 + 0 = 4), Matt (2 + 0 + 1 = 3)
+      expect(m.totalScope["Kim"]).toBe(4);
+      expect(m.totalScope["Matt"]).toBe(3);
+
+      // Category Dominance
+      // Carte: Matt won in g1 & g3 (2), Kim won in g2 (1)
+      expect(m.categoryWins.carte["Matt"]).toBe(2);
+      expect(m.categoryWins.carte["Kim"]).toBe(1);
+    });
+  });
+
+  describe("recent players helpers", () => {
+    it("should save and load recent player names per player count", () => {
+      expect(loadRecentPlayerNames(2)).toBeNull();
+
+      saveRecentPlayerNames(2, ["Kim", "Matt"]);
+      expect(loadRecentPlayerNames(2)).toEqual(["Kim", "Matt"]);
+
+      saveRecentPlayerNames(3, ["Kim", "Matt", "Alex"]);
+      expect(loadRecentPlayerNames(3)).toEqual(["Kim", "Matt", "Alex"]);
+      // 2 players should remain intact
+      expect(loadRecentPlayerNames(2)).toEqual(["Kim", "Matt"]);
+    });
+
+    it("should fall back to most recent game in history when no explicit recent names saved", () => {
+      const game = createSampleFinishedGame("game_fallback");
+      saveFinishedGame(game);
+
+      // No explicit RECENT_PLAYERS_STORAGE_KEY exists yet
+      const loaded = loadRecentPlayerNames(2);
+      expect(loaded).toEqual(["Player 1", "Player 2"]);
+    });
+  });
 });
+
 
