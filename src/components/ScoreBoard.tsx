@@ -20,7 +20,9 @@ export default function ScoreBoard({
   onResetGame,
 }: ScoreBoardProps) {
   const [showRules, setShowRules] = useState(false);
-  const [isHistoryCollapsed, setIsHistoryCollapsed] = useState(false);
+  const [isHistoryCollapsed, setIsHistoryCollapsed] = useState(
+    () => game.rounds.length > 0,
+  );
 
   const { players, rounds, settings, isFinished, winnerId } = game;
   const currentTotals: Record<string, number> = {};
@@ -169,12 +171,14 @@ export default function ScoreBoard({
                   />
                 </div>
 
-                {/* Quick stat settebello chip */}
-                <div className="text-[11px] text-emerald-300 font-medium">
-                  🧹{" "}
-                  {totalScope[p.id] < 2
-                    ? `${totalScope[p.id] || 0} scopa`
-                    : `${totalScope[p.id]} scope`}
+                {/* Quick stat scopa chip */}
+                <div className="flex items-center gap-1.5 text-xs text-emerald-200 font-medium">
+                  <span className="text-base sm:text-lg leading-none shrink-0">🧹</span>
+                  <span>
+                    {totalScope[p.id] < 2
+                      ? `${totalScope[p.id] || 0} scopa`
+                      : `${totalScope[p.id]} scope`}
+                  </span>
                 </div>
               </div>
             </div>
@@ -291,9 +295,12 @@ export default function ScoreBoard({
                           {/* Breakdown Badges */}
                           <div className="flex flex-wrap gap-1 items-center">
                             {scopeCount > 0 && (
-                              <span className="rounded bg-emerald-800 px-1 py-0.5 text-[10px] text-yellow-200 font-semibold">
-                                🧹 {scopeCount}{" "}
-                                {scopeCount === 1 ? "scopa" : "scope"}
+                              <span className="rounded bg-emerald-800 px-1.5 py-0.5 text-[10px] text-yellow-200 font-semibold inline-flex items-center gap-1">
+                                <span className="text-xs sm:text-sm leading-none">🧹</span>
+                                <span>
+                                  {scopeCount}{" "}
+                                  {scopeCount === 1 ? "scopa" : "scope"}
+                                </span>
                               </span>
                             )}
                             {gotCarte && (
