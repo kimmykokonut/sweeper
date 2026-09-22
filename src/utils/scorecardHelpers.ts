@@ -1,7 +1,8 @@
-import type { FinishedGame, GameState, Player, RoundEntry } from "../types";
+import type { FinishedGame, GameState, MatchupSummary, Player, RoundEntry } from "../types";
 
 export const STORAGE_KEY = "sweeper_active_game";
 export const HISTORY_STORAGE_KEY = "sweeper_game_history";
+export const RECENT_PLAYERS_STORAGE_KEY = "sweeper_recent_players";
 
 /**
  * Calculates points scored by each player in a single round
@@ -253,5 +254,150 @@ export function formatGameTime(timestamp: number): string {
     hour: "numeric",
     minute: "2-digit",
   });
+}
+
+/**
+ * Groups game history by opponent matchups (e.g. Kim vs Matt)
+ */
+export function groupHistoryByMatchup(history: FinishedGame[]): MatchupSummary[] {
+  const matchupMap = new Map<string, MatchupSummary>();
+
+  for (const game of history) {
+    const rawNames = game.players.map((p) => p.name.trim());
+    // Create a stable sorted key for this group of players
+    const sortedKey = [...rawNames].sort((a, b) => a.localeCompare(b)).join(" vs ");
+
+    let summary = matchupMap.get(sortedKey);
+    if (!summary) {
+      summary = {
+        key: sortedKey,
+        playerNames: [...rawNames],
+        totalGames: 0,
+        wins: {},
+        ties: 0,
+        totalScope: {},
+        totalPoints: {},
+        categoryWins: {
+          carte: {},
+          denari: {},
+          settebello: {},
+          primiera: {},
+        },
+        games: [],
+      };
+      for (const name of rawNames) {
+        summary.wins[name] = 0;
+        summary.totalScope[name] = 0;
+        summary.totalPoints[name] = 0;
+        summary.categoryWins.carte[name] = 0;
+        summary.categoryWins.denari[name] = 0;
+        summary.categoryWins.settebello[name] = 0;
+        summary.categoryWins.primiera[name] = 0;
+      }
+      matchupMap.set(sortedKey, summary);
+    }
+
+    summary.totalGames += 1;
+    summary.games.push(game);
+
+    // Winner & Ties
+    const winnerPlayer = game.players.find((p) => p.id === game.winnerId);
+    if (winnerPlayer) {
+      const winnerName = winnerPlayer.name.trim();
+      summary.wins[winnerName] = (summary.wins[winnerName] || 0) + 1;
+    } else {
+      summary.ties += 1;
+    }
+
+    // Points & Scope
+    for (const p of game.players) {
+      const pName = p.name.trim();
+      summary.totalPoints[pName] =
+        (summary.totalPoints[pName] || 0) + (game.finalScores[p.id] || 0);
+      summary.totalScope[pName] =
+        (summary.totalScope[pName] || 0) + (game.totalScope[p.id] || 0);
+    }
+
+    // Category wins across rounds
+    for (const round of game.rounds) {
+      if (round.carteWinnerId) {
+        const p = game.players.find((pl) => pl.id === round.carteWinnerId);
+        if (p) summary.categoryWins.carte[p.name.trim()] = (summary.categoryWins.carte[p.name.trim()] || 0) + 1;
+      }
+      if (round.denariWinnerId) {
+        const p = game.players.find((pl) => pl.id === round.denariWinnerId);
+        if (p) summary.categoryWins.denari[p.name.trim()] = (summary.categoryWins.denari[p.name.trim()] || 0) + 1;
+      }
+      if (round.settebelloWinnerId) {
+        const p = game.players.find((pl) => pl.id === round.settebelloWinnerId);
+        if (p) summary.categoryWins.settebello[p.name.trim()] = (summary.categoryWins.settebello[p.name.trim()] || 0) + 1;
+      }
+      if (round.primieraWinnerId) {
+        const p = game.players.find((pl) => pl.id === round.primieraWinnerId);
+        if (p) summary.categoryWins.primiera[p.name.trim()] = (summary.categoryWins.primiera[p.name.trim()] || 0) + 1;
+      }
+    }
+  }
+
+  const results = Array.from(matchupMap.values());
+
+  // Sort each matchup's playerNames so the player with the most wins is listed first
+  for (const matchup of results) {
+    matchup.playerNames.sort((a, b) => {
+      const diff = (matchup.wins[b] || 0) - (matchup.wins[a] || 0);
+      if (diff !== 0) return diff;
+      return a.localeCompare(b);
+    });
+  }
+
+  // Sort matchups by most games played, then most recent game
+  results.sort((a, b) => {
+    if (b.totalGames !== a.totalGames) {
+      return b.totalGames - a.totalGames;
+    }
+    const latestA = a.games[0]?.completedAt ?? 0;
+    const latestB = b.games[0]?.completedAt ?? 0;
+    return latestB - latestA;
+  });
+
+  return results;
+}
+
+/**
+ * Remembered player names helpers for GameSetup
+ */
+export function saveRecentPlayerNames(playerCount: number, names: string[]): void {
+  try {
+    const raw = localStorage.getItem(RECENT_PLAYERS_STORAGE_KEY);
+    const existing = raw ? JSON.parse(raw) : {};
+    existing[playerCount] = names;
+    localStorage.setItem(RECENT_PLAYERS_STORAGE_KEY, JSON.stringify(existing));
+  } catch (err) {
+    console.error("Failed to save recent player names to localStorage", err);
+  }
+}
+
+export function loadRecentPlayerNames(playerCount: number): string[] | null {
+  try {
+    const raw = localStorage.getItem(RECENT_PLAYERS_STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed[playerCount]) && parsed[playerCount].length > 0) {
+        return parsed[playerCount];
+      }
+    }
+    // Fallback: check most recent matching game from history
+    const history = loadGameHistory();
+    const matchingGame = history.find(
+      (g) => g.players.length === (playerCount === 4 ? 4 : playerCount)
+    );
+    if (matchingGame) {
+      return matchingGame.players.map((p) => p.name);
+    }
+    return null;
+  } catch (err) {
+    console.error("Failed to load recent player names from localStorage", err);
+    return null;
+  }
 }
 

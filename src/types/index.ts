@@ -68,3 +68,20 @@ export interface FinishedGame {
   finalScores: Record<string, number>;
   totalScope: Record<string, number>;
 }
+
+export interface MatchupSummary {
+  key: string;
+  playerNames: string[];
+  totalGames: number;
+  wins: Record<string, number>;
+  ties: number;
+  totalScope: Record<string, number>;
+  totalPoints: Record<string, number>;
+  categoryWins: {
+    carte: Record<string, number>;
+    denari: Record<string, number>;
+    settebello: Record<string, number>;
+    primiera: Record<string, number>;
+  };
+  games: FinishedGame[];
+}
