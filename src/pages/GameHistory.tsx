@@ -270,26 +270,26 @@ export default function GameHistory() {
                         {/* Category Rows */}
                         <div className="divide-y divide-emerald-900/60 px-3 py-1 text-[11px]">
                           {[
+                            { label: "Settebello", key: "settebello" as const },
                             { label: "Most Cards", key: "carte" as const },
                             { label: "Most Coins", key: "denari" as const },
-                            { label: "7 of Coins", key: "settebello" as const },
                             { label: "Primiera", key: "primiera" as const },
                           ].map(({ label, key }) => {
                             const winsMap = game.players.reduce<
                               Record<string, number>
                             >((acc, p) => {
                               acc[p.id] =
-                                key === "carte"
+                                key === "settebello"
                                   ? game.rounds.filter(
-                                      (r) => r.carteWinnerId === p.id,
+                                      (r) => r.settebelloWinnerId === p.id,
                                     ).length
-                                  : key === "denari"
+                                  : key === "carte"
                                     ? game.rounds.filter(
-                                        (r) => r.denariWinnerId === p.id,
+                                        (r) => r.carteWinnerId === p.id,
                                       ).length
-                                    : key === "settebello"
+                                    : key === "denari"
                                       ? game.rounds.filter(
-                                          (r) => r.settebelloWinnerId === p.id,
+                                          (r) => r.denariWinnerId === p.id,
                                         ).length
                                       : game.rounds.filter(
                                           (r) => r.primieraWinnerId === p.id,
