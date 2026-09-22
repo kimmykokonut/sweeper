@@ -237,3 +237,21 @@ export function clearGameHistory(): void {
     console.error("Failed to clear game history from localStorage", err);
   }
 }
+
+export function formatGameDate(timestamp: number): string {
+  const date = new Date(timestamp);
+  return date.toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
+export function formatGameTime(timestamp: number): string {
+  const date = new Date(timestamp);
+  return date.toLocaleTimeString(undefined, {
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
+

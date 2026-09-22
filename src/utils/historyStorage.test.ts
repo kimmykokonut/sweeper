@@ -4,6 +4,8 @@ import {
   loadGameHistory,
   deleteGameFromHistory,
   clearGameHistory,
+  formatGameDate,
+  formatGameTime,
   HISTORY_STORAGE_KEY,
 } from "./scorecardHelpers";
 import type { GameState, Player } from "../types";
@@ -174,4 +176,19 @@ describe("historyStorage (sweeper_game_history)", () => {
     expect(loadGameHistory()).toEqual([]);
     expect(mockStorage[HISTORY_STORAGE_KEY]).toBeUndefined();
   });
+
+  describe("date & time formatting helpers", () => {
+    it("should format timestamps into human readable dates and times", () => {
+      // 2026-09-22T20:00:00.000Z
+      const timestamp = 1790107200000;
+      const formattedDate = formatGameDate(timestamp);
+      const formattedTime = formatGameTime(timestamp);
+
+      expect(formattedDate).toBeTruthy();
+      expect(typeof formattedDate).toBe("string");
+      expect(formattedTime).toBeTruthy();
+      expect(typeof formattedTime).toBe("string");
+    });
+  });
 });
+
