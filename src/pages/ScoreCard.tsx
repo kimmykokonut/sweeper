@@ -8,6 +8,7 @@ import {
   clearGameState,
   loadGameState,
   recalculateGame,
+  saveFinishedGame,
   saveGameState,
 } from "../utils/scorecardHelpers";
 
@@ -59,6 +60,9 @@ export default function ScoreCard() {
     if (newGame) {
       saveGameState(newGame);
       setSavedGame(newGame);
+      if (newGame.isFinished) {
+        saveFinishedGame(newGame);
+      }
     } else {
       clearGameState();
       setSavedGame(null);
@@ -149,6 +153,9 @@ export default function ScoreCard() {
   };
 
   const handleResetGame = () => {
+    if (game?.isFinished) {
+      saveFinishedGame(game);
+    }
     updateGame(null);
   };
 
