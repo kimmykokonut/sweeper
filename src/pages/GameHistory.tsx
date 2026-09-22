@@ -185,8 +185,8 @@ export default function GameHistory() {
                                 </span>
                               </div>
                               <div className="py-1 px-2.5 rounded-lg bg-emerald-900/80 border border-emerald-700/60 flex items-center justify-center gap-1.5">
-                                <span className="text-xl sm:text-2xl shrink-0 leading-none">🧹</span>
-                                <span className="text-sm sm:text-base font-bold text-yellow-300 leading-none">
+                                <span className="text-lg sm:text-xl shrink-0">🧹</span>
+                                <span className="text-sm sm:text-base font-black text-yellow-300 leading-none">
                                   {scopeCount}
                                 </span>
                               </div>
@@ -239,8 +239,8 @@ export default function GameHistory() {
                                 </span>
                               </div>
                               <div className="py-1 px-2.5 rounded-lg bg-emerald-900/80 border border-emerald-700/60 flex items-center justify-center gap-1.5">
-                                <span className="text-xl sm:text-2xl shrink-0 leading-none">🧹</span>
-                                <span className="text-sm sm:text-base font-bold text-yellow-300 leading-none">
+                                <span className="text-lg sm:text-xl shrink-0">🧹</span>
+                                <span className="text-sm sm:text-base font-black text-yellow-300 leading-none">
                                   {scopeCount}
                                 </span>
                               </div>
@@ -294,9 +294,9 @@ export default function GameHistory() {
                                 </span>
                               </div>
                               <div className="py-1 px-2.5 rounded-lg bg-emerald-900/80 border border-emerald-700/60 flex items-center justify-center gap-1.5">
-                                <span className="text-xl sm:text-2xl shrink-0 leading-none">🧹</span>
-                                <span className="text-sm sm:text-base font-bold text-yellow-300 leading-none">
-                                  {scopeCount}
+                                <span className="text-lg sm:text-xl shrink-0">🧹</span>
+                                <span className="text-sm sm:text-base font-black text-yellow-300 leading-none">
+                                   {scopeCount}
                                 </span>
                               </div>
                             </div>
@@ -604,10 +604,8 @@ export default function GameHistory() {
 
                             {/* Large, prominent Scopa Display */}
                             <div className="py-1 px-2.5 rounded-lg bg-emerald-900/80 border border-emerald-700/60 flex items-center justify-center gap-1.5">
-                              <span className="text-xl sm:text-2xl shrink-0 leading-none">
-                                🧹
-                              </span>
-                              <span className="text-sm sm:text-base font-bold text-yellow-300 leading-none">
+                              <span className="text-lg sm:text-xl shrink-0">🧹</span>
+                              <span className="text-sm sm:text-base font-black text-yellow-300 leading-none">
                                 {scopeCount}
                               </span>
                             </div>
