@@ -77,6 +77,26 @@ export default function BottomNav() {
         </svg>
       ),
     },
+    {
+      name: "History",
+      path: "/history",
+      icon: () => (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="size-5"
+          aria-hidden="true"
+        >
+          <circle cx="12" cy="12" r="10" />
+          <polyline points="12 6 12 12 16 14" />
+        </svg>
+      ),
+    },
   ];
 
   return (
@@ -84,7 +104,7 @@ export default function BottomNav() {
       aria-label="Bottom Navigation"
       className="fixed bottom-0 left-0 right-0 z-40 bg-emerald-950/95 border-t border-emerald-800/80 backdrop-blur-md shadow-2xl pb-[env(safe-area-inset-bottom,0.25rem)]"
     >
-      <div className="grid grid-cols-3 max-w-lg mx-auto h-14">
+      <div className="grid grid-cols-4 max-w-lg mx-auto h-14">
         {navItems.map((item) => {
           const isActive =
             item.path === "/"

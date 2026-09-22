@@ -4,6 +4,7 @@ import Layout from "./components/Layout";
 import Home from "./pages/Home";
 import Primiera from "./pages/Primiera";
 import ScoreCard from "./pages/ScoreCard";
+import GameHistory from "./pages/GameHistory";
 
 const router = createHashRouter([
   {
@@ -13,6 +14,7 @@ const router = createHashRouter([
       { index: true, element: <Home /> },
       { path: "primiera", element: <Primiera /> },
       { path: "score", element: <ScoreCard /> },
+      { path: "history", element: <GameHistory /> },
     ],
   },
 ]);
