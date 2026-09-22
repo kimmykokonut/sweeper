@@ -257,7 +257,7 @@ export function formatGameTime(timestamp: number): string {
 }
 
 /**
- * Groups game history by opponent matchups (e.g. Kim vs Matt)
+ * Groups game history by opponent matchups
  */
 export function groupHistoryByMatchup(history: FinishedGame[]): MatchupSummary[] {
   const matchupMap = new Map<string, MatchupSummary>();

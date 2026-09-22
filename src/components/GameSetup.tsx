@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { GameSettings, GameState, Player } from "../types";
 import { CARD_DATA } from "../utils/cardData";
+import { loadRecentPlayerNames, saveRecentPlayerNames } from "../utils/scorecardHelpers";
 
 interface GameSetupProps {
   existingGame: GameState | null;
@@ -17,17 +18,38 @@ export default function GameSetup({
   const [isTeams, setIsTeams] = useState<boolean>(false);
   const [targetScore, setTargetScore] = useState<number>(11);
   const [customTarget, setCustomTarget] = useState<string>("");
-  const [playerNames, setPlayerNames] = useState<Record<number, string>>({
-    0: "Player 1",
-    1: "Player 2",
-    2: "Player 3",
-    3: "Player 4",
+  const [playerNames, setPlayerNames] = useState<Record<number, string>>(() => {
+    const recent = loadRecentPlayerNames(2);
+    if (recent && recent.length >= 2) {
+      return {
+        0: recent[0] || "Player 1",
+        1: recent[1] || "Player 2",
+        2: recent[2] || "Player 3",
+        3: recent[3] || "Player 4",
+      };
+    }
+    return {
+      0: "Player 1",
+      1: "Player 2",
+      2: "Player 3",
+      3: "Player 4",
+    };
   });
 
   const handlePlayerCountChange = (count: 2 | 3 | 4) => {
     setPlayerCount(count);
     if (count !== 4) {
       setIsTeams(false);
+    }
+    const recent = loadRecentPlayerNames(count);
+    if (recent && recent.length >= count) {
+      setPlayerNames((prev) => {
+        const updated = { ...prev };
+        for (let i = 0; i < count; i++) {
+          if (recent[i]) updated[i] = recent[i];
+        }
+        return updated;
+      });
     }
   };
 
@@ -65,6 +87,12 @@ export default function GameSetup({
         name: playerNames[i]?.trim() || defaultName,
       });
     }
+
+    // Save recent player names for this player count so next time they are remembered
+    saveRecentPlayerNames(
+      actualCount,
+      finalPlayers.map((p) => p.name)
+    );
 
     const finalTarget = customTarget
       ? parseInt(customTarget, 10) || 11
@@ -208,6 +236,8 @@ export default function GameSetup({
                       maxLength={20}
                       value={playerNames[index] ?? defaultPlaceholder}
                       onChange={(e) => handleNameChange(index, e.target.value)}
+                      onFocus={(e) => e.target.select()}
+                      onClick={(e) => (e.target as HTMLInputElement).select()}
                       placeholder={defaultPlaceholder}
                       className="flex-1 rounded-xl bg-emerald-950/80 border border-emerald-600 px-3.5 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base text-white placeholder-emerald-500 focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 focus:outline-none"
                     />
