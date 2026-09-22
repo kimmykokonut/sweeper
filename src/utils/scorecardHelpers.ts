@@ -1,6 +1,7 @@
-import type { GameState, Player, RoundEntry } from "../types";
+import type { FinishedGame, GameState, Player, RoundEntry } from "../types";
 
-const STORAGE_KEY = "sweeper_active_game";
+export const STORAGE_KEY = "sweeper_active_game";
+export const HISTORY_STORAGE_KEY = "sweeper_game_history";
 
 /**
  * Calculates points scored by each player in a single round
@@ -139,5 +140,100 @@ export function clearGameState(): void {
     localStorage.removeItem(STORAGE_KEY);
   } catch (err) {
     console.error("Failed to clear game state from localStorage", err);
+  }
+}
+
+/**
+ * Game History helpers (sweeper_game_history)
+ */
+
+export function saveFinishedGame(game: GameState): FinishedGame | null {
+  if (!game.isFinished) {
+    return null;
+  }
+
+  const finalScores: Record<string, number> = {};
+  const totalScope: Record<string, number> = {};
+
+  for (const p of game.players) {
+    finalScores[p.id] = 0;
+    totalScope[p.id] = 0;
+  }
+
+  if (game.rounds.length > 0) {
+    const lastRound = game.rounds[game.rounds.length - 1];
+    for (const p of game.players) {
+      finalScores[p.id] = lastRound.cumulativeTotals[p.id] ?? 0;
+    }
+  }
+
+  for (const r of game.rounds) {
+    for (const p of game.players) {
+      totalScope[p.id] += r.scope[p.id] || 0;
+    }
+  }
+
+  const history = loadGameHistory();
+  const existingIndex = history.findIndex((g) => g.id === game.id);
+
+  const finishedGame: FinishedGame = {
+    id: game.id,
+    createdAt: game.createdAt,
+    completedAt: existingIndex >= 0 ? history[existingIndex].completedAt : Date.now(),
+    players: game.players,
+    settings: game.settings,
+    rounds: game.rounds,
+    winnerId: game.winnerId,
+    finalScores,
+    totalScope,
+  };
+
+  let updatedHistory: FinishedGame[];
+  if (existingIndex >= 0) {
+    // Replace in place
+    updatedHistory = [...history];
+    updatedHistory[existingIndex] = finishedGame;
+  } else {
+    // Prepend new finished game
+    updatedHistory = [finishedGame, ...history];
+  }
+
+  try {
+    localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(updatedHistory));
+  } catch (err) {
+    console.error("Failed to save finished game to history in localStorage", err);
+  }
+
+  return finishedGame;
+}
+
+export function loadGameHistory(): FinishedGame[] {
+  try {
+    const raw = localStorage.getItem(HISTORY_STORAGE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed as FinishedGame[];
+  } catch (err) {
+    console.error("Failed to load game history from localStorage", err);
+    return [];
+  }
+}
+
+export function deleteGameFromHistory(gameId: string): void {
+  try {
+    const history = loadGameHistory();
+    const updated = history.filter((g) => g.id !== gameId);
+    localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(updated));
+  } catch (err) {
+    console.error("Failed to delete game from history in localStorage", err);
+  }
+}
+
+export function clearGameHistory(): void {
+  try {
+    localStorage.removeItem(HISTORY_STORAGE_KEY);
+  } catch (err) {
+    console.error("Failed to clear game history from localStorage", err);
   }
 }

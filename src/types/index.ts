@@ -56,3 +56,15 @@ export interface GameState {
   isFinished: boolean;
   winnerId: string | null;
 }
+
+export interface FinishedGame {
+  id: string;
+  createdAt: number;
+  completedAt: number;
+  players: Player[];
+  settings: GameSettings;
+  rounds: RoundEntry[];
+  winnerId: string | null;
+  finalScores: Record<string, number>;
+  totalScope: Record<string, number>;
+}
