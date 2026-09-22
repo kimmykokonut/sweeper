@@ -3,6 +3,7 @@ import type { GameState, RoundEntry } from "../types";
 import setteBelloImg from "../assets/7-denari.jpg";
 import coinIcon from "../assets/denare.png";
 import aceCoinsImg from "../assets/1-denari.jpg";
+import kingSpadesImg from "../assets/10-spade.jpg";
 
 interface ScoreBoardProps {
   game: GameState;
@@ -74,7 +75,7 @@ export default function ScoreBoard({
           <button
             type="button"
             onClick={() => setShowRules(true)}
-            className="rounded-lg bg-emerald-800/80 border border-emerald-600 px-3 py-1.5 text-xs font-semibold text-emerald-100 hover:bg-emerald-700 transition-colors"
+            className="rounded-lg bg-emerald-800/80 border border-emerald-600 px-3 py-1.5 text-xs font-semibold text-emerald-100 hover:bg-emerald-700 transition-colors cursor-pointer"
           >
             📖 Rules
           </button>
@@ -101,7 +102,6 @@ export default function ScoreBoard({
             <span className="font-bold text-yellow-300">
               {currentTotals[winner.id]} points
             </span>{" "}
-            (target: {settings.targetScore})!
           </p>
           <div className="flex justify-center pt-2">
             <button
@@ -207,9 +207,6 @@ export default function ScoreBoard({
             <h3 className="font-bold text-base sm:text-lg text-white">
               Rounds History
             </h3>
-            <span className="rounded-md bg-emerald-800 px-2 py-0.5 text-xs text-emerald-200">
-              {rounds.length} {rounds.length === 1 ? "round" : "rounds"}
-            </span>
           </div>
 
           {rounds.length > 0 && (
@@ -232,122 +229,127 @@ export default function ScoreBoard({
           )}
         </div>
 
-        {!isHistoryCollapsed && (
-          rounds.length === 0 ? (
-          <div className="p-8 text-center text-emerald-300 space-y-2">
-            <p className="text-lg">No rounds played yet!</p>
-            <p className="text-xs text-emerald-400">
-              Deal the 40 cards, play the hand, and click "+ Score Round 1"
-              above to record the score.
-            </p>
-          </div>
-        ) : (
-          <div className="divide-y divide-emerald-800/80 overflow-x-auto">
-            {rounds.map((round) => (
-              <div
-                key={round.roundNumber}
-                className="p-3 sm:p-4 hover:bg-emerald-800/40 transition-colors flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
-              >
-                {/* Round Label & Actions */}
-                <div className="flex items-center justify-between sm:justify-start gap-3 sm:w-28 shrink-0">
-                  <span className="font-extrabold text-sm sm:text-base text-yellow-300">
-                    Round {round.roundNumber}
-                  </span>
+        {!isHistoryCollapsed &&
+          (rounds.length === 0 ? (
+            <div className="p-8 text-center text-emerald-300 space-y-2">
+              <p className="text-lg">No rounds played yet!</p>
+              <p className="text-xs text-emerald-400">
+                Deal the 40 cards, play the hand, and click "+ Score Round 1"
+                above to record the score.
+              </p>
+            </div>
+          ) : (
+            <div className="divide-y divide-emerald-800/80 overflow-x-auto">
+              {rounds.map((round) => (
+                <div
+                  key={round.roundNumber}
+                  className="p-3 sm:p-4 hover:bg-emerald-800/40 transition-colors flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
+                >
+                  {/* Round Label & Actions */}
+                  <div className="flex items-center justify-between sm:justify-start gap-3 sm:w-28 shrink-0">
+                    <span className="font-extrabold text-sm sm:text-base text-yellow-300">
+                      Round {round.roundNumber}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => onEditRound(round)}
+                      className="p-1 text-emerald-300 hover:text-white rounded hover:bg-emerald-800 text-xs sm:hidden"
+                      title="Edit Round"
+                    >
+                      ✏️
+                    </button>
+                  </div>
+
+                  {/* Points & Breakdown per player */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 flex-1">
+                    {players.map((p) => {
+                      const pts = round.roundTotals[p.id] || 0;
+                      const scopeCount = round.scope[p.id] || 0;
+                      const gotCarte = round.carteWinnerId === p.id;
+                      const gotDenari = round.denariWinnerId === p.id;
+                      const gotSettebello = round.settebelloWinnerId === p.id;
+                      const gotPrimiera = round.primieraWinnerId === p.id;
+                      const cumTotal = round.cumulativeTotals[p.id] || 0;
+
+                      return (
+                        <div
+                          key={p.id}
+                          className="rounded-xl bg-emerald-950/60 border border-emerald-800/80 p-2 text-xs flex flex-col justify-between"
+                        >
+                          <div className="flex items-center justify-between border-b border-emerald-800/50 pb-1 mb-1.5">
+                            <span className="font-bold text-emerald-200 truncate mr-1">
+                              {p.name}
+                            </span>
+                            <span className="font-black text-yellow-300 text-sm">
+                              +{pts}{" "}
+                              <span className="text-[10px] text-emerald-400 font-normal">
+                                ({cumTotal})
+                              </span>
+                            </span>
+                          </div>
+
+                          {/* Breakdown Badges */}
+                          <div className="flex flex-wrap gap-1 items-center">
+                            {scopeCount > 0 && (
+                              <span className="rounded bg-emerald-800 px-1 py-0.5 text-[10px] text-yellow-200 font-semibold">
+                                🧹 {scopeCount}{" "}
+                                {scopeCount === 1 ? "scopa" : "scope"}
+                              </span>
+                            )}
+                            {gotCarte && (
+                              <span className="rounded bg-amber-400/20 text-yellow-300 border border-yellow-400/40 px-1 py-0.5 text-[10px] font-bold inline-flex items-center gap-1">
+                                <img
+                                  src={kingSpadesImg}
+                                  alt="King of Spades Card"
+                                  className="size-3 object-contain inline shrink-0"
+                                />
+                                <span>Carte</span>
+                              </span>
+                            )}
+                            {gotDenari && (
+                              <span className="rounded bg-amber-400/20 text-yellow-300 border border-yellow-400/40 px-1 py-0.5 text-[10px] font-bold inline-flex items-center gap-1">
+                                <img
+                                  src={coinIcon}
+                                  alt="Coins suit"
+                                  className="size-3 object-contain inline shrink-0"
+                                />
+                                <span>Denari</span>
+                              </span>
+                            )}
+                            {gotSettebello && (
+                              <span className="rounded bg-emerald-800 px-1 py-0.5 text-[10px] text-yellow-200 font-semibold">
+                                ⭐ 7 Bello
+                              </span>
+                            )}
+                            {gotPrimiera && (
+                              <span className="rounded bg-emerald-800 px-1 py-0.5 text-[10px] text-emerald-200">
+                                🏆 Primiera
+                              </span>
+                            )}
+                            {pts === 0 && (
+                              <span className="text-[10px] text-emerald-500 italic">
+                                No points
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Desktop Edit Round buttons */}
                   <button
                     type="button"
                     onClick={() => onEditRound(round)}
-                    className="p-1 text-emerald-300 hover:text-white rounded hover:bg-emerald-800 text-xs sm:hidden"
+                    className="p-1.5 text-emerald-300 hover:text-white rounded-lg hover:bg-emerald-800 transition-colors text-sm hidden sm:block"
                     title="Edit Round"
                   >
                     ✏️
                   </button>
                 </div>
-
-                {/* Points & Breakdown per player */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 flex-1">
-                  {players.map((p) => {
-                    const pts = round.roundTotals[p.id] || 0;
-                    const scopeCount = round.scope[p.id] || 0;
-                    const gotCarte = round.carteWinnerId === p.id;
-                    const gotDenari = round.denariWinnerId === p.id;
-                    const gotSettebello = round.settebelloWinnerId === p.id;
-                    const gotPrimiera = round.primieraWinnerId === p.id;
-                    const cumTotal = round.cumulativeTotals[p.id] || 0;
-
-                    return (
-                      <div
-                        key={p.id}
-                        className="rounded-xl bg-emerald-950/60 border border-emerald-800/80 p-2 text-xs flex flex-col justify-between"
-                      >
-                        <div className="flex items-center justify-between border-b border-emerald-800/50 pb-1 mb-1.5">
-                          <span className="font-bold text-emerald-200 truncate mr-1">
-                            {p.name}
-                          </span>
-                          <span className="font-black text-yellow-300 text-sm">
-                            +{pts}{" "}
-                            <span className="text-[10px] text-emerald-400 font-normal">
-                              ({cumTotal})
-                            </span>
-                          </span>
-                        </div>
-
-                        {/* Breakdown Badges */}
-                        <div className="flex flex-wrap gap-1">
-                          {scopeCount > 0 && (
-                            <span className="rounded bg-emerald-800 px-1.5 py-0.5 text-[10px] text-yellow-200 font-semibold">
-                              🧹 {scopeCount}{" "}
-                              {scopeCount === 1 ? "scopa" : "scope"}
-                            </span>
-                          )}
-                          {gotCarte && (
-                            <span className="rounded bg-emerald-800 px-1.5 py-0.5 text-[10px] text-emerald-200">
-                              🃏 Carte
-                            </span>
-                          )}
-                          {gotDenari && (
-                            <span className="rounded bg-emerald-800 px-1.5 py-0.5 text-[10px] text-emerald-200">
-                              🪙 Denari
-                            </span>
-                          )}
-                          {gotSettebello && (
-                            <span className="rounded bg-amber-400/20 text-yellow-300 border border-yellow-400/40 px-1.5 py-0.5 text-[10px] font-bold inline-flex items-center gap-1">
-                              <img
-                                src={coinIcon}
-                                alt="Denari"
-                                className="size-3 object-contain inline shrink-0"
-                              />
-                              <span>7 Bello</span>
-                            </span>
-                          )}
-                          {gotPrimiera && (
-                            <span className="rounded bg-emerald-800 px-1.5 py-0.5 text-[10px] text-emerald-200">
-                              🏆 Primiera
-                            </span>
-                          )}
-                          {pts === 0 && (
-                            <span className="text-[10px] text-emerald-500 italic">
-                              No points
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {/* Desktop Edit Round buttons */}
-                <button
-                  type="button"
-                  onClick={() => onEditRound(round)}
-                  className="p-1.5 text-emerald-300 hover:text-white rounded-lg hover:bg-emerald-800 transition-colors text-sm hidden sm:block"
-                  title="Edit Round"
-                >
-                  ✏️
-                </button>
-              </div>
-            ))}
-          </div>
-        ))}
+              ))}
+            </div>
+          ))}
       </div>
 
       {/* Rules Quick Reference Modal */}

@@ -99,7 +99,7 @@ export default function GameHistory() {
                 key={game.id}
                 className="rounded-2xl bg-emerald-900/90 border border-emerald-700/90 p-3.5 sm:p-4 shadow-xl space-y-3 transition-all"
               >
-                {/* Match Header Row: Date/Time + Rounds Pill on Same Line (Target removed) */}
+                {/* Match Header Row: Date/Time + Rounds */}
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex flex-wrap items-center gap-1.5 text-xs text-emerald-200">
                     <span className="font-semibold text-emerald-100">
@@ -221,7 +221,7 @@ export default function GameHistory() {
                           </span>
                         </div>
 
-                        {/* Large, prominent Scopa Display */}
+                        {/* Scopa Display */}
                         <div className="py-1 px-2 rounded-lg bg-emerald-900/80 border border-emerald-700/60 flex items-center justify-center gap-1.5">
                           <span className="text-base sm:text-lg shrink-0">
                             🧹
@@ -248,7 +248,7 @@ export default function GameHistory() {
                     </span>
                   </button>
 
-                  {/* Clean Category Stats Table (Side-by-side comparison, English labels, no repeated names) */}
+                  {/* Category Stats Table */}
                   {isExpanded && (
                     <div className="mt-2.5 pt-2 border-t border-emerald-800/40 animate-fade-in">
                       <div className="rounded-xl bg-emerald-950/80 border border-emerald-800/70 overflow-hidden text-xs">
@@ -346,7 +346,7 @@ export default function GameHistory() {
             );
           })}
 
-          {/* 4. Clear All History Button Alone at Bottom (Muted deep crimson, no green box) */}
+          {/* 4. Clear All History Button */}
           <div className="mt-8 mb-4 flex justify-center">
             <button
               type="button"
