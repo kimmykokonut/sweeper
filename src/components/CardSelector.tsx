@@ -59,15 +59,16 @@ function CardSelector({
             <img
               src={CARD_DATA[activeSuit].icon}
               alt=""
-              className="size-5 object-contain"
+              aria-hidden="true"
+              className="size-6 sm:size-7 object-contain"
             />
             <span
               id="card-selector-title"
-              className="text-sm sm:text-base font-bold text-white"
+              className="text-base sm:text-lg font-bold text-white"
             >
               {CARD_DATA[activeSuit].displayName}
             </span>
-            <span className="text-xs text-emerald-400 font-medium">
+            <span className="text-xs sm:text-sm text-emerald-300 font-medium">
               • Select highest card
             </span>
           </div>
@@ -76,7 +77,7 @@ function CardSelector({
             type="button"
             onClick={onClose}
             aria-label="Close card picker"
-            className="rounded-lg p-1 text-emerald-300 hover:bg-emerald-800 hover:text-white transition-colors cursor-pointer text-base"
+            className="min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl text-emerald-300 hover:bg-emerald-800 hover:text-white transition-colors cursor-pointer text-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400"
           >
             ✕
           </button>
@@ -95,7 +96,7 @@ function CardSelector({
                 type="button"
                 disabled={isDisabled}
                 onClick={() => !isDisabled && onCardSelect(activeSuit, sevenCard.value)}
-                className={`w-full grid grid-cols-3 items-center px-3 py-1.5 sm:py-2 rounded-xl transition-all shadow-md ${
+                className={`w-full grid grid-cols-3 items-center px-3 py-1.5 sm:py-2 rounded-xl transition-all shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 ${
                   isDisabled
                     ? "bg-emerald-950/40 border border-emerald-900/60 opacity-60 cursor-not-allowed"
                     : isSelectedByCurrent
@@ -108,14 +109,14 @@ function CardSelector({
                 {/* Left Column: 7 / Status */}
                 <div className="flex flex-col items-center sm:items-start text-center sm:text-left pl-1 sm:pl-3">
                   <span
-                    className={`text-3xl sm:text-4xl font-black leading-none ${
+                    className={`text-3xl sm:text-4xl font-extrabold leading-none ${
                       isDisabled ? "text-emerald-500/70" : "text-white"
                     }`}
                   >
                     7
                   </span>
                   <span
-                    className={`text-xs sm:text-sm font-black uppercase tracking-wider mt-1 ${
+                    className={`text-xs sm:text-sm font-bold uppercase tracking-wider mt-1 ${
                       takenBy
                         ? "text-amber-300 flex items-center gap-1"
                         : "text-yellow-400"
@@ -148,14 +149,14 @@ function CardSelector({
                 {/* Right Column: 21 / POINTS */}
                 <div className="flex flex-col items-center sm:items-end text-center sm:text-right pr-1 sm:pr-3">
                   <span
-                    className={`text-3xl sm:text-4xl font-black leading-none ${
+                    className={`text-3xl sm:text-4xl font-extrabold leading-none ${
                       isDisabled ? "text-emerald-500/70" : "text-yellow-300"
                     }`}
                   >
                     21
                   </span>
                   <span
-                    className={`text-xs sm:text-sm font-black uppercase tracking-wider mt-1 ${
+                    className={`text-xs sm:text-sm font-bold uppercase tracking-wider mt-1 ${
                       isDisabled ? "text-emerald-500/70" : "text-emerald-300"
                     }`}
                   >
@@ -180,7 +181,7 @@ function CardSelector({
                   type="button"
                   disabled={isDisabled}
                   onClick={() => !isDisabled && onCardSelect(activeSuit, card.value)}
-                  className={`group relative flex aspect-[2/3] flex-col items-center justify-between overflow-hidden rounded-xl p-1.5 shadow transition-all ${
+                  className={`group relative flex aspect-[2/3] flex-col items-center justify-between overflow-hidden rounded-xl p-1.5 shadow transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 ${
                     isDisabled
                       ? "bg-emerald-950/40 border border-emerald-900/60 opacity-60 cursor-not-allowed"
                       : isSelectedByCurrent
@@ -208,12 +209,12 @@ function CardSelector({
                     )}
                   </div>
                   <div
-                    className={`w-full py-0.5 sm:py-1 text-center text-xs sm:text-sm font-extrabold rounded-md leading-tight mt-1 truncate px-0.5 ${
+                    className={`w-full py-0.5 sm:py-1 text-center text-xs sm:text-sm font-bold rounded-md leading-tight mt-1 truncate px-0.5 border ${
                       takenBy
-                        ? "bg-emerald-950/90 text-amber-300/90 text-[11px]"
+                        ? "bg-emerald-950/90 text-amber-300/90 border-emerald-800 text-[11px]"
                         : isHighTier
-                          ? "bg-emerald-800 text-white"
-                          : "bg-emerald-950/85 text-emerald-200"
+                          ? "bg-emerald-950 text-yellow-300 border-yellow-400/40 shadow-xs"
+                          : "bg-emerald-950/90 text-emerald-100 border-emerald-800/70"
                     }`}
                   >
                     {takenBy ? `Taken` : `${card.points} pts`}
