@@ -87,16 +87,12 @@ export default function RoundScoreModal({
     () => {
       if (existingRound?.rawCounts) return { ...existingRound.rawCounts };
       const initial: Record<string, RoundRawCounts> = {};
-      for (const p of players)
-        initial[p.id] = { cards: undefined, coins: undefined };
+      for (const p of players) initial[p.id] = { cards: undefined };
       return initial;
     },
   );
 
   const [autoFilledCardsPlayerId, setAutoFilledCardsPlayerId] = useState<
-    string | null
-  >(null);
-  const [autoFilledCoinsPlayerId, setAutoFilledCoinsPlayerId] = useState<
     string | null
   >(null);
 
@@ -251,135 +247,6 @@ export default function RoundScoreModal({
     }
   };
 
-  const handleCoinCountChange = (playerId: string, val: string) => {
-    // 1. If user deletes the value (empty string):
-    if (val === "") {
-      const updated: Record<string, RoundRawCounts> = { ...rawCounts };
-      updated[playerId] = { ...updated[playerId], coins: undefined };
-
-      if (players.length === 2) {
-        const otherPlayer = players.find((p) => p.id !== playerId);
-        if (otherPlayer) {
-          updated[otherPlayer.id] = {
-            ...updated[otherPlayer.id],
-            coins: undefined,
-          };
-        }
-        setAutoFilledCoinsPlayerId(null);
-      } else {
-        if (autoFilledCoinsPlayerId) {
-          updated[autoFilledCoinsPlayerId] = {
-            ...updated[autoFilledCoinsPlayerId],
-            coins: undefined,
-          };
-          setAutoFilledCoinsPlayerId(null);
-        }
-      }
-
-      setRawCounts(updated);
-
-      const counts: Record<string, number> = {};
-      for (const p of players) {
-        if (updated[p.id]?.coins !== undefined) {
-          counts[p.id] = updated[p.id].coins!;
-        }
-      }
-      if (Object.keys(counts).length > 0) {
-        setDenariChoice(determineWinnerFromCounts(counts) ?? "tie");
-      } else {
-        setDenariChoice(null);
-      }
-      return;
-    }
-
-    // 2. User entered a numeric value:
-    const parsed = parseInt(val, 10);
-    if (isNaN(parsed)) return;
-
-    if (players.length === 2) {
-      const clamped = Math.min(10, Math.max(0, parsed));
-      const otherPlayer = players.find((p) => p.id !== playerId)!;
-      const otherRemainder = 10 - clamped;
-
-      const updated: Record<string, RoundRawCounts> = {
-        ...rawCounts,
-        [playerId]: { ...rawCounts[playerId], coins: clamped },
-        [otherPlayer.id]: {
-          ...rawCounts[otherPlayer.id],
-          coins: otherRemainder,
-        },
-      };
-
-      setAutoFilledCoinsPlayerId(otherPlayer.id);
-      setRawCounts(updated);
-
-      const counts: Record<string, number> = {
-        [playerId]: clamped,
-        [otherPlayer.id]: otherRemainder,
-      };
-      setDenariChoice(determineWinnerFromCounts(counts) ?? "tie");
-      return;
-    }
-
-    // 3+ Player Game:
-    const otherManualCoins = players
-      .filter((p) => p.id !== playerId && p.id !== autoFilledCoinsPlayerId)
-      .reduce((sum, p) => sum + (rawCounts[p.id]?.coins || 0), 0);
-
-    const maxAllowed = Math.max(0, 10 - otherManualCoins);
-    const clamped = Math.min(maxAllowed, Math.max(0, parsed));
-
-    const updated: Record<string, RoundRawCounts> = {
-      ...rawCounts,
-      [playerId]: { ...rawCounts[playerId], coins: clamped },
-    };
-
-    let newAutoFilledId: string | null = null;
-    if (autoFilledCoinsPlayerId && autoFilledCoinsPlayerId !== playerId) {
-      updated[autoFilledCoinsPlayerId] = {
-        ...updated[autoFilledCoinsPlayerId],
-        coins: undefined,
-      };
-    }
-
-    const filledManualPlayers = players.filter(
-      (p) => updated[p.id]?.coins !== undefined,
-    );
-
-    if (filledManualPlayers.length === players.length - 1) {
-      const unfilledPlayer = players.find(
-        (p) => updated[p.id]?.coins === undefined,
-      );
-      if (unfilledPlayer) {
-        const sumManual = filledManualPlayers.reduce(
-          (sum, p) => sum + (updated[p.id]?.coins || 0),
-          0,
-        );
-        const remainder = Math.max(0, 10 - sumManual);
-        updated[unfilledPlayer.id] = {
-          ...updated[unfilledPlayer.id],
-          coins: remainder,
-        };
-        newAutoFilledId = unfilledPlayer.id;
-      }
-    }
-
-    setAutoFilledCoinsPlayerId(newAutoFilledId);
-    setRawCounts(updated);
-
-    const counts: Record<string, number> = {};
-    for (const p of players) {
-      if (updated[p.id]?.coins !== undefined) {
-        counts[p.id] = updated[p.id].coins!;
-      }
-    }
-    if (Object.keys(counts).length > 0) {
-      setDenariChoice(determineWinnerFromCounts(counts) ?? "tie");
-    } else {
-      setDenariChoice(null);
-    }
-  };
-
   // Calculate live preview totals
   const roundTotals: Record<string, number> = {};
   for (const p of players) {
@@ -406,21 +273,12 @@ export default function RoundScoreModal({
     });
   };
 
-  // Card count verification helper
-  const totalCardsCounted = Object.values(rawCounts).reduce(
-    (sum, c) => sum + (c.cards || 0),
-    0,
-  );
-  const totalCoinsCounted = Object.values(rawCounts).reduce(
-    (sum, c) => sum + (c.coins || 0),
-    0,
-  );
-
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/75 p-2 sm:p-4 pb-[max(0.5rem,env(safe-area-inset-bottom))] backdrop-blur-xs cursor-pointer"
       role="dialog"
       aria-modal="true"
+      aria-labelledby="round-score-modal-title"
       onClick={(e) => {
         if (e.target === e.currentTarget) {
           onClose();
@@ -434,8 +292,13 @@ export default function RoundScoreModal({
         {/* Header */}
         <div className="flex shrink-0 items-center justify-between border-b border-emerald-800 bg-emerald-950/80 px-4 py-3 sm:px-6">
           <div className="flex items-center gap-2">
-            <span className="text-xl">📝</span>
-            <h2 className="text-lg sm:text-xl font-bold text-white">
+            <span className="text-xl" aria-hidden="true">
+              📝
+            </span>
+            <h2
+              id="round-score-modal-title"
+              className="text-xl sm:text-2xl font-bold text-white"
+            >
               {existingRound
                 ? `Edit Round ${roundNumber}`
                 : `Score Round ${roundNumber}`}
@@ -444,25 +307,27 @@ export default function RoundScoreModal({
           <button
             type="button"
             onClick={onClose}
-            aria-label="Close dialog"
-            className="rounded-lg p-1.5 text-emerald-300 hover:bg-emerald-800 hover:text-white transition-colors cursor-pointer"
+            aria-label="Close round scoring dialog"
+            className="rounded-lg min-h-[44px] min-w-[44px] flex items-center justify-center text-emerald-200 hover:bg-emerald-800 hover:text-white focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none transition-colors cursor-pointer text-lg font-bold"
           >
-            ✕
+            <span aria-hidden="true">✕</span>
           </button>
         </div>
 
         {/* Form Body */}
-        <div className="flex-1 min-h-0 overflow-y-auto p-4 space-y-5">
+        <div className="flex-1 min-h-0 overflow-y-auto p-4 space-y-3">
           {/* Section 1: Scope (Sweeps) */}
           <div className="rounded-xl bg-emerald-950/60 border border-emerald-800 p-3 sm:p-4">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
-                <span className="text-lg">🧹</span>
+                <span className="text-xl" aria-hidden="true">
+                  🧹
+                </span>
                 <div>
-                  <h3 className="font-bold text-white text-sm sm:text-base">
+                  <h3 className="font-bold text-white text-base sm:text-lg">
                     Scope (Sweeps)
                   </h3>
-                  <p className="text-xs text-emerald-300">
+                  <p className="text-xs sm:text-sm text-emerald-200">
                     1 point for each sweep during play
                   </p>
                 </div>
@@ -473,26 +338,31 @@ export default function RoundScoreModal({
               {players.map((p) => (
                 <div
                   key={p.id}
-                  className="flex items-center justify-between bg-emerald-900/80 border border-emerald-700 rounded-lg p-2.5"
+                  className="flex items-center justify-between bg-emerald-900/80 border border-emerald-700 rounded-lg p-2.5 sm:p-3"
                 >
-                  <span className="font-semibold text-sm truncate mr-2">
+                  <span className="font-semibold text-sm sm:text-base truncate mr-2">
                     {p.name}
                   </span>
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
                       onClick={() => handleScopeChange(p.id, -1)}
-                      className="size-8 rounded-md bg-emerald-800 border border-emerald-600 text-lg font-bold text-white hover:bg-emerald-700 active:scale-95 flex items-center justify-center"
+                      aria-label={`Decrease ${p.name}'s sweeps`}
+                      className="size-10 sm:size-11 rounded-lg bg-emerald-800 border border-emerald-600 text-xl font-bold text-white hover:bg-emerald-700 active:scale-95 flex items-center justify-center focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none cursor-pointer transition-colors"
                     >
                       -
                     </button>
-                    <span className="w-7 text-center font-bold text-base text-yellow-300">
+                    <span
+                      aria-label={`${p.name}: ${scope[p.id] || 0} sweeps`}
+                      className="w-8 sm:w-10 text-center font-bold text-lg sm:text-xl text-yellow-300"
+                    >
                       {scope[p.id] || 0}
                     </span>
                     <button
                       type="button"
                       onClick={() => handleScopeChange(p.id, 1)}
-                      className="size-8 rounded-md bg-emerald-700 border border-emerald-500 text-lg font-bold text-white hover:bg-emerald-600 active:scale-95 flex items-center justify-center shadow-xs"
+                      aria-label={`Increase ${p.name}'s sweeps`}
+                      className="size-10 sm:size-11 rounded-lg bg-emerald-700 border border-emerald-500 text-xl font-bold text-white hover:bg-emerald-600 active:scale-95 flex items-center justify-center shadow-xs focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none cursor-pointer transition-colors"
                     >
                       +
                     </button>
@@ -505,89 +375,94 @@ export default function RoundScoreModal({
           {/* Section 2: Settebello */}
           <div className="rounded-xl bg-emerald-950/60 border border-emerald-800 p-3 sm:p-4">
             <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2.5">
                 <img
                   src={setteBelloImg}
-                  alt="Settebello"
-                  className="h-7 w-auto rounded border border-yellow-400"
+                  alt=""
+                  aria-hidden="true"
+                  className="h-8 w-auto rounded border border-yellow-400 shrink-0"
                 />
                 <div>
-                  <h3 className="font-bold text-white text-sm sm:text-base">
+                  <h3 className="font-bold text-white text-base sm:text-lg">
                     Il Settebello (7 of Coins)
                   </h3>
-                  <p className="text-xs text-emerald-300">1 point</p>
+                  <p className="text-xs sm:text-sm text-emerald-200">1 point</p>
                 </div>
               </div>
             </div>
 
             <div className="flex flex-wrap gap-2 mt-2">
-              {players.map((p) => (
-                <button
-                  key={p.id}
-                  type="button"
-                  onClick={() => setSettebelloWinnerId(p.id)}
-                  className={`flex-1 min-w-[100px] py-2 px-3 rounded-lg text-sm font-semibold transition-all border flex items-center justify-center gap-1.5 ${
-                    settebelloWinnerId === p.id
-                      ? "bg-emerald-600 text-white border-emerald-400 shadow-md font-bold ring-2 ring-yellow-400"
-                      : "bg-emerald-900/80 text-emerald-100 border-emerald-700 hover:bg-emerald-800"
-                  }`}
-                >
-                  {settebelloWinnerId === p.id && (
-                    <img
-                      src={coinIcon}
-                      alt="Denari"
-                      className="size-4.5 object-contain inline-block shrink-0"
-                    />
-                  )}
-                  <span>{p.name}</span>
-                </button>
-              ))}
+              {players.map((p) => {
+                const isSelected = settebelloWinnerId === p.id;
+                return (
+                  <button
+                    key={p.id}
+                    type="button"
+                    onClick={() => setSettebelloWinnerId(p.id)}
+                    aria-pressed={isSelected}
+                    className={`flex-1 min-w-[100px] min-h-[44px] py-2 px-3 rounded-lg text-sm sm:text-base font-semibold transition-all border flex items-center justify-center gap-2 cursor-pointer focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none ${
+                      isSelected
+                        ? "bg-emerald-600 text-white border-emerald-400 shadow-md font-bold ring-2 ring-yellow-400"
+                        : "bg-emerald-900/80 text-emerald-100 border-emerald-700 hover:bg-emerald-800"
+                    }`}
+                  >
+                    {isSelected && (
+                      <img
+                        src={coinIcon}
+                        alt=""
+                        aria-hidden="true"
+                        className="size-5 object-contain inline-block shrink-0"
+                      />
+                    )}
+                    <span>{p.name}</span>
+                  </button>
+                );
+              })}
             </div>
           </div>
 
           {/* Section 3: Carte (Cards) */}
           <div className="rounded-xl bg-emerald-950/60 border border-emerald-800 p-3 sm:p-4">
             <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2.5">
                 <img
                   src={oneSpadesImg}
-                  alt="One of spades card"
-                  className="h-7 w-auto rounded border border-yellow-400"
+                  alt=""
+                  aria-hidden="true"
+                  className="h-8 w-auto rounded border border-yellow-400 shrink-0"
                 />
 
                 <div>
-                  <h3 className="font-bold text-white text-sm sm:text-base">
-                    Carte (Most Cards)
+                  <h3 className="font-bold text-white text-base sm:text-lg">
+                    <span>Carte</span>{" "}
+                    <span className="inline-block whitespace-nowrap">
+                      (Most Cards)
+                    </span>
                   </h3>
-                  <p className="text-xs text-emerald-300">1 point</p>
+                  <p className="text-xs sm:text-sm text-emerald-200">1 point</p>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={() => setShowCountHelper(!showCountHelper)}
-                className="text-xs text-yellow-300 hover:underline flex items-center gap-1 bg-emerald-900/90 border border-emerald-700 px-2 py-1 rounded"
+                aria-expanded={showCountHelper}
+                className="text-xs sm:text-sm font-semibold text-yellow-300 hover:text-white hover:bg-emerald-800/80 flex items-center gap-1.5 bg-emerald-900/90 border border-emerald-600/80 px-2.5 py-1.5 min-h-[36px] rounded-lg focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none transition-colors cursor-pointer"
               >
-                {showCountHelper ? "Hide Counts" : "Enter Exact Counts"}
+                <span>{showCountHelper ? "Hide Counts" : "Enter Count"}</span>
+                <span
+                  className="text-[10px] text-emerald-400"
+                  aria-hidden="true"
+                >
+                  {showCountHelper ? "▲" : "▼"}
+                </span>
               </button>
             </div>
 
             {/* Optional count inputs */}
             {showCountHelper && (
-              <div className="mb-3 p-2.5 rounded-lg bg-emerald-900/90 border border-emerald-700 text-xs space-y-2">
-                <div className="flex justify-between text-emerald-300">
-                  <span>Enter cards captured:</span>
-                  <span
-                    className={
-                      totalCardsCounted === 40
-                        ? "text-yellow-300 font-bold"
-                        : "text-emerald-400"
-                    }
-                  >
-                    {totalCardsCounted} / 40 cards
-                    {totalCardsCounted === 40
-                      ? " ✓"
-                      : ` (${40 - totalCardsCounted} left)`}
-                  </span>
+              <div className="mb-3 p-3 rounded-lg bg-emerald-900/90 border border-emerald-700 text-xs sm:text-sm space-y-2.5">
+                <div className="flex justify-between items-center text-xs sm:text-sm text-emerald-200 font-medium">
+                  Enter cards captured (of 40):
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   {players.map((p) => {
@@ -606,15 +481,19 @@ export default function RoundScoreModal({
 
                     return (
                       <div key={p.id} className="flex flex-col">
-                        <div className="flex items-center justify-between text-[11px] text-emerald-200">
+                        <label
+                          htmlFor={`cards-count-${p.id}`}
+                          className="flex items-center justify-between text-xs text-emerald-200 font-semibold mb-1"
+                        >
                           <span className="truncate">{p.name}</span>
                           {isAutoFilled && (
-                            <span className="text-[10px] text-yellow-300 font-bold bg-emerald-950/80 px-1 rounded">
+                            <span className="text-[10px] text-yellow-300 font-bold bg-emerald-950/80 px-1 py-0.5 rounded border border-yellow-400/50">
                               Auto
                             </span>
                           )}
-                        </div>
+                        </label>
                         <input
+                          id={`cards-count-${p.id}`}
                           type="number"
                           min="0"
                           max={maxPlayerCards}
@@ -623,10 +502,11 @@ export default function RoundScoreModal({
                             handleCardCountChange(p.id, e.target.value)
                           }
                           placeholder="0"
-                          className={`mt-1 w-full rounded border px-2 py-1 text-center font-bold text-sm focus:outline-none ${
+                          aria-label={`${p.name}'s captured cards count`}
+                          className={`w-full rounded-lg border px-2 py-1.5 text-center font-bold text-base min-h-[40px] focus:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 ${
                             isAutoFilled
-                              ? "bg-emerald-950/90 border-yellow-400/70 text-yellow-300 focus:border-yellow-400"
-                              : "bg-emerald-950 border-emerald-600 text-yellow-300 focus:border-yellow-400"
+                              ? "bg-emerald-950/90 border-yellow-400/70 text-yellow-300"
+                              : "bg-emerald-950 border-emerald-600 text-yellow-300"
                           }`}
                         />
                       </div>
@@ -637,24 +517,29 @@ export default function RoundScoreModal({
             )}
 
             <div className="flex flex-wrap gap-2">
-              {players.map((p) => (
-                <button
-                  key={p.id}
-                  type="button"
-                  onClick={() => setCarteChoice(p.id)}
-                  className={`flex-1 min-w-[90px] py-2 px-3 rounded-lg text-sm font-semibold transition-all border ${
-                    carteChoice === p.id
-                      ? "bg-emerald-600 text-white border-emerald-400 shadow-md font-bold ring-2 ring-yellow-400"
-                      : "bg-emerald-900/80 text-emerald-100 border-emerald-700 hover:bg-emerald-800"
-                  }`}
-                >
-                  {p.name}
-                </button>
-              ))}
+              {players.map((p) => {
+                const isSelected = carteChoice === p.id;
+                return (
+                  <button
+                    key={p.id}
+                    type="button"
+                    onClick={() => setCarteChoice(p.id)}
+                    aria-pressed={isSelected}
+                    className={`flex-1 min-w-[90px] min-h-[44px] py-2 px-3 rounded-lg text-sm sm:text-base font-semibold transition-all border cursor-pointer focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none ${
+                      isSelected
+                        ? "bg-emerald-600 text-white border-emerald-400 shadow-md font-bold ring-2 ring-yellow-400"
+                        : "bg-emerald-900/80 text-emerald-100 border-emerald-700 hover:bg-emerald-800"
+                    }`}
+                  >
+                    {p.name}
+                  </button>
+                );
+              })}
               <button
                 type="button"
                 onClick={() => setCarteChoice("tie")}
-                className={`flex-1 min-w-[90px] py-2 px-3 rounded-lg text-sm font-semibold transition-all border ${
+                aria-pressed={carteChoice === "tie"}
+                className={`flex-1 min-w-[90px] min-h-[44px] py-2 px-3 rounded-lg text-sm sm:text-base font-semibold transition-all border cursor-pointer focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none ${
                   carteChoice === "tie"
                     ? "bg-emerald-600 text-white border-emerald-400 shadow-md font-bold ring-2 ring-yellow-400"
                     : "bg-emerald-900/80 text-emerald-100 border-emerald-700 hover:bg-emerald-800"
@@ -668,101 +553,48 @@ export default function RoundScoreModal({
           {/* Section 4: Denari (Coins) */}
           <div className="rounded-xl bg-emerald-950/60 border border-emerald-800 p-3 sm:p-4">
             <div className="flex items-center justify-between mb-2">
-              <div>
-                <h3 className="font-bold text-white text-sm sm:text-base flex items-center gap-1.5">
-                  <img src={coinIcon} alt="Coin" className="size-4" />
-                  <span>Denari (Most Coins)</span>
-                </h3>
-                <p className="text-xs text-emerald-300">
-                  1 pt for capturing the most coins.
-                </p>
+              <div className="flex items-center gap-2.5">
+                <img
+                  src={coinIcon}
+                  alt=""
+                  aria-hidden="true"
+                  className="h-7 w-auto rounded border border-yellow-400 shrink-0"
+                />
+                <div>
+                  <h3 className="font-bold text-white text-base sm:text-lg">
+                    Denari (Most Coins)
+                  </h3>
+                  <p className="text-xs sm:text-sm text-emerald-200">
+                    1 point for most coins (of 10)
+                  </p>
+                </div>
               </div>
             </div>
 
-            {/* Optional coin count inputs if count helper open */}
-            {showCountHelper && (
-              <div className="mb-3 p-2.5 rounded-lg bg-emerald-900/90 border border-emerald-700 text-xs space-y-2">
-                <div className="flex justify-between text-emerald-300">
-                  <span>Enter coins captured:</span>
-                  <span
-                    className={
-                      totalCoinsCounted === 10
-                        ? "text-yellow-300 font-bold"
-                        : "text-emerald-400"
-                    }
-                  >
-                    {totalCoinsCounted} / 10 coins
-                    {totalCoinsCounted === 10
-                      ? " ✓"
-                      : ` (${10 - totalCoinsCounted} left)`}
-                  </span>
-                </div>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                  {players.map((p) => {
-                    const isAutoFilled = autoFilledCoinsPlayerId === p.id;
-                    const otherCoins = players
-                      .filter(
-                        (other) =>
-                          other.id !== p.id &&
-                          other.id !== autoFilledCoinsPlayerId,
-                      )
-                      .reduce(
-                        (sum, other) => sum + (rawCounts[other.id]?.coins || 0),
-                        0,
-                      );
-                    const maxPlayerCoins = Math.max(0, 10 - otherCoins);
-
-                    return (
-                      <div key={p.id} className="flex flex-col">
-                        <div className="flex items-center justify-between text-[11px] text-emerald-200">
-                          <span className="truncate">{p.name}</span>
-                          {isAutoFilled && (
-                            <span className="text-[10px] text-yellow-300 font-bold bg-emerald-950/80 px-1 rounded">
-                              Auto
-                            </span>
-                          )}
-                        </div>
-                        <input
-                          type="number"
-                          min="0"
-                          max={maxPlayerCoins}
-                          value={rawCounts[p.id]?.coins ?? ""}
-                          onChange={(e) =>
-                            handleCoinCountChange(p.id, e.target.value)
-                          }
-                          placeholder="0"
-                          className={`mt-1 w-full rounded border px-2 py-1 text-center font-bold text-sm focus:outline-none ${
-                            isAutoFilled
-                              ? "bg-emerald-950/90 border-yellow-400/70 text-yellow-300 focus:border-yellow-400"
-                              : "bg-emerald-950 border-emerald-600 text-yellow-300 focus:border-yellow-400"
-                          }`}
-                        />
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
             <div className="flex flex-wrap gap-2">
-              {players.map((p) => (
-                <button
-                  key={p.id}
-                  type="button"
-                  onClick={() => setDenariChoice(p.id)}
-                  className={`flex-1 min-w-[90px] py-2 px-3 rounded-lg text-sm font-semibold transition-all border ${
-                    denariChoice === p.id
-                      ? "bg-emerald-600 text-white border-emerald-400 shadow-md font-bold ring-2 ring-yellow-400"
-                      : "bg-emerald-900/80 text-emerald-100 border-emerald-700 hover:bg-emerald-800"
-                  }`}
-                >
-                  {p.name}
-                </button>
-              ))}
+              {players.map((p) => {
+                const isSelected = denariChoice === p.id;
+                return (
+                  <button
+                    key={p.id}
+                    type="button"
+                    onClick={() => setDenariChoice(p.id)}
+                    aria-pressed={isSelected}
+                    className={`flex-1 min-w-[90px] min-h-[44px] py-2 px-3 rounded-lg text-sm sm:text-base font-semibold transition-all border cursor-pointer focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none ${
+                      isSelected
+                        ? "bg-emerald-600 text-white border-emerald-400 shadow-md font-bold ring-2 ring-yellow-400"
+                        : "bg-emerald-900/80 text-emerald-100 border-emerald-700 hover:bg-emerald-800"
+                    }`}
+                  >
+                    {p.name}
+                  </button>
+                );
+              })}
               <button
                 type="button"
                 onClick={() => setDenariChoice("tie")}
-                className={`flex-1 min-w-[90px] py-2 px-3 rounded-lg text-sm font-semibold transition-all border ${
+                aria-pressed={denariChoice === "tie"}
+                className={`flex-1 min-w-[90px] min-h-[44px] py-2 px-3 rounded-lg text-sm sm:text-base font-semibold transition-all border cursor-pointer focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none ${
                   denariChoice === "tie"
                     ? "bg-emerald-600 text-white border-emerald-400 shadow-md font-bold ring-2 ring-yellow-400"
                     : "bg-emerald-900/80 text-emerald-100 border-emerald-700 hover:bg-emerald-800"
@@ -777,54 +609,59 @@ export default function RoundScoreModal({
           <div className="rounded-xl bg-emerald-950/60 border border-emerald-800 p-3 sm:p-4">
             <div className="flex items-center justify-between mb-2">
               <div>
-                <h3 className="font-bold text-white text-sm sm:text-base flex items-center gap-1.5">
-                  <span>🏆</span>
+                <h3 className="font-bold text-white text-base sm:text-lg flex items-center gap-1.5">
+                  <span aria-hidden="true">🏆</span>
                   <span>Primiera</span>
                 </h3>
-                <p className="text-xs text-emerald-300">
+                <p className="text-xs sm:text-sm text-emerald-200">
                   1 pt for highest 4-suit primiera total.
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => setShowPrimieraCalc(true)}
-                className="flex items-center gap-1.5 bg-yellow-400 text-emerald-950 font-bold px-3 py-1.5 rounded-lg text-xs hover:bg-yellow-300 transition-transform active:scale-95 shadow-md"
+                className="flex items-center gap-1.5 bg-yellow-400 text-emerald-950 font-bold px-3.5 py-1.5 min-h-[38px] rounded-lg text-xs sm:text-sm hover:bg-yellow-300 focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none transition-all active:scale-95 shadow-md cursor-pointer"
               >
                 <span>Open Calculator</span>
               </button>
             </div>
 
             {primieraMethod === "calculated" && (
-              <div className="mb-2 text-xs text-yellow-300 font-medium flex items-center gap-1">
+              <div className="mb-2 text-xs sm:text-sm text-yellow-300 font-medium flex items-center gap-1">
                 <span>✓ Winner determined via Primiera Calculator</span>
               </div>
             )}
 
             <div className="flex flex-wrap gap-2">
-              {players.map((p) => (
-                <button
-                  key={p.id}
-                  type="button"
-                  onClick={() => {
-                    setPrimieraChoice(p.id);
-                    setPrimieraMethod("manual");
-                  }}
-                  className={`flex-1 min-w-[90px] py-2 px-3 rounded-lg text-sm font-semibold transition-all border ${
-                    primieraChoice === p.id
-                      ? "bg-emerald-600 text-white border-emerald-400 shadow-md font-bold ring-2 ring-yellow-400"
-                      : "bg-emerald-900/80 text-emerald-100 border-emerald-700 hover:bg-emerald-800"
-                  }`}
-                >
-                  {p.name}
-                </button>
-              ))}
+              {players.map((p) => {
+                const isSelected = primieraChoice === p.id;
+                return (
+                  <button
+                    key={p.id}
+                    type="button"
+                    onClick={() => {
+                      setPrimieraChoice(p.id);
+                      setPrimieraMethod("manual");
+                    }}
+                    aria-pressed={isSelected}
+                    className={`flex-1 min-w-[90px] min-h-[44px] py-2 px-3 rounded-lg text-sm sm:text-base font-semibold transition-all border cursor-pointer focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none ${
+                      isSelected
+                        ? "bg-emerald-600 text-white border-emerald-400 shadow-md font-bold ring-2 ring-yellow-400"
+                        : "bg-emerald-900/80 text-emerald-100 border-emerald-700 hover:bg-emerald-800"
+                    }`}
+                  >
+                    {p.name}
+                  </button>
+                );
+              })}
               <button
                 type="button"
                 onClick={() => {
                   setPrimieraChoice("tie");
                   setPrimieraMethod("manual");
                 }}
-                className={`flex-1 min-w-[90px] py-2 px-3 rounded-lg text-sm font-semibold transition-all border ${
+                aria-pressed={primieraChoice === "tie"}
+                className={`flex-1 min-w-[90px] min-h-[44px] py-2 px-3 rounded-lg text-sm sm:text-base font-semibold transition-all border cursor-pointer focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none ${
                   primieraChoice === "tie"
                     ? "bg-emerald-600 text-white border-emerald-400 shadow-md font-bold ring-2 ring-yellow-400"
                     : "bg-emerald-900/80 text-emerald-100 border-emerald-700 hover:bg-emerald-800"
@@ -837,7 +674,7 @@ export default function RoundScoreModal({
 
           {/* Points Breakdown Preview */}
           <div className="rounded-xl bg-emerald-950/90 border border-emerald-700 p-3 sm:p-4">
-            <h4 className="text-xs uppercase font-bold text-emerald-400 tracking-wider mb-2">
+            <h4 className="text-xs sm:text-sm uppercase font-bold text-emerald-300 tracking-wider mb-2">
               Round Points Summary
             </h4>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -848,10 +685,10 @@ export default function RoundScoreModal({
                     key={p.id}
                     className="flex flex-col items-center justify-center p-2 rounded-lg bg-emerald-900/70 border border-emerald-700"
                   >
-                    <span className="text-xs text-emerald-200 font-medium truncate max-w-full">
+                    <span className="text-xs sm:text-sm text-emerald-100 font-semibold truncate max-w-full">
                       {p.name}
                     </span>
-                    <span className="text-xl font-extrabold text-yellow-300">
+                    <span className="text-xl sm:text-2xl font-bold text-yellow-300">
                       +{total} {total === 1 ? "pt" : "pts"}
                     </span>
                   </div>
@@ -862,9 +699,9 @@ export default function RoundScoreModal({
         </div>
 
         {/* Footer Actions */}
-        <div className="shrink-0 border-t border-emerald-800 bg-emerald-950/95 px-4 py-3 sm:px-6 space-y-1.5">
+        <div className="shrink-0 border-t border-emerald-800 bg-emerald-950/95 px-4 py-3 sm:px-6 space-y-2">
           {!isRoundComplete && (
-            <p className="text-center text-xs text-emerald-300/80 italic">
+            <p className="text-center text-xs sm:text-sm text-emerald-200 font-medium italic">
               Select all 4 categories to save
             </p>
           )}
@@ -872,10 +709,11 @@ export default function RoundScoreModal({
             type="button"
             onClick={handleSave}
             disabled={!isRoundComplete}
-            className={`w-full rounded-xl py-2.5 font-bold shadow-lg transition-all text-sm ${
+            aria-disabled={!isRoundComplete}
+            className={`w-full min-h-[48px] rounded-xl py-3 font-bold shadow-lg transition-all text-base sm:text-lg focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none ${
               isRoundComplete
-                ? "bg-yellow-400 text-emerald-950 hover:bg-yellow-300 hover:scale-[1.01] cursor-pointer"
-                : "bg-emerald-950 border border-emerald-800 text-emerald-500 cursor-not-allowed opacity-50"
+                ? "bg-yellow-400 text-emerald-950 hover:bg-yellow-300 hover:scale-[1.01] active:scale-95 cursor-pointer"
+                : "bg-emerald-950 border border-emerald-800 text-emerald-400 cursor-not-allowed opacity-60"
             }`}
           >
             {existingRound ? "Update Round" : "Save Round"}
