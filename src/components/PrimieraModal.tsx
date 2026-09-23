@@ -33,6 +33,7 @@ export default function PrimieraModal({
       className="fixed inset-0 z-60 flex items-center justify-center overflow-y-auto bg-black/75 p-3 sm:p-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-xs cursor-pointer"
       role="dialog"
       aria-modal="true"
+      aria-labelledby="primiera-calculator-title"
       onClick={(e) => {
         if (e.target === e.currentTarget) {
           e.stopPropagation();
