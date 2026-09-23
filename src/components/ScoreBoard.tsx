@@ -57,9 +57,9 @@ export default function ScoreBoard({
   const winner = players.find((p) => p.id === winnerId);
 
   return (
-    <div className="mx-auto w-full max-w-4xl flex-1 flex flex-col px-3 sm:px-6 py-3 sm:py-4 space-y-4 sm:space-y-6 text-white min-h-0">
+    <div className="mx-auto w-full max-w-4xl flex-1 flex flex-col px-3 sm:px-6 py-3 sm:py-4 gap-3 sm:gap-4 text-white min-h-0 overflow-y-auto">
       {/* Top Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-3 shrink-0">
         <div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-white">
             Scopa Scorecard
@@ -94,137 +94,140 @@ export default function ScoreBoard({
         </div>
       </div>
 
-      {/* Winner Banner if Finished */}
-      {isFinished && winner && (
-        <div
-          role="status"
-          aria-live="polite"
-          className="rounded-2xl border-2 border-yellow-400 bg-linear-to-r from-emerald-950 via-emerald-900 to-emerald-950 p-5 shadow-2xl text-center space-y-3 animate-fade-in mb-5"
-        >
-          <div className="text-4xl" aria-hidden="true">
-            🏆
+      {/* Middle Section: Player Scores & Primary CTA (plus Winner Banner) */}
+      <div className="space-y-3 sm:space-y-4 shrink-0 my-auto">
+        {/* Winner Banner if Finished */}
+        {isFinished && winner && (
+          <div
+            role="status"
+            aria-live="polite"
+            className="rounded-2xl border-2 border-yellow-400 bg-linear-to-r from-emerald-950 via-emerald-900 to-emerald-950 p-5 shadow-2xl text-center space-y-3 animate-fade-in"
+          >
+            <div className="text-4xl" aria-hidden="true">
+              🏆
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-bold text-yellow-300">
+              {winner.name} Wins!
+            </h2>
+            <p className="text-emerald-200 text-sm sm:text-base">
+              Victory achieved in {rounds.length}{" "}
+              {rounds.length === 1 ? "round" : "rounds"} with{" "}
+              <span className="font-bold text-yellow-300">
+                {currentTotals[winner.id]} points
+              </span>{" "}
+            </p>
+            <div className="flex justify-center pt-2">
+              <button
+                type="button"
+                onClick={onResetGame}
+                className="rounded-xl bg-yellow-400 px-6 py-2.5 font-bold text-emerald-950 shadow-lg hover:bg-yellow-300 hover:scale-105 active:scale-95 focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none transition-all text-base sm:text-lg cursor-pointer"
+              >
+                Start New Game
+              </button>
+            </div>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-bold text-yellow-300">
-            {winner.name} Wins!
-          </h2>
-          <p className="text-emerald-200 text-sm sm:text-base">
-            Victory achieved in {rounds.length}{" "}
-            {rounds.length === 1 ? "round" : "rounds"} with{" "}
-            <span className="font-bold text-yellow-300">
-              {currentTotals[winner.id]} points
-            </span>{" "}
-          </p>
-          <div className="flex justify-center pt-2">
+        )}
+
+        {/* Player Score Badges */}
+        <div
+          className={`grid gap-3 ${players.length === 2 ? "grid-cols-2" : players.length === 3 ? "grid-cols-3" : "grid-cols-2 sm:grid-cols-4"}`}
+        >
+          {players.map((p) => {
+            const score = currentTotals[p.id] || 0;
+            const isLeader =
+              score === highestScore && highestScore > 0 && !isLeaderTied;
+            const progressPercent = Math.min(
+              100,
+              Math.round((score / settings.targetScore) * 100),
+            );
+
+            return (
+              <div
+                key={p.id}
+                className={`relative flex flex-col justify-between rounded-2xl p-4 shadow-xl border transition-all ${
+                  isLeader
+                    ? "bg-linear-to-b from-emerald-800 to-emerald-900 border-yellow-400 ring-2 ring-yellow-400/80 scale-[1.02]"
+                    : "bg-emerald-900/80 border-emerald-700/80"
+                }`}
+              >
+                {/* Leader Badge */}
+                {isLeader && (
+                  <div
+                    aria-label="Current game leader"
+                    className="absolute -top-3 right-3 rounded-full bg-yellow-400 text-emerald-950 px-2 py-0.5 text-[11px] font-bold shadow-md flex items-center gap-1"
+                  >
+                    Leader
+                  </div>
+                )}
+
+                <div>
+                  <h2 className="font-bold text-base sm:text-lg text-white truncate pr-2">
+                    {p.name}
+                  </h2>
+
+                  {/* Score Number */}
+                  <div className="my-2 flex items-baseline gap-1">
+                    <span className="text-4xl sm:text-5xl font-extrabold text-yellow-300 tracking-tight">
+                      {score}
+                    </span>
+                    <span className="text-xs sm:text-sm text-emerald-300 font-medium">
+                      / {settings.targetScore}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Progress Bar */}
+                <div className="space-y-1.5 pt-1">
+                  <div
+                    role="progressbar"
+                    aria-valuenow={score}
+                    aria-valuemin={0}
+                    aria-valuemax={settings.targetScore}
+                    aria-label={`${p.name}: ${score} of ${settings.targetScore} points`}
+                    className="h-2 w-full overflow-hidden rounded-full bg-emerald-950"
+                  >
+                    <div
+                      className="h-full bg-linear-to-r from-emerald-400 to-yellow-400 transition-all duration-500 rounded-full"
+                      style={{ width: `${progressPercent}%` }}
+                    />
+                  </div>
+
+                  {/* Quick stat scopa chip */}
+                  <div className="flex items-center gap-1.5 text-xs text-emerald-200 font-medium">
+                    <span
+                      aria-hidden="true"
+                      className="text-lg sm:text-xl leading-none shrink-0"
+                    >
+                      🧹
+                    </span>
+                    <span>
+                      {totalScope[p.id] < 2
+                        ? `${totalScope[p.id] || 0} scopa`
+                        : `${totalScope[p.id]} scope`}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Primary Action Button */}
+        {!isFinished && (
+          <div className="flex justify-center pt-1 sm:pt-2">
             <button
               type="button"
-              onClick={onResetGame}
-              className="rounded-xl bg-yellow-400 px-6 py-2.5 font-bold text-emerald-950 shadow-lg hover:bg-yellow-300 hover:scale-105 active:scale-95 focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none transition-all text-base sm:text-lg cursor-pointer"
+              onClick={onScoreNextRound}
+              className="w-full sm:w-auto min-w-[260px] min-h-[48px] rounded-2xl bg-yellow-400 py-3.5 px-8 font-bold text-emerald-950 text-base sm:text-lg shadow-xl hover:bg-yellow-300 hover:scale-105 active:scale-95 focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none transition-all cursor-pointer flex items-center justify-center gap-2"
             >
-              Start New Game
+              <span>+ Score Round {rounds.length + 1}</span>
             </button>
           </div>
-        </div>
-      )}
-
-      {/* Player Score Badges */}
-      <div
-        className={`grid gap-3 ${players.length === 2 ? "grid-cols-2" : players.length === 3 ? "grid-cols-3" : "grid-cols-2 sm:grid-cols-4"}`}
-      >
-        {players.map((p) => {
-          const score = currentTotals[p.id] || 0;
-          const isLeader =
-            score === highestScore && highestScore > 0 && !isLeaderTied;
-          const progressPercent = Math.min(
-            100,
-            Math.round((score / settings.targetScore) * 100),
-          );
-
-          return (
-            <div
-              key={p.id}
-              className={`relative flex flex-col justify-between rounded-2xl p-4 shadow-xl border transition-all ${
-                isLeader
-                  ? "bg-linear-to-b from-emerald-800 to-emerald-900 border-yellow-400 ring-2 ring-yellow-400/80 scale-[1.02]"
-                  : "bg-emerald-900/80 border-emerald-700/80"
-              }`}
-            >
-              {/* Leader Badge */}
-              {isLeader && (
-                <div
-                  aria-label="Current game leader"
-                  className="absolute -top-3 right-3 rounded-full bg-yellow-400 text-emerald-950 px-2 py-0.5 text-[11px] font-bold shadow-md flex items-center gap-1"
-                >
-                  Leader
-                </div>
-              )}
-
-              <div>
-                <h2 className="font-bold text-base sm:text-lg text-white truncate pr-2">
-                  {p.name}
-                </h2>
-
-                {/* Score Number */}
-                <div className="my-2 flex items-baseline gap-1">
-                  <span className="text-4xl sm:text-5xl font-extrabold text-yellow-300 tracking-tight">
-                    {score}
-                  </span>
-                  <span className="text-xs sm:text-sm text-emerald-300 font-medium">
-                    / {settings.targetScore}
-                  </span>
-                </div>
-              </div>
-
-              {/* Progress Bar */}
-              <div className="space-y-1.5 pt-1">
-                <div
-                  role="progressbar"
-                  aria-valuenow={score}
-                  aria-valuemin={0}
-                  aria-valuemax={settings.targetScore}
-                  aria-label={`${p.name}: ${score} of ${settings.targetScore} points`}
-                  className="h-2 w-full overflow-hidden rounded-full bg-emerald-950"
-                >
-                  <div
-                    className="h-full bg-linear-to-r from-emerald-400 to-yellow-400 transition-all duration-500 rounded-full"
-                    style={{ width: `${progressPercent}%` }}
-                  />
-                </div>
-
-                {/* Quick stat scopa chip */}
-                <div className="flex items-center gap-1.5 text-xs text-emerald-200 font-medium">
-                  <span
-                    aria-hidden="true"
-                    className="text-lg sm:text-xl leading-none shrink-0"
-                  >
-                    🧹
-                  </span>
-                  <span>
-                    {totalScope[p.id] < 2
-                      ? `${totalScope[p.id] || 0} scopa`
-                      : `${totalScope[p.id]} scope`}
-                  </span>
-                </div>
-              </div>
-            </div>
-          );
-        })}
+        )}
       </div>
 
-      {/* Primary Action Button */}
-      {!isFinished && (
-        <div className="flex justify-center pt-2">
-          <button
-            type="button"
-            onClick={onScoreNextRound}
-            className="w-full sm:w-auto min-w-[260px] min-h-[48px] rounded-2xl bg-yellow-400 py-3.5 px-8 font-bold text-emerald-950 text-base sm:text-lg shadow-xl hover:bg-yellow-300 hover:scale-105 active:scale-95 focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none transition-all cursor-pointer flex items-center justify-center gap-2"
-          >
-            <span>+ Score Round {rounds.length + 1}</span>
-          </button>
-        </div>
-      )}
-
       {/* Round History Table */}
-      <div className="rounded-2xl bg-emerald-900/90 border border-emerald-700 shadow-xl overflow-hidden">
+      <div className="rounded-2xl bg-emerald-900/90 border border-emerald-700 shadow-xl overflow-hidden shrink-0">
         <div
           className={`flex items-center justify-between bg-emerald-950/70 px-4 py-3 sm:px-6 ${
             !isHistoryCollapsed ? "border-b border-emerald-800" : ""
