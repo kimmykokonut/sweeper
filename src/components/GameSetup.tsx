@@ -123,7 +123,10 @@ export default function GameSetup({
       </div>
 
       {/* 2. Suit Badges Row */}
-      <div className="flex items-center justify-center gap-3.5 sm:gap-4 shrink-0 py-0.5">
+      <div
+        aria-hidden="true"
+        className="flex items-center justify-center gap-3.5 sm:gap-4 shrink-0 py-0.5 select-none"
+      >
         {(["coins", "cups", "swords", "clubs"] as const).map((suit) => (
           <div
             key={suit}
@@ -156,7 +159,8 @@ export default function GameSetup({
             <button
               type="button"
               onClick={onResume}
-              className="shrink-0 rounded-lg bg-yellow-400 px-3.5 py-2 text-sm sm:text-base font-bold text-emerald-950 hover:bg-yellow-300 shadow-sm cursor-pointer transition-transform hover:scale-105 active:scale-95"
+              aria-label={`Resume unfinished game, Round ${existingGame.rounds.length + 1}`}
+              className="shrink-0 rounded-lg bg-yellow-400 px-3.5 py-2 min-h-[44px] text-sm sm:text-base font-bold text-emerald-950 hover:bg-yellow-300 focus-visible:ring-2 focus-visible:ring-yellow-300 focus-visible:outline-none shadow-sm cursor-pointer transition-transform hover:scale-105 active:scale-95 flex items-center justify-center"
             >
               Resume
             </button>
@@ -178,8 +182,9 @@ export default function GameSetup({
                 <button
                   key={count}
                   type="button"
+                  aria-pressed={playerCount === count}
                   onClick={() => handlePlayerCountChange(count as 2 | 3 | 4)}
-                  className={`py-2 sm:py-3 px-1 sm:px-2.5 flex items-center justify-center text-center rounded-xl font-semibold text-base sm:text-lg border transition-all ${
+                  className={`py-2 sm:py-3 px-1 sm:px-2.5 flex items-center justify-center text-center rounded-xl font-semibold text-base sm:text-lg border focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none transition-all cursor-pointer ${
                     playerCount === count
                       ? "bg-yellow-400 text-emerald-950 border-yellow-300 shadow-md ring-2 ring-yellow-300 scale-102 font-bold"
                       : "bg-emerald-950/60 text-emerald-200 border-emerald-700 hover:bg-emerald-800"
@@ -195,8 +200,9 @@ export default function GameSetup({
               <div className="mt-2.5 flex items-center justify-center gap-2 p-1.5 bg-emerald-950/60 rounded-xl border border-emerald-800 text-sm sm:text-base">
                 <button
                   type="button"
+                  aria-pressed={!isTeams}
                   onClick={() => handleTeamsToggle(false)}
-                  className={`flex-1 py-2 font-semibold rounded-lg transition-colors ${
+                  className={`flex-1 py-2 font-semibold rounded-lg transition-colors focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none cursor-pointer ${
                     !isTeams
                       ? "bg-emerald-600 text-white shadow-xs font-bold"
                       : "text-emerald-300 hover:text-white"
@@ -206,8 +212,9 @@ export default function GameSetup({
                 </button>
                 <button
                   type="button"
+                  aria-pressed={isTeams}
                   onClick={() => handleTeamsToggle(true)}
-                  className={`flex-1 py-2 font-semibold rounded-lg transition-colors ${
+                  className={`flex-1 py-2 font-semibold rounded-lg transition-colors focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none cursor-pointer ${
                     isTeams
                       ? "bg-emerald-600 text-white shadow-xs font-bold"
                       : "text-emerald-300 hover:text-white"
@@ -230,19 +237,27 @@ export default function GameSetup({
                   ? `Team ${index + 1}`
                   : `Player ${index + 1}`;
                 return (
-                  <div key={index} className="flex items-center gap-2.5 sm:gap-3 min-w-0 w-full">
-                    <span className="text-sm sm:text-base font-semibold text-emerald-400 w-16 sm:w-20 text-right shrink-0">
+                  <div
+                    key={index}
+                    className="flex items-center gap-2.5 sm:gap-3 min-w-0 w-full"
+                  >
+                    <label
+                      htmlFor={`player-name-${index}`}
+                      className="text-sm sm:text-base font-semibold text-emerald-400 w-16 sm:w-20 text-right shrink-0 cursor-pointer"
+                    >
                       {isTeams ? `Team ${index + 1}` : `Player ${index + 1}`}:
-                    </span>
+                    </label>
                     <input
+                      id={`player-name-${index}`}
                       type="text"
                       maxLength={20}
+                      aria-label={`${isTeams ? "Team" : "Player"} ${index + 1} Name`}
                       value={playerNames[index] ?? defaultPlaceholder}
                       onChange={(e) => handleNameChange(index, e.target.value)}
                       onFocus={(e) => e.target.select()}
                       onClick={(e) => (e.target as HTMLInputElement).select()}
                       placeholder={defaultPlaceholder}
-                      className="flex-1 min-w-0 rounded-xl bg-emerald-950/80 border border-emerald-600 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-white placeholder-emerald-500 focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 focus:outline-none"
+                      className="flex-1 min-w-0 rounded-xl bg-emerald-950/80 border border-emerald-600 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-white placeholder-emerald-500 focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none"
                     />
                   </div>
                 );
@@ -258,11 +273,12 @@ export default function GameSetup({
             <div className="flex gap-2.5 sm:gap-3">
               <button
                 type="button"
+                aria-pressed={targetScore === 11 && !customTarget}
                 onClick={() => {
                   setTargetScore(11);
                   setCustomTarget("");
                 }}
-                className={`flex-1 py-3 sm:py-3.5 px-2.5 sm:px-3 rounded-xl font-semibold text-base sm:text-lg border transition-all ${
+                className={`flex-1 py-3 sm:py-3.5 px-2.5 sm:px-3 rounded-xl font-semibold text-base sm:text-lg border focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none transition-all cursor-pointer ${
                   targetScore === 11 && !customTarget
                     ? "bg-yellow-400 text-emerald-950 border-yellow-300 shadow-md ring-2 ring-yellow-300 scale-101 font-bold"
                     : "bg-emerald-950/60 text-emerald-200 border-emerald-700 hover:bg-emerald-800"
@@ -293,13 +309,14 @@ export default function GameSetup({
                     min="1"
                     max="99"
                     placeholder="21"
+                    aria-label="Custom target score in points"
                     value={customTarget}
                     onChange={(e) => {
                       const val = e.target.value;
                       setCustomTarget(val);
                       if (val) setTargetScore(parseInt(val, 10) || 11);
                     }}
-                    className="flex-1 min-w-0 rounded-lg bg-emerald-950 border border-emerald-600 px-2 py-1.5 text-center text-base sm:text-lg font-semibold text-yellow-300 placeholder:font-normal placeholder-emerald-500 focus:border-yellow-400 focus:outline-none"
+                    className="flex-1 min-w-0 rounded-lg bg-emerald-950 border border-emerald-600 px-2 py-1.5 text-center text-base sm:text-lg font-semibold text-yellow-300 placeholder:font-normal placeholder-emerald-500 focus:border-yellow-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400"
                   />
                   <span className="text-sm sm:text-base text-emerald-300 font-medium shrink-0">
                     pts
@@ -312,7 +329,7 @@ export default function GameSetup({
           {/* Start Game Button */}
           <button
             type="submit"
-            className="w-full rounded-xl bg-yellow-400 py-3 sm:py-4 font-bold text-emerald-950 text-lg sm:text-xl shadow-lg hover:bg-yellow-300 hover:scale-[1.01] active:scale-99 transition-all cursor-pointer"
+            className="w-full rounded-xl bg-yellow-400 py-3.5 sm:py-4 font-bold text-emerald-950 text-lg sm:text-xl shadow-lg hover:bg-yellow-300 hover:scale-[1.01] active:scale-99 focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none transition-all cursor-pointer"
           >
             Start Game
           </button>
