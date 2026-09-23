@@ -112,34 +112,34 @@ export default function GameSetup({
 
   return (
     <div className="w-full max-w-lg mx-auto flex-1 flex flex-col justify-center gap-4 sm:gap-6 my-auto px-4 py-3 sm:py-5 min-h-0 overflow-y-auto text-white">
-      {/* 1. Header: Title, Subtitle, and Integrated Suit Badges */}
-      <div className="text-center space-y-1 py-1 shrink-0">
+      {/* 1. Header: Title & Subtitle */}
+      <div className="text-center space-y-1 shrink-0">
         <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
           Scopa Setup
         </h1>
         <p className="text-sm sm:text-base text-emerald-200/90">
           Configure players and target score
         </p>
-
-        {/* 4 Card Suit Chips */}
-        <div className="flex items-center justify-center gap-3 pt-1.5">
-          {(["coins", "cups", "swords", "clubs"] as const).map((suit) => (
-            <div
-              key={suit}
-              className="flex items-center justify-center size-9 sm:size-10 rounded-full bg-amber-50/95 border border-yellow-400/80 shadow-md p-0.25 transition-transform hover:scale-110"
-              title={CARD_DATA[suit].displayName}
-            >
-              <img
-                src={CARD_DATA[suit].icon}
-                alt={CARD_DATA[suit].displayName}
-                className="size-full object-contain drop-shadow-xs"
-              />
-            </div>
-          ))}
-        </div>
       </div>
 
-      {/* 2. Form Card & Optional Resume Banner */}
+      {/* 2. Suit Badges Row */}
+      <div className="flex items-center justify-center gap-3.5 sm:gap-4 shrink-0 py-0.5">
+        {(["coins", "cups", "swords", "clubs"] as const).map((suit) => (
+          <div
+            key={suit}
+            className="flex items-center justify-center size-9 sm:size-10 rounded-full bg-amber-50/95 border border-yellow-400/80 shadow-md p-0.25 transition-transform hover:scale-110"
+            title={CARD_DATA[suit].displayName}
+          >
+            <img
+              src={CARD_DATA[suit].icon}
+              alt={CARD_DATA[suit].displayName}
+              className="size-full object-contain drop-shadow-xs"
+            />
+          </div>
+        ))}
+      </div>
+
+      {/* 3. Form Card & Optional Resume Banner */}
       <div className="w-full space-y-3 shrink-0">
         {/* Resume In-Progress Game Banner */}
         {existingGame && !existingGame.isFinished && (
