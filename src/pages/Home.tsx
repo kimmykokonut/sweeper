@@ -75,13 +75,15 @@ function Home() {
             aria-label={`Resume game in progress, Round ${activeGame.rounds.length + 1}`}
             className="w-full flex items-center justify-between p-2 sm:p-3 rounded-xl bg-emerald-950/90 border border-emerald-700/80 text-emerald-100 hover:bg-emerald-900/90 hover:border-yellow-400/70 focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none transition-all shadow-md hover:scale-[1.01] active:scale-99 mb-6 sm:mb-8"
           >
-            <div className="flex items-center gap-2 min-w-0 flex-1 pr-2">
-              <img src={cupIcon} alt="" aria-hidden="true" className="size-5 sm:size-6 object-contain shrink-0" />
+            <div className="flex items-center gap-2.5 min-w-0 flex-1 pr-2">
+              <div className="flex items-center justify-center size-8 sm:size-9 rounded-full bg-amber-50/95 border border-yellow-400/80 shadow-xs shrink-0 p-1">
+                <img src={cupIcon} alt="" aria-hidden="true" className="size-full object-contain" />
+              </div>
               <div className="min-w-0 flex flex-wrap items-baseline gap-x-1.5 leading-snug">
-                <span className="text-base sm:text-lg font-bold whitespace-nowrap">
+                <span className="text-base sm:text-lg font-semibold whitespace-nowrap">
                   Game in Progress
                 </span>
-                <span className="text-sm sm:text-base text-yellow-300 font-bold whitespace-nowrap">
+                <span className="text-sm sm:text-base text-yellow-300 font-medium whitespace-nowrap">
                   (Round {activeGame.rounds.length + 1})
                 </span>
               </div>
@@ -107,10 +109,10 @@ function Home() {
               className="w-full aspect-[250/413] object-contain rounded-xl shadow-xl shadow-black/40 ring-1 ring-black/15 group-hover:ring-2 group-hover:ring-yellow-400/80 group-hover:shadow-2xl transition-all duration-200 group-hover:scale-102"
             />
             <div className="mt-2.5 w-full rounded-xl bg-emerald-950/90 border border-emerald-800/80 p-2 sm:p-2.5 text-center group-hover:bg-emerald-900 group-hover:border-yellow-400 group-hover:ring-1 group-hover:ring-yellow-400/30 transition-all shadow-md">
-              <h2 className="text-base sm:text-lg font-extrabold text-white leading-tight">
+              <h2 className="text-lg sm:text-xl font-bold text-white leading-tight">
                 Scorecard
               </h2>
-              <span className="mt-0.5 flex items-center justify-center gap-1 text-xs sm:text-sm font-bold text-yellow-300">
+              <span className="mt-0.5 flex items-center justify-center gap-1 text-sm sm:text-base font-medium text-yellow-300">
                 <span>
                   {activeGame && !activeGame.isFinished
                     ? "New Game"
@@ -135,10 +137,10 @@ function Home() {
               className="w-full aspect-[250/413] object-contain rounded-xl shadow-xl shadow-black/40 ring-1 ring-black/15 group-hover:ring-2 group-hover:ring-yellow-400/80 group-hover:shadow-2xl transition-all duration-200 group-hover:scale-102"
             />
             <div className="mt-2.5 w-full rounded-xl bg-emerald-950/90 border border-emerald-800/80 p-2 sm:p-2.5 text-center group-hover:bg-emerald-900 group-hover:border-yellow-400 group-hover:ring-1 group-hover:ring-yellow-400/30 transition-all shadow-md">
-              <h2 className="text-base sm:text-lg font-extrabold text-white leading-tight">
+              <h2 className="text-lg sm:text-xl font-bold text-white leading-tight">
                 Primiera
               </h2>
-              <span className="mt-0.5 flex items-center justify-center gap-1 text-xs sm:text-sm font-bold text-yellow-300">
+              <span className="mt-0.5 flex items-center justify-center gap-1 text-sm sm:text-base font-medium text-yellow-300">
                 <span>Calculate Hand</span>
                 <span className="transition-transform group-hover:translate-x-0.5" aria-hidden="true">
                   →
