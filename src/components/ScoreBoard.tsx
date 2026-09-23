@@ -59,14 +59,14 @@ export default function ScoreBoard({
   return (
     <div className="mx-auto w-full max-w-4xl flex-1 flex flex-col px-3 sm:px-6 py-3 sm:py-4 space-y-4 sm:space-y-6 text-white min-h-0">
       {/* Top Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-emerald-800 pb-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-white">
             Scopa Scorecard
           </h1>
           <p className="text-xs sm:text-sm text-emerald-200">
             Playing to{" "}
-            <span className="font-bold text-yellow-300">
+            <span className="font-semibold text-yellow-300">
               {settings.targetScore} points
             </span>
             {settings.isTeams ? " • Teams" : ` • ${players.length} Players`}
@@ -77,14 +77,17 @@ export default function ScoreBoard({
           <button
             type="button"
             onClick={() => setShowRules(true)}
-            className="rounded-lg bg-emerald-800/80 border border-emerald-600 px-3 py-1.5 text-xs font-semibold text-emerald-100 hover:bg-emerald-700 transition-colors cursor-pointer"
+            aria-label="View Scopa scoring rules"
+            className="rounded-lg bg-emerald-800/80 border border-emerald-600 px-3 py-1.5 min-h-[38px] text-xs sm:text-sm font-semibold text-emerald-100 hover:bg-emerald-700 focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none transition-colors cursor-pointer flex items-center gap-1.5"
           >
-            📖 Rules
+            <span aria-hidden="true">📖</span>
+            <span>Rules</span>
           </button>
           <button
             type="button"
             onClick={onResetGame}
-            className="rounded-lg bg-emerald-800/80 border border-emerald-600 px-3 py-1.5 text-xs font-semibold text-emerald-100 hover:bg-emerald-700 hover:text-white transition-colors cursor-pointer"
+            aria-label="Start a new game"
+            className="rounded-lg bg-emerald-800/80 border border-emerald-600 px-3 py-1.5 min-h-[38px] text-xs sm:text-sm font-semibold text-emerald-100 hover:bg-emerald-700 hover:text-white focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none transition-colors cursor-pointer flex items-center justify-center"
           >
             New Game
           </button>
@@ -93,12 +96,18 @@ export default function ScoreBoard({
 
       {/* Winner Banner if Finished */}
       {isFinished && winner && (
-        <div className="rounded-2xl border-2 border-yellow-400 bg-linear-to-r from-emerald-950 via-emerald-900 to-emerald-950 p-5 shadow-2xl text-center space-y-3 animate-fade-in">
-          <div className="text-4xl">🏆</div>
-          <h2 className="text-2xl sm:text-3xl font-black text-yellow-300">
+        <div
+          role="status"
+          aria-live="polite"
+          className="rounded-2xl border-2 border-yellow-400 bg-linear-to-r from-emerald-950 via-emerald-900 to-emerald-950 p-5 shadow-2xl text-center space-y-3 animate-fade-in mb-5"
+        >
+          <div className="text-4xl" aria-hidden="true">
+            🏆
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-bold text-yellow-300">
             {winner.name} Wins!
           </h2>
-          <p className="text-emerald-200 text-sm">
+          <p className="text-emerald-200 text-sm sm:text-base">
             Victory achieved in {rounds.length}{" "}
             {rounds.length === 1 ? "round" : "rounds"} with{" "}
             <span className="font-bold text-yellow-300">
@@ -109,7 +118,7 @@ export default function ScoreBoard({
             <button
               type="button"
               onClick={onResetGame}
-              className="rounded-xl bg-yellow-400 px-6 py-2.5 font-extrabold text-emerald-950 shadow-lg hover:bg-yellow-300 hover:scale-105 transition-all text-sm cursor-pointer"
+              className="rounded-xl bg-yellow-400 px-6 py-2.5 font-bold text-emerald-950 shadow-lg hover:bg-yellow-300 hover:scale-105 active:scale-95 focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none transition-all text-base sm:text-lg cursor-pointer"
             >
               Start New Game
             </button>
@@ -141,22 +150,25 @@ export default function ScoreBoard({
             >
               {/* Leader Badge */}
               {isLeader && (
-                <div className="absolute -top-3 right-3 rounded-full bg-yellow-400 text-emerald-950 px-2 py-0.5 text-[11px] font-extrabold shadow-md flex items-center gap-1">
+                <div
+                  aria-label="Current game leader"
+                  className="absolute -top-3 right-3 rounded-full bg-yellow-400 text-emerald-950 px-2 py-0.5 text-[11px] font-bold shadow-md flex items-center gap-1"
+                >
                   Leader
                 </div>
               )}
 
               <div>
-                <h3 className="font-bold text-base sm:text-lg text-white truncate pr-2">
+                <h2 className="font-bold text-base sm:text-lg text-white truncate pr-2">
                   {p.name}
-                </h3>
+                </h2>
 
                 {/* Score Number */}
                 <div className="my-2 flex items-baseline gap-1">
-                  <span className="text-4xl sm:text-5xl font-black text-yellow-300 tracking-tight">
+                  <span className="text-4xl sm:text-5xl font-extrabold text-yellow-300 tracking-tight">
                     {score}
                   </span>
-                  <span className="text-xs text-emerald-300 font-semibold">
+                  <span className="text-xs sm:text-sm text-emerald-300 font-medium">
                     / {settings.targetScore}
                   </span>
                 </div>
@@ -164,7 +176,14 @@ export default function ScoreBoard({
 
               {/* Progress Bar */}
               <div className="space-y-1.5 pt-1">
-                <div className="h-2 w-full overflow-hidden rounded-full bg-emerald-950">
+                <div
+                  role="progressbar"
+                  aria-valuenow={score}
+                  aria-valuemin={0}
+                  aria-valuemax={settings.targetScore}
+                  aria-label={`${p.name}: ${score} of ${settings.targetScore} points`}
+                  className="h-2 w-full overflow-hidden rounded-full bg-emerald-950"
+                >
                   <div
                     className="h-full bg-linear-to-r from-emerald-400 to-yellow-400 transition-all duration-500 rounded-full"
                     style={{ width: `${progressPercent}%` }}
@@ -173,7 +192,12 @@ export default function ScoreBoard({
 
                 {/* Quick stat scopa chip */}
                 <div className="flex items-center gap-1.5 text-xs text-emerald-200 font-medium">
-                  <span className="text-base sm:text-lg leading-none shrink-0">🧹</span>
+                  <span
+                    aria-hidden="true"
+                    className="text-lg sm:text-xl leading-none shrink-0"
+                  >
+                    🧹
+                  </span>
                   <span>
                     {totalScope[p.id] < 2
                       ? `${totalScope[p.id] || 0} scopa`
@@ -192,7 +216,7 @@ export default function ScoreBoard({
           <button
             type="button"
             onClick={onScoreNextRound}
-            className="w-full sm:w-auto min-w-[260px] rounded-2xl bg-yellow-400 py-3.5 px-8 font-black text-emerald-950 text-base sm:text-lg shadow-xl hover:bg-yellow-300 hover:scale-105 active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-2"
+            className="w-full sm:w-auto min-w-[260px] min-h-[48px] rounded-2xl bg-yellow-400 py-3.5 px-8 font-bold text-emerald-950 text-base sm:text-lg shadow-xl hover:bg-yellow-300 hover:scale-105 active:scale-95 focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none transition-all cursor-pointer flex items-center justify-center gap-2"
           >
             <span>+ Score Round {rounds.length + 1}</span>
           </button>
@@ -217,7 +241,7 @@ export default function ScoreBoard({
             <button
               type="button"
               onClick={() => setIsHistoryCollapsed(!isHistoryCollapsed)}
-              className="text-xs font-semibold text-emerald-300 hover:text-white px-2.5 py-1 rounded-lg bg-emerald-900/80 hover:bg-emerald-800 border border-emerald-700/60 transition-colors cursor-pointer flex items-center gap-1.5"
+              className="text-xs font-semibold text-emerald-300 hover:text-white px-2.5 py-1.5 min-h-[36px] rounded-lg bg-emerald-900/80 hover:bg-emerald-800 border border-emerald-700/60 focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none transition-colors cursor-pointer flex items-center gap-1.5"
               aria-expanded={!isHistoryCollapsed}
               aria-label={
                 isHistoryCollapsed
@@ -251,13 +275,14 @@ export default function ScoreBoard({
                 >
                   {/* Round Label & Actions */}
                   <div className="flex items-center justify-between sm:justify-start gap-3 sm:w-28 shrink-0">
-                    <span className="font-extrabold text-sm sm:text-base text-yellow-300">
+                    <span className="font-bold text-sm sm:text-base text-yellow-300">
                       Round {round.roundNumber}
                     </span>
                     <button
                       type="button"
                       onClick={() => onEditRound(round)}
-                      className="p-1 text-emerald-300 hover:text-white rounded hover:bg-emerald-800 text-xs sm:hidden"
+                      aria-label={`Edit Round ${round.roundNumber}`}
+                      className="p-1 min-h-[44px] min-w-[44px] flex items-center justify-center text-emerald-300 hover:text-white rounded hover:bg-emerald-800 focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none text-xs sm:hidden cursor-pointer"
                       title="Edit Round"
                     >
                       ✏️
@@ -284,7 +309,7 @@ export default function ScoreBoard({
                             <span className="font-bold text-emerald-200 truncate mr-1">
                               {p.name}
                             </span>
-                            <span className="font-black text-yellow-300 text-sm">
+                            <span className="font-bold text-yellow-300 text-sm">
                               +{pts}{" "}
                               <span className="text-[10px] text-emerald-400 font-normal">
                                 ({cumTotal})
@@ -296,7 +321,12 @@ export default function ScoreBoard({
                           <div className="flex flex-wrap gap-1 items-center">
                             {scopeCount > 0 && (
                               <span className="rounded bg-emerald-800 px-1.5 py-0.5 text-[10px] text-yellow-200 font-semibold inline-flex items-center gap-1">
-                                <span className="text-xs sm:text-sm leading-none">🧹</span>
+                                <span
+                                  aria-hidden="true"
+                                  className="text-xs sm:text-sm leading-none"
+                                >
+                                  🧹
+                                </span>
                                 <span>
                                   {scopeCount}{" "}
                                   {scopeCount === 1 ? "scopa" : "scope"}
@@ -304,20 +334,22 @@ export default function ScoreBoard({
                               </span>
                             )}
                             {gotCarte && (
-                              <span className="rounded bg-amber-400/20 text-yellow-300 border border-yellow-400/40 px-1 py-0.5 text-[10px] font-bold inline-flex items-center gap-1">
+                              <span className="rounded bg-amber-400/20 text-yellow-300 border border-yellow-400/40 px-1 py-0.5 text-[10px] font-semibold inline-flex items-center gap-1">
                                 <img
                                   src={kingSpadesImg}
-                                  alt="King of Spades Card"
+                                  alt=""
+                                  aria-hidden="true"
                                   className="size-3 object-contain inline shrink-0"
                                 />
                                 <span>Carte</span>
                               </span>
                             )}
                             {gotDenari && (
-                              <span className="rounded bg-amber-400/20 text-yellow-300 border border-yellow-400/40 px-1 py-0.5 text-[10px] font-bold inline-flex items-center gap-1">
+                              <span className="rounded bg-amber-400/20 text-yellow-300 border border-yellow-400/40 px-1 py-0.5 text-[10px] font-semibold inline-flex items-center gap-1">
                                 <img
                                   src={coinIcon}
-                                  alt="Coins suit"
+                                  alt=""
+                                  aria-hidden="true"
                                   className="size-3 object-contain inline shrink-0"
                                 />
                                 <span>Denari</span>
@@ -348,7 +380,8 @@ export default function ScoreBoard({
                   <button
                     type="button"
                     onClick={() => onEditRound(round)}
-                    className="p-1.5 text-emerald-300 hover:text-white rounded-lg hover:bg-emerald-800 transition-colors text-sm hidden sm:block"
+                    aria-label={`Edit Round ${round.roundNumber}`}
+                    className="p-1.5 min-h-[36px] min-w-[36px] flex items-center justify-center text-emerald-300 hover:text-white rounded-lg hover:bg-emerald-800 focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none transition-colors text-sm hidden sm:flex cursor-pointer"
                     title="Edit Round"
                   >
                     ✏️
@@ -361,16 +394,25 @@ export default function ScoreBoard({
 
       {/* Rules Quick Reference Modal */}
       {showRules && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-3 sm:p-4">
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="rules-modal-title"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-3 sm:p-4"
+        >
           <div className="relative flex max-h-[90vh] w-full max-w-lg flex-col rounded-2xl bg-emerald-900 border border-emerald-700 p-5 shadow-2xl text-white overflow-y-auto space-y-4">
             <div className="flex items-center justify-between border-b border-emerald-800 pb-2">
-              <h3 className="font-bold text-lg text-white">
+              <h3
+                id="rules-modal-title"
+                className="font-bold text-lg text-white"
+              >
                 Scopa Scoring Rules
               </h3>
               <button
                 type="button"
                 onClick={() => setShowRules(false)}
-                className="text-emerald-300 hover:text-white"
+                aria-label="Close rules modal"
+                className="min-h-[44px] min-w-[44px] flex items-center justify-center text-emerald-300 hover:text-white rounded-lg focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none transition-colors cursor-pointer text-base"
               >
                 ✕
               </button>
@@ -394,7 +436,8 @@ export default function ScoreBoard({
                 <div className="rounded-lg bg-emerald-950/70 p-2.5 border border-emerald-800 flex items-start gap-2">
                   <img
                     src={aceCoinsImg}
-                    alt="Italian Ace of Coins"
+                    alt=""
+                    aria-hidden="true"
                     className="h-8 w-auto rounded border border-yellow-400 shrink-0"
                   />
                   <div>
@@ -409,7 +452,8 @@ export default function ScoreBoard({
                 <div className="rounded-lg bg-emerald-950/70 p-2.5 border border-emerald-800 flex items-start gap-2">
                   <img
                     src={setteBelloImg}
-                    alt="Settebello"
+                    alt=""
+                    aria-hidden="true"
                     className="h-8 w-auto rounded border border-yellow-400 shrink-0"
                   />
                   <div>
@@ -424,7 +468,8 @@ export default function ScoreBoard({
                 <div className="rounded-lg bg-emerald-950/70 p-2.5 border border-emerald-800 flex items-start gap-2">
                   <img
                     src={coinIcon}
-                    alt="Coins suit"
+                    alt=""
+                    aria-hidden="true"
                     className="h-8 w-auto rounded border border-yellow-400 shrink-0"
                   />
                   <div>
@@ -449,14 +494,14 @@ export default function ScoreBoard({
               <div className="text-xs text-emerald-300 pt-1">
                 <strong>Winning:</strong> The first player or team to reach or
                 exceed {settings.targetScore} points with strictly the highest
-                score wins the match!
+                score wins the game!
               </div>
             </div>
 
             <button
               type="button"
               onClick={() => setShowRules(false)}
-              className="w-full rounded-xl bg-yellow-400 py-2.5 font-bold text-emerald-950 hover:bg-yellow-300 shadow-md transition-colors"
+              className="w-full rounded-xl bg-yellow-400 py-3 font-bold text-emerald-950 hover:bg-yellow-300 focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none shadow-md transition-colors cursor-pointer min-h-[44px]"
             >
               Got it!
             </button>
