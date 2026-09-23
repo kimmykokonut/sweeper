@@ -259,17 +259,20 @@ export default function PrimieraCalculator({
     >
       {/* Header */}
       <div
-        className={`flex items-center justify-between ${
+        className={`flex items-center justify-between shrink-0 ${
           isModal
             ? "border-b border-emerald-800 bg-emerald-950/70 px-4 py-3 sm:px-6"
             : "px-4 pt-3 pb-2 sm:px-6 bg-transparent"
         }`}
       >
         <div>
-          <h2 className="text-lg sm:text-xl font-bold text-white leading-tight">
+          <h2
+            id="primiera-calculator-title"
+            className="text-xl sm:text-2xl font-bold text-white leading-tight"
+          >
             Primiera Calculator
           </h2>
-          <p className="text-xs text-emerald-300">
+          <p className="text-xs sm:text-sm text-emerald-200 mt-0.5">
             {isModal
               ? "Calculate Primiera point for this round"
               : "Select the highest card in each suit"}
@@ -281,7 +284,7 @@ export default function PrimieraCalculator({
             type="button"
             onClick={onClose}
             aria-label="Close calculator"
-            className="rounded-lg p-1.5 text-emerald-300 hover:bg-emerald-800 hover:text-white transition-colors cursor-pointer"
+            className="min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl text-emerald-300 hover:bg-emerald-800 hover:text-white transition-colors cursor-pointer text-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400"
           >
             ✕
           </button>
@@ -291,9 +294,9 @@ export default function PrimieraCalculator({
           <button
             type="button"
             onClick={handleResetAllCards}
-            className="text-xs rounded-lg bg-emerald-800 hover:bg-emerald-700 text-emerald-200 hover:text-white px-2.5 py-1.5 font-medium transition-colors cursor-pointer"
+            className="min-h-[44px] text-xs sm:text-sm rounded-xl bg-emerald-700 hover:bg-emerald-600 text-yellow-300 hover:text-white px-4 py-2 font-bold transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400"
           >
-            Reset Hand
+            Reset
           </button>
         )}
       </div>
@@ -303,7 +306,7 @@ export default function PrimieraCalculator({
         !playersProp &&
         !allCalculated &&
         (isPlayerCountExpanded ? (
-          <div className="w-full px-4 py-2 bg-transparent">
+          <div className="w-full px-4 py-2 bg-transparent shrink-0">
             <div className="grid grid-cols-3 w-full gap-2">
               {[2, 3, 4].map((count) => {
                 const isActive = standalonePlayerCount === count;
@@ -311,11 +314,12 @@ export default function PrimieraCalculator({
                   <button
                     key={count}
                     type="button"
+                    aria-pressed={isActive}
                     onClick={() => handleStandalonePlayerCountChange(count)}
-                    className={`py-2 px-1 rounded-lg text-xs sm:text-sm font-bold transition-all text-center cursor-pointer ${
+                    className={`min-h-[44px] py-2 px-2 rounded-xl text-sm sm:text-base font-bold transition-all text-center cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 ${
                       isActive
-                        ? "bg-yellow-400 text-emerald-950 shadow"
-                        : "bg-emerald-800/80 text-emerald-200 hover:bg-emerald-700"
+                        ? "bg-yellow-400 text-emerald-950 shadow-md"
+                        : "bg-emerald-800/80 text-emerald-200 hover:bg-emerald-700 hover:text-white"
                     }`}
                   >
                     {count} Players
@@ -325,22 +329,25 @@ export default function PrimieraCalculator({
             </div>
           </div>
         ) : (
-          <div className="flex items-center justify-between px-4 py-1.5 text-xs bg-transparent">
+          <div className="flex items-center justify-between px-4 py-1.5 text-xs sm:text-sm bg-transparent shrink-0">
             <div className="flex items-center gap-2">
-              <span className="text-emerald-400 font-semibold uppercase tracking-wider text-[11px]">
+              <span className="text-emerald-400 font-semibold uppercase tracking-wider text-xs">
                 Players:
               </span>
-              <span className="text-white font-bold bg-emerald-800/90 px-2 py-0.5 rounded text-xs">
+              <span className="text-white font-bold bg-emerald-700 px-2.5 py-1 rounded-lg text-xs sm:text-sm">
                 {standalonePlayerCount} Players
               </span>
             </div>
             <button
               type="button"
+              aria-expanded={false}
               onClick={() => setIsPlayerCountExpanded(true)}
-              className="text-yellow-300 hover:text-yellow-200 font-semibold underline underline-offset-2 flex items-center gap-1 cursor-pointer"
+              className="min-h-[44px] text-yellow-300 hover:text-yellow-200 font-bold flex items-center gap-1 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 rounded-lg px-2"
             >
               <span>Change</span>
-              <span className="text-[10px]">▾</span>
+              <span className="text-xs" aria-hidden="true">
+                ▾
+              </span>
             </button>
           </div>
         ))}
@@ -348,7 +355,9 @@ export default function PrimieraCalculator({
       {/* Player Selector Comparison Cards */}
       {activePlayers.length > 1 && (!allCalculated || isModal) && (
         <div
-          className={`grid w-full gap-2 ${
+          role="tablist"
+          aria-label="Players primiera selection"
+          className={`grid w-full gap-2 shrink-0 ${
             isModal
               ? "border-b border-emerald-800 bg-emerald-950/40 p-2"
               : "px-3 sm:px-4 py-2 bg-transparent"
@@ -373,8 +382,10 @@ export default function PrimieraCalculator({
               <button
                 key={p.id}
                 type="button"
+                role="tab"
+                aria-selected={isSelected}
                 onClick={() => setSelectedPlayerId(p.id)}
-                className={`w-full min-w-0 flex flex-col items-center justify-center p-2 rounded-xl border transition-all text-center cursor-pointer ${
+                className={`w-full min-w-0 min-h-[44px] flex flex-col items-center justify-center p-2 rounded-xl border transition-all text-center cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 ${
                   isSelected
                     ? "bg-emerald-700 border-yellow-400 ring-2 ring-yellow-400/80 shadow-lg"
                     : isLeader && score > 0
@@ -382,14 +393,16 @@ export default function PrimieraCalculator({
                       : "bg-emerald-900/60 border-emerald-700/60 hover:bg-emerald-800/60"
                 }`}
               >
-                <div className="flex items-center gap-1 text-xs font-semibold truncate max-w-full text-emerald-100">
+                <div className="flex items-center gap-1 text-xs sm:text-sm font-bold truncate max-w-full text-emerald-100">
                   {allCalculated && winnerId === p.id && (
-                    <span className="text-yellow-300">⭐</span>
+                    <span className="text-yellow-300" aria-hidden="true">
+                      ⭐
+                    </span>
                   )}
                   <span className="truncate">{p.name}</span>
                 </div>
 
-                <div className="text-lg sm:text-xl font-extrabold text-white leading-tight mt-0.5">
+                <div className="text-xl sm:text-2xl font-extrabold text-white leading-tight mt-0.5">
                   {suitsCount === 4
                     ? `${score} pts`
                     : suitsCount > 0
@@ -397,17 +410,19 @@ export default function PrimieraCalculator({
                       : "—"}
                 </div>
 
-                <div className="text-[10px] sm:text-[11px] font-bold h-4 flex items-center justify-center">
+                <div className="text-xs sm:text-sm font-semibold h-4 flex items-center justify-center">
                   {allCalculated && winnerId === p.id ? (
-                    <span className="text-yellow-300">Winner</span>
+                    <span className="text-yellow-300 font-bold">Winner</span>
                   ) : isLeader && score > 0 ? (
-                    <span className="text-yellow-300/90">👑 Highest</span>
+                    <span className="text-yellow-300/90 font-bold">
+                      👑 Highest
+                    </span>
                   ) : suitsCount < 4 && suitsCount > 0 ? (
-                    <span className="text-emerald-400">
+                    <span className="text-emerald-300">
                       {suitsCount}/4 suits
                     </span>
                   ) : (
-                    <span className="text-emerald-500/70">
+                    <span className="text-emerald-400/80">
                       {isSelected ? "Active" : "Tap to edit"}
                     </span>
                   )}
@@ -422,20 +437,23 @@ export default function PrimieraCalculator({
       <div className="flex-1 overflow-y-auto px-3 sm:px-4 py-3 space-y-3">
         {/* Celebration / Action Card (Shown when all cards are selected) */}
         {allCalculated && (
-          <div className="rounded-2xl bg-gradient-to-b from-yellow-400/20 via-emerald-900/60 to-emerald-950/80 border border-yellow-400/50 p-3 sm:p-4 text-center shadow-lg">
+          <div
+            role="status"
+            aria-live="polite"
+            className="rounded-2xl bg-gradient-to-b from-yellow-400/20 via-emerald-900/60 to-emerald-950/80 border border-yellow-400/50 p-3.5 sm:p-4 text-center shadow-lg"
+          >
             {/* Winner Announcement */}
-            <div className="flex items-center justify-center gap-2 text-sm sm:text-base font-extrabold text-yellow-300 mb-1">
+            <div className="flex items-center justify-center gap-2 text-base sm:text-lg font-bold text-yellow-300 mb-1">
               {winnerId ? (
-                <>
-                  <span className="text-lg">⭐</span>
-                  <span>
-                    {activePlayers.find((p) => p.id === winnerId)?.name} wins
-                    the Primiera point!
-                  </span>
-                </>
+                <div>
+                  {activePlayers.find((p) => p.id === winnerId)?.name} wins the
+                  Primiera point!
+                </div>
               ) : isTie ? (
                 <>
-                  <span className="text-lg">⚖️</span>
+                  <span className="text-xl" aria-hidden="true">
+                    ⚖️
+                  </span>
                   <span className="text-amber-200">
                     Tie! No Primiera point awarded.
                   </span>
@@ -444,11 +462,11 @@ export default function PrimieraCalculator({
             </div>
 
             {/* Score summary chips */}
-            <div className="flex flex-wrap items-center justify-center gap-2 my-2">
+            <div className="flex flex-wrap items-center justify-center gap-2 my-2.5">
               {activePlayers.map((p) => (
                 <span
                   key={p.id}
-                  className={`text-xs px-2.5 py-1 rounded-lg font-bold ${
+                  className={`text-xs sm:text-sm px-3 py-1 rounded-lg font-bold ${
                     winnerId === p.id
                       ? "bg-yellow-400 text-emerald-950 shadow"
                       : "bg-emerald-950/70 border border-emerald-700/60 text-emerald-200"
@@ -461,18 +479,18 @@ export default function PrimieraCalculator({
 
             {/* Action buttons (Page Mode only) */}
             {!isModal && (
-              <div className="grid grid-cols-2 gap-2 mt-3 pt-2 border-t border-yellow-400/30 w-full">
+              <div className="grid grid-cols-2 gap-2.5 mt-3 pt-2.5 border-t border-yellow-400/30 w-full">
                 <button
                   type="button"
                   onClick={handleResetAllCards}
-                  className="w-full py-2 px-2 sm:px-3 rounded-xl bg-emerald-800 hover:bg-emerald-700 text-emerald-100 font-semibold text-xs sm:text-sm transition-colors cursor-pointer text-center"
+                  className="w-full min-h-[44px] py-2.5 px-3 rounded-xl bg-emerald-800 hover:bg-emerald-700 text-emerald-100 font-bold text-sm sm:text-base transition-colors cursor-pointer text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400"
                 >
                   Reset Hand
                 </button>
                 <button
                   type="button"
                   onClick={handleTransferToScorecard}
-                  className="w-full py-2 px-2 sm:px-3 rounded-xl bg-emerald-800 hover:bg-emerald-700 text-emerald-100 font-semibold text-xs sm:text-sm transition-colors cursor-pointer text-center"
+                  className="w-full min-h-[44px] py-2.5 px-3 rounded-xl bg-yellow-400 hover:bg-yellow-300 text-emerald-950 font-bold text-sm sm:text-base transition-colors cursor-pointer text-center shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
                 >
                   Transfer to Scorecard
                 </button>
@@ -485,19 +503,25 @@ export default function PrimieraCalculator({
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {SUITS.map((suit) => {
             const selectedValue = currentSelections[suit];
+            const suitInfo = CARD_DATA[suit];
             return (
               <button
                 key={suit}
                 type="button"
                 onClick={() => setActiveSuit(suit)}
-                className={`group relative flex aspect-[2/3] flex-col items-center justify-center rounded-xl p-1.5 transition-all shadow-md ${
+                aria-label={
+                  selectedValue
+                    ? `${selectedValue} of ${suit}, ${primieraValues[selectedValue]} points. Tap to change.`
+                    : `Select highest card for ${suitInfo.displayName}`
+                }
+                className={`group relative flex aspect-[2/3] flex-col items-center justify-center rounded-2xl p-2 transition-all shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 cursor-pointer ${
                   selectedValue
                     ? "bg-white ring-2 ring-yellow-400 hover:ring-yellow-300"
-                    : "bg-emerald-800/80 border-2 border-dashed border-emerald-600 hover:border-emerald-400 hover:bg-emerald-700/60"
+                    : "bg-emerald-800/80 border-2 border-dashed border-emerald-600 hover:border-emerald-400 hover:bg-emerald-700/70"
                 }`}
               >
                 {selectedValue ? (
-                  <div className="relative flex h-full w-full flex-col items-center justify-center">
+                  <div className="relative flex h-full w-full flex-col items-center justify-between">
                     {/* Inline X button to clear this card */}
                     <button
                       type="button"
@@ -505,35 +529,38 @@ export default function PrimieraCalculator({
                         e.stopPropagation();
                         handleRemoveCard(suit);
                       }}
-                      className="absolute -top-1 -right-1 z-10 size-5 rounded-full bg-emerald-950/90 hover:bg-red-600 text-white text-[11px] font-bold flex items-center justify-center shadow-md transition-colors cursor-pointer"
+                      className="absolute -top-3 -right-3 z-10 size-8 sm:size-9 rounded-full bg-emerald-950 hover:bg-red-600 text-white text-sm font-bold flex items-center justify-center shadow-lg border border-emerald-700 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
                       title={`Clear ${suit}`}
                       aria-label={`Clear ${suit}`}
                     >
                       ✕
                     </button>
-                    <img
-                      src={getCardImage(suit, selectedValue)}
-                      alt={`${selectedValue} of ${suit}`}
-                      className="min-h-0 w-full flex-1 object-contain"
-                    />
-                    <div className="mt-1 flex items-center justify-between w-full px-1 text-xs font-bold text-emerald-900 bg-emerald-100 rounded">
+                    <div className="min-h-0 w-full flex-1 flex items-center justify-center p-1">
+                      <img
+                        src={getCardImage(suit, selectedValue)}
+                        alt={`${selectedValue} of ${suit}`}
+                        className="h-full w-full object-contain drop-shadow-sm"
+                      />
+                    </div>
+                    <div className="mt-1 flex items-center justify-between w-full px-2 py-1 text-xs sm:text-sm font-bold text-emerald-950 bg-emerald-100 rounded-lg">
                       <span className="capitalize">{suit}</span>
-                      <span className="text-emerald-700">
+                      <span className="text-emerald-800 font-extrabold">
                         {primieraValues[selectedValue]} pts
                       </span>
                     </div>
                   </div>
                 ) : (
-                  <div className="flex flex-col items-center justify-center gap-1.5 p-2 text-center">
+                  <div className="flex flex-col items-center justify-center gap-2 sm:gap-3 p-2 text-center h-full w-full">
                     <img
-                      src={CARD_DATA[suit].icon}
-                      alt={`${CARD_DATA[suit].name} suit`}
-                      className="h-10 w-10 sm:h-12 sm:w-12 object-contain transition-transform group-hover:scale-110"
+                      src={suitInfo.icon}
+                      alt=""
+                      aria-hidden="true"
+                      className="size-32 sm:size-40 object-contain transition-transform duration-200 group-hover:scale-110 drop-shadow-md"
                     />
-                    <span className="text-xs font-semibold text-emerald-200">
-                      {CARD_DATA[suit].displayName}
+                    <span className="text-base sm:text-lg font-bold text-white tracking-wide">
+                      {suitInfo.displayName}
                     </span>
-                    <span className="text-[10px] text-emerald-400">
+                    <span className="text-xs sm:text-sm font-semibold text-emerald-300">
                       Tap to choose
                     </span>
                   </div>
@@ -546,12 +573,12 @@ export default function PrimieraCalculator({
 
       {/* Footer Actions (Modal Mode) */}
       {isModal && (
-        <div className="border-t border-emerald-800 bg-emerald-950/70 px-4 py-3 sm:px-6">
+        <div className="border-t border-emerald-800 bg-emerald-950/70 px-4 py-3 sm:px-6 shrink-0">
           <button
             type="button"
             onClick={handleApply}
             disabled={!allCalculated}
-            className={`w-full rounded-xl py-2.5 font-bold shadow-lg transition-all text-sm ${
+            className={`w-full min-h-[48px] rounded-xl py-3 font-bold shadow-lg transition-all text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 ${
               allCalculated
                 ? "bg-yellow-400 text-emerald-950 hover:bg-yellow-300 hover:scale-[1.01] cursor-pointer"
                 : "bg-gray-600 text-gray-300 opacity-50 cursor-not-allowed"
