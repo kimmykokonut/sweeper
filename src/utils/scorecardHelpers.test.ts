@@ -3,6 +3,7 @@ import {
   calculateRoundTotals,
   recalculateGame,
   determineWinnerFromCounts,
+  calculateAutoFillCards,
   saveGameState,
   loadGameState,
   clearGameState,
@@ -235,9 +236,135 @@ describe("scorecardHelpers", () => {
 
       saveGameState(sampleGame);
       expect(loadGameState()).not.toBeNull();
-
       clearGameState();
       expect(loadGameState()).toBeNull();
+    });
+
+    it("should return null if stored game state is corrupted JSON", () => {
+      mockStorage["sweeper_active_game"] = "not-valid-json{{{";
+      expect(loadGameState()).toBeNull();
+    });
+
+    it("should return null if stored game state is missing players or rounds", () => {
+      mockStorage["sweeper_active_game"] = JSON.stringify({
+        id: "game_broken",
+        players: [],
+      });
+      expect(loadGameState()).toBeNull();
+
+      mockStorage["sweeper_active_game"] = JSON.stringify({
+        id: "game_broken_rounds",
+        players: [{ id: "p1", name: "Player 1" }],
+        // missing rounds array
+      });
+      expect(loadGameState()).toBeNull();
+    });
+  });
+
+  describe("calculateAutoFillCards", () => {
+    const twoPlayerIds = ["p1", "p2"];
+
+    it("should auto-fill the other player and determine winner in a 2-player game", () => {
+      const result = calculateAutoFillCards({}, "p1", "24", twoPlayerIds, null);
+      expect(result.updatedCounts).toEqual({ p1: 24, p2: 16 });
+      expect(result.autoFilledId).toBe("p2");
+      expect(result.carteWinnerId).toBe("p1");
+    });
+
+    it("should clamp card count to 40 maximum in a 2-player game", () => {
+      const result = calculateAutoFillCards({}, "p1", "45", twoPlayerIds, null);
+      expect(result.updatedCounts).toEqual({ p1: 40, p2: 0 });
+      expect(result.autoFilledId).toBe("p2");
+      expect(result.carteWinnerId).toBe("p1");
+    });
+
+    it("should declare tie when cards are split 20-20 in a 2-player game", () => {
+      const result = calculateAutoFillCards({}, "p1", "20", twoPlayerIds, null);
+      expect(result.updatedCounts).toEqual({ p1: 20, p2: 20 });
+      expect(result.carteWinnerId).toBe("tie");
+    });
+
+    it("should clear both players when deleting input (empty string) in a 2-player game", () => {
+      const initial = { p1: 22, p2: 18 };
+      const result = calculateAutoFillCards(initial, "p1", "", twoPlayerIds, "p2");
+      expect(result.updatedCounts).toEqual({ p1: undefined, p2: undefined });
+      expect(result.autoFilledId).toBeNull();
+      expect(result.carteWinnerId).toBeNull();
+    });
+
+    it("should handle 3-player game: clamp entry and auto-fill last player once 2 players enter counts", () => {
+      const threePlayerIds = ["p1", "p2", "p3"];
+
+      // Step 1: p1 enters 15
+      const step1 = calculateAutoFillCards({}, "p1", "15", threePlayerIds, null);
+      expect(step1.updatedCounts.p1).toBe(15);
+      expect(step1.autoFilledId).toBeNull(); // Only 1 of 3 filled, no auto-fill yet
+      expect(step1.carteWinnerId).toBe("p1");
+
+      // Step 2: p2 enters 15 -> exactly (3 - 1) = 2 players filled, p3 auto-fills remainder (40 - 30 = 10)
+      const step2 = calculateAutoFillCards(
+        step1.updatedCounts,
+        "p2",
+        "15",
+        threePlayerIds,
+        step1.autoFilledId,
+      );
+      expect(step2.updatedCounts).toEqual({ p1: 15, p2: 15, p3: 10 });
+      expect(step2.autoFilledId).toBe("p3");
+      expect(step2.carteWinnerId).toBe("tie"); // p1 and p2 tied at 15
+    });
+
+    it("should clear stale auto-filled player when a count is cleared in 3-player game", () => {
+      const threePlayerIds = ["p1", "p2", "p3"];
+      const counts = { p1: 15, p2: 15, p3: 10 };
+
+      const result = calculateAutoFillCards(counts, "p1", "", threePlayerIds, "p3");
+      expect(result.updatedCounts.p1).toBeUndefined();
+      expect(result.updatedCounts.p3).toBeUndefined(); // Stale auto-fill cleared
+      expect(result.updatedCounts.p2).toBe(15); // p2 remains
+      expect(result.autoFilledId).toBeNull();
+      expect(result.carteWinnerId).toBe("p2");
+    });
+
+    it("should ignore non-numeric string values safely", () => {
+      const result = calculateAutoFillCards({ p1: 20 }, "p1", "abc", twoPlayerIds, null);
+      expect(result.updatedCounts).toEqual({ p1: 20 });
+    });
+  });
+
+  describe("4-player team mode scoring", () => {
+    const teams: Player[] = [
+      { id: "p1", name: "Team 1" },
+      { id: "p2", name: "Team 2" },
+    ];
+
+    it("should calculate game and declare winning team correctly", () => {
+      const rounds = [
+        {
+          roundNumber: 1,
+          scope: { p1: 3, p2: 1 },
+          carteWinnerId: "p1",
+          denariWinnerId: "p1",
+          settebelloWinnerId: "p1",
+          primieraWinnerId: "p2",
+        },
+        {
+          roundNumber: 2,
+          scope: { p1: 4, p2: 0 },
+          carteWinnerId: "p1",
+          denariWinnerId: "p1",
+          settebelloWinnerId: "p1",
+          primieraWinnerId: "p1",
+        },
+      ];
+
+      const result = recalculateGame(rounds, teams, 11);
+      // Round 1: Team 1 has 3 (scope) + 3 categories = 6 pts; Team 2 has 1 (scope) + 1 category = 2 pts
+      expect(result.recalculatedRounds[0].cumulativeTotals).toEqual({ p1: 6, p2: 2 });
+      // Round 2: Team 1 has 4 + 4 categories = 8 pts -> Total 14 pts; Team 2 has 2 pts
+      expect(result.recalculatedRounds[1].cumulativeTotals).toEqual({ p1: 14, p2: 2 });
+      expect(result.isFinished).toBe(true);
+      expect(result.winnerId).toBe("p1");
     });
   });
 });

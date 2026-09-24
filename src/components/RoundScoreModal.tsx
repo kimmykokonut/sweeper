@@ -4,7 +4,9 @@ import setteBelloImg from "../assets/7-denari.jpg";
 import oneSpadesImg from "../assets/1-spade.jpg";
 import coinIcon from "../assets/denare.png";
 import PrimieraModal from "./PrimieraModal";
-import { determineWinnerFromCounts } from "../utils/scorecardHelpers";
+import {
+  calculateAutoFillCards,
+} from "../utils/scorecardHelpers";
 
 interface RoundScoreModalProps {
   players: Player[];
@@ -110,141 +112,32 @@ export default function RoundScoreModal({
     });
   };
 
-  // Count helper handlers
   const handleCardCountChange = (playerId: string, val: string) => {
-    // 1. If user deletes the value (empty string):
-    if (val === "") {
-      const updated: Record<string, RoundRawCounts> = { ...rawCounts };
-      updated[playerId] = { ...updated[playerId], cards: undefined };
-
-      // In a 2-player game, clearing one player also clears the other so user starts fresh
-      if (players.length === 2) {
-        const otherPlayer = players.find((p) => p.id !== playerId);
-        if (otherPlayer) {
-          updated[otherPlayer.id] = {
-            ...updated[otherPlayer.id],
-            cards: undefined,
-          };
-        }
-        setAutoFilledCardsPlayerId(null);
-      } else {
-        // In 3+ player game, if there was an auto-filled player, clear it because counts are no longer complete
-        if (autoFilledCardsPlayerId) {
-          updated[autoFilledCardsPlayerId] = {
-            ...updated[autoFilledCardsPlayerId],
-            cards: undefined,
-          };
-          setAutoFilledCardsPlayerId(null);
-        }
-      }
-
-      setRawCounts(updated);
-
-      // Re-evaluate Carte winner based on remaining counts
-      const counts: Record<string, number> = {};
-      for (const p of players) {
-        if (updated[p.id]?.cards !== undefined) {
-          counts[p.id] = updated[p.id].cards!;
-        }
-      }
-      if (Object.keys(counts).length > 0) {
-        setCarteChoice(determineWinnerFromCounts(counts) ?? "tie");
-      } else {
-        setCarteChoice(null);
-      }
-      return;
+    const playerIds = players.map((p) => p.id);
+    const existingCounts: Record<string, number | undefined> = {};
+    for (const p of players) {
+      existingCounts[p.id] = rawCounts[p.id]?.cards;
     }
 
-    // 2. User entered a numeric value:
-    const parsed = parseInt(val, 10);
-    if (isNaN(parsed)) return;
-
-    if (players.length === 2) {
-      // 2-Player Game: Directly clamp to 40, and update the other player to (40 - clamped)
-      const clamped = Math.min(40, Math.max(0, parsed));
-      const otherPlayer = players.find((p) => p.id !== playerId)!;
-      const otherRemainder = 40 - clamped;
-
-      const updated: Record<string, RoundRawCounts> = {
-        ...rawCounts,
-        [playerId]: { ...rawCounts[playerId], cards: clamped },
-        [otherPlayer.id]: {
-          ...rawCounts[otherPlayer.id],
-          cards: otherRemainder,
-        },
-      };
-
-      setAutoFilledCardsPlayerId(otherPlayer.id);
-      setRawCounts(updated);
-
-      const counts: Record<string, number> = {
-        [playerId]: clamped,
-        [otherPlayer.id]: otherRemainder,
-      };
-      setCarteChoice(determineWinnerFromCounts(counts) ?? "tie");
-      return;
-    }
-
-    // 3+ Player Game:
-    // Exclude the current playerId and any currently auto-filled player from manual sum
-    const otherManualCards = players
-      .filter((p) => p.id !== playerId && p.id !== autoFilledCardsPlayerId)
-      .reduce((sum, p) => sum + (rawCounts[p.id]?.cards || 0), 0);
-
-    const maxAllowed = Math.max(0, 40 - otherManualCards);
-    const clamped = Math.min(maxAllowed, Math.max(0, parsed));
-
-    const updated: Record<string, RoundRawCounts> = {
-      ...rawCounts,
-      [playerId]: { ...rawCounts[playerId], cards: clamped },
-    };
-
-    // If another player was auto-filled, clear it before re-checking
-    let newAutoFilledId: string | null = null;
-    if (autoFilledCardsPlayerId && autoFilledCardsPlayerId !== playerId) {
-      updated[autoFilledCardsPlayerId] = {
-        ...updated[autoFilledCardsPlayerId],
-        cards: undefined,
-      };
-    }
-
-    const filledManualPlayers = players.filter(
-      (p) => updated[p.id]?.cards !== undefined,
+    const result = calculateAutoFillCards(
+      existingCounts,
+      playerId,
+      val,
+      playerIds,
+      autoFilledCardsPlayerId,
     );
 
-    // If exactly (players.length - 1) players have counts, auto-fill the remaining one
-    if (filledManualPlayers.length === players.length - 1) {
-      const unfilledPlayer = players.find(
-        (p) => updated[p.id]?.cards === undefined,
-      );
-      if (unfilledPlayer) {
-        const sumManual = filledManualPlayers.reduce(
-          (sum, p) => sum + (updated[p.id]?.cards || 0),
-          0,
-        );
-        const remainder = Math.max(0, 40 - sumManual);
-        updated[unfilledPlayer.id] = {
-          ...updated[unfilledPlayer.id],
-          cards: remainder,
-        };
-        newAutoFilledId = unfilledPlayer.id;
-      }
+    const updatedRawCounts: Record<string, RoundRawCounts> = { ...rawCounts };
+    for (const id of playerIds) {
+      updatedRawCounts[id] = {
+        ...updatedRawCounts[id],
+        cards: result.updatedCounts[id],
+      };
     }
 
-    setAutoFilledCardsPlayerId(newAutoFilledId);
-    setRawCounts(updated);
-
-    const counts: Record<string, number> = {};
-    for (const p of players) {
-      if (updated[p.id]?.cards !== undefined) {
-        counts[p.id] = updated[p.id].cards!;
-      }
-    }
-    if (Object.keys(counts).length > 0) {
-      setCarteChoice(determineWinnerFromCounts(counts) ?? "tie");
-    } else {
-      setCarteChoice(null);
-    }
+    setRawCounts(updatedRawCounts);
+    setAutoFilledCardsPlayerId(result.autoFilledId);
+    setCarteChoice(result.carteWinnerId);
   };
 
   // Calculate live preview totals
