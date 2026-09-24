@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { GameState, RoundEntry } from "../types";
 import setteBelloImg from "../assets/7-denari.jpg";
 import coinIcon from "../assets/denare.png";
@@ -23,6 +23,18 @@ export default function ScoreBoard({
   const [isHistoryCollapsed, setIsHistoryCollapsed] = useState(
     () => game.rounds.length > 0,
   );
+
+  // Close rules modal on Escape key press
+  useEffect(() => {
+    if (!showRules) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setShowRules(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [showRules]);
 
   const { players, rounds, settings, isFinished, winnerId } = game;
   const currentTotals: Record<string, number> = {};
@@ -401,25 +413,23 @@ export default function ScoreBoard({
           role="dialog"
           aria-modal="true"
           aria-labelledby="rules-modal-title"
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-3 sm:p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-3 sm:p-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-xs cursor-pointer"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowRules(false);
+            }
+          }}
         >
-          <div className="relative flex max-h-[90vh] w-full max-w-lg flex-col rounded-2xl bg-emerald-900 border border-emerald-700 p-5 shadow-2xl text-white overflow-y-auto space-y-4">
-            <div className="flex items-center justify-between border-b border-emerald-800 pb-2">
-              <h3
-                id="rules-modal-title"
-                className="font-bold text-lg text-white"
-              >
-                Scopa Scoring Rules
-              </h3>
-              <button
-                type="button"
-                onClick={() => setShowRules(false)}
-                aria-label="Close rules modal"
-                className="min-h-[44px] min-w-[44px] flex items-center justify-center text-emerald-300 hover:text-white rounded-lg focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none transition-colors cursor-pointer text-base"
-              >
-                ✕
-              </button>
-            </div>
+          <div
+            className="relative flex max-h-[calc(100dvh-1.5rem)] sm:max-h-[90vh] w-full max-w-lg flex-col rounded-2xl bg-emerald-900 border border-emerald-700 p-5 shadow-2xl text-white overflow-y-auto space-y-4 cursor-default"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3
+              id="rules-modal-title"
+              className="font-bold text-lg text-white border-b border-emerald-800 pb-2"
+            >
+              Scopa Scoring Rules
+            </h3>
 
             <div className="text-xs sm:text-sm text-emerald-100 space-y-3">
               <p>
@@ -429,7 +439,7 @@ export default function ScoreBoard({
 
               <div className="space-y-2">
                 <div className="rounded-lg bg-emerald-950/70 p-2.5 border border-emerald-800">
-                  <span className="font-bold text-yellow-300">
+                  <span className="h-6 font-bold text-yellow-300">
                     🧹 Scope (Sweeps):{" "}
                   </span>
                   1 point each time a player captures all cards currently on the

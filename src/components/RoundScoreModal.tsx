@@ -201,7 +201,7 @@ export default function RoundScoreModal({
             type="button"
             onClick={onClose}
             aria-label="Close round scoring dialog"
-            className="rounded-lg min-h-[44px] min-w-[44px] flex items-center justify-center text-emerald-200 hover:bg-emerald-800 hover:text-white focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none transition-colors cursor-pointer text-lg font-bold"
+            className="min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl text-emerald-200 hover:text-white hover:bg-emerald-800/70 transition-colors cursor-pointer text-lg font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400"
           >
             <span aria-hidden="true">✕</span>
           </button>

@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Link } from "react-router";
 import type { FinishedGame } from "../types";
 import {
@@ -26,6 +26,18 @@ export default function GameHistory() {
   >({});
   const [deletingGameId, setDeletingGameId] = useState<string | null>(null);
   const [showClearModal, setShowClearModal] = useState<boolean>(false);
+
+  // Close clear history modal on Escape key press
+  useEffect(() => {
+    if (!showClearModal) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setShowClearModal(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [showClearModal]);
 
   const matchups = useMemo(() => groupHistoryByMatchup(history), [history]);
 
@@ -861,9 +873,17 @@ export default function GameHistory() {
           role="dialog"
           aria-modal="true"
           aria-labelledby="clear-history-title"
-          className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4 backdrop-blur-xs animate-fade-in"
+          className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4 backdrop-blur-xs animate-fade-in cursor-pointer"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowClearModal(false);
+            }
+          }}
         >
-          <div className="w-full max-w-sm rounded-2xl bg-emerald-950 border border-emerald-700 p-5 shadow-2xl space-y-4 text-center">
+          <div
+            className="w-full max-w-sm rounded-2xl bg-emerald-950 border border-emerald-700 p-5 shadow-2xl space-y-4 text-center cursor-default"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div
               className="size-12 rounded-full bg-red-900/40 border border-red-600/70 text-red-400 flex items-center justify-center text-xl mx-auto"
               aria-hidden="true"

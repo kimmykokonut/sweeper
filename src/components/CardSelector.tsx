@@ -77,9 +77,9 @@ function CardSelector({
             type="button"
             onClick={onClose}
             aria-label="Close card picker"
-            className="min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl text-emerald-300 hover:bg-emerald-800 hover:text-white transition-colors cursor-pointer text-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400"
+            className="min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl text-emerald-200 hover:text-white hover:bg-emerald-800/70 transition-colors cursor-pointer text-lg font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400"
           >
-            ✕
+            <span aria-hidden="true">✕</span>
           </button>
         </div>
 
