@@ -5,11 +5,13 @@ import Home from "./pages/Home";
 import Primiera from "./pages/Primiera";
 import ScoreCard from "./pages/ScoreCard";
 import GameHistory from "./pages/GameHistory";
+import ErrorPage from "./pages/ErrorPage";
 
 const router = createHashRouter([
   {
     path: "/",
     element: <Layout />,
+    errorElement: <ErrorPage />,
     children: [
       { index: true, element: <Home />, handle: { title: "Scopa Scorecard Home" } },
       {
@@ -22,6 +24,11 @@ const router = createHashRouter([
         path: "history",
         element: <GameHistory />,
         handle: { title: "Game History" },
+      },
+      {
+        path: "*",
+        element: <ErrorPage />,
+        handle: { title: "Page Not Found", hideNav: true },
       },
     ],
   },
