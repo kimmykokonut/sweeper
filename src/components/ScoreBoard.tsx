@@ -461,7 +461,7 @@ export default function ScoreBoard({
                   />
                   <div>
                     <span className="font-bold text-yellow-300">
-                      ⭐ Il Settebello:{" "}
+                      Il Settebello:{" "}
                     </span>
                     1 point to the player who captured the Seven of Coins (7 di
                     Denari).
@@ -473,7 +473,7 @@ export default function ScoreBoard({
                     src={coinIcon}
                     alt=""
                     aria-hidden="true"
-                    className="h-8 w-auto rounded border border-yellow-400 shrink-0"
+                    className="h-7 w-auto rounded border border-yellow-400 shrink-0"
                   />
                   <div>
                     <span className="font-bold text-yellow-300">
