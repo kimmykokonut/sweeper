@@ -4,9 +4,9 @@
 
 _by [Kim Robinson](https://github.com/kimmykokonut)_
 
-| Home                            | Calculator                            | Scorecard                                             |
-| ------------------------------- | ------------------------------------- | ----------------------------------------------------- |
-| ![Home](src/assets/ss-home.png) | ![Calculator](src/assets/ss-calc.png) | ![Scorecard page screenshot](src/assets/ss-score.png) |
+| Home                            | Calculator                            | Scorecard                                                 | Setup                                                       | Scoring Action                                   | Stats                                             |
+| ------------------------------- | ------------------------------------- | --------------------------------------------------------- | ----------------------------------------------------------- | ------------------------------------------------ | ------------------------------------------------- |
+| ![Home](src/assets/ss-home.png) | ![Calculator](src/assets/ss-calc.png) | ![Scorecard page screenshot](src/assets/ss-scorecard.png) | ![Scorecard setup page screenshot](src/assets/ss-setup.png) | ![Scoring screenshot](src/assets/ss-scoring.png) | ![Stats page screenshot](src/assets/ss-stats.png) |
 
 See app [live](https://kimmykokonut.github.io/sweeper/)
 _In Browser, choose `Add to Home Screen` to have a mobile experience_
