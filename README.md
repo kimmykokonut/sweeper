@@ -9,7 +9,7 @@ _by [Kim Robinson](https://github.com/kimmykokonut)_
 | ![Home](src/assets/ss-home.png) | ![Calculator](src/assets/ss-calc.png) | ![Scorecard page screenshot](src/assets/ss-scorecard.png) | ![Scorecard setup page screenshot](src/assets/ss-setup.png) | ![Scoring screenshot](src/assets/ss-scoring.png) | ![Stats page screenshot](src/assets/ss-stats.png) |
 
 See app [live](https://kimmykokonut.github.io/sweeper/)
-_In Browser, choose `Add to Home Screen` to have a mobile experience_
+_In Browser, choose `Add to Home Screen` for the best mobile experience._
 
 ---
 
@@ -51,60 +51,39 @@ Once that foundation was humming, I decided to use the project as an opportunity
 Here is what Sweeper brings to your game table:
 
 ### 🏆 Full Scopa Scorecard (2–4 Players)
-
-- Set up matches for 2, 3, or 4 players with custom player names and target scores (11 pts or custom).
-- Score rounds with live point previews across all 5 official Scopa scoring categories:
-  - **Scope (Sweeps)**: Quick-increment counter buttons for every sweep during play.
-  - **Carte (Cards)**: Awarded to the player with the most captured cards.
-  - **Denari (Coins)**: Awarded to the player with the most coins.
-  - **Settebello (7 of Coins)**: Dedicated toggle for capturing the most valuable card in the deck.
-  - **Primiera**: Select the round's Primiera winner manually or use the built-in calculator.
-- Real-time score summaries, round-by-round point breakdown, and a victory banner when a player crosses the target score!
+- Set up matches for 2, 3, or 4 players (individuals or 2-teams-of-2) with custom names and target scores (11 pts or custom).
+- Score rounds with live point previews across all 5 official categories: **Scope (Sweeps)**, **Carte (Cards)**, **Denari (Coins)**, **Settebello (7 of Coins)**, and **Primiera**.
+- Live leaderboard, progress bars, collapsible round breakdown, and instant victory banners.
 
 ### ⚡ Smart Count Verification Assistant
-
-- When tallying cards and coins at the end of a round, pop open the Count Helper:
-  - **Instant Two-Way Auto-Fill**: In a 2-player game, entering 23 cards for Player 1 immediately auto-balances Player 2 to 17 cards (out of 40 total). Change your mind and type 25 into Player 2? Player 1 updates to 15 instantly!
-  - **3+ Player Remainder Balancing**: Enter counts for all players except the last one, and the remainder auto-fills automatically.
-  - **Clean Backspace Deletion**: Backspacing any score clears it cleanly without weird auto-fill snapbacks.
-  - **Deck Limit Safeguards**: Input is strictly capped at 40 total cards and 10 total coins so math errors never ruin game night.
-  - **Auto-Winner Detection**: Automatically identifies and highlights the Carte and Denari winners (or ties) based on your counts.
+- **Two-Way Auto-Fill**: In 2-player games, entering 23 cards for Player 1 immediately auto-balances Player 2 to 17 (out of 40 total), and vice versa.
+- **Remainder Balancing**: For 3+ players, enter counts for all players except the last and the remainder auto-fills instantly.
+- **Deck Safeguards**: Clean backspace deletion without snapbacks, strictly capped at 40 total cards and 10 total coins with auto-winner detection.
 
 ### 🃏 Authentic Primiera Calculator (Standalone & Embedded)
+- Available as a standalone tab in bottom navigation or embedded right inside the round scoring dialog.
+- Authentic Neapolitan deck imagery across all four suits (_Denari_, _Spade_, _Coppe_, _Bastoni_) with accurate Scopa Primiera point values ($7=21, 6=18, \dots$, face cards $=10$).
+- **Deck Uniqueness Locks**: Claimed cards automatically lock for other players with a `🔒 Taken by Player` badge.
+- **Direct Hand Transfer**: One-tap transfer from standalone calculator directly into a fresh Round 1 scorecard with the winner pre-selected.
 
-- Available as a standalone tool in the bottom navigation or embedded right inside the round scoring modal.
-- Authentic Neapolitan card imagery for all four suits (_Denari / Coins_, _Spade / Swords_, _Coppe / Cups_, _Bastoni / Clubs_).
-- Accurate Scopa Primiera point values ($7=21, 6=18, \text{Ace}=16, 5=15, 4=14, 3=13, 2=12, \text{Face}=10$).
-- Live point calculations for each player and automatic tie/winner determination.
+### 📊 Game History & Head-to-Head Rivalry Records
+- Archived game history saved directly in browser `localStorage`—no accounts or database servers needed.
+- **Head-to-Head Rivalry View**: Tracks series records, win rates, total sweeps, and category dominance (Carte, Denari, Settebello, Primiera) between opponents.
+- Complete round-by-round reviews with individual game deletion and clear-all controls.
 
-### 🔒 Physical Deck Uniqueness (No Duplicate Cards!)
+### 📱 Mobile-First Emerald Felt Table & WCAG Accessibility
+- Immersive emerald-green card table theme with dynamic viewport sizing (`dvh`) tailored for small phones through ultra-tall screens.
+- **WCAG Compliant**: Flexible 44px touch targets on all interactive controls, high-contrast gold focus rings, high contrast text (> 7:1 AAA), and full screen-reader semantics.
+- Consistent modal controls: tap the background or press `Escape` to dismiss.
 
-- In real Scopa, there is only one 7 of Coins in the entire deck!
-- When Player 1 claims a card in the Primiera picker, that card is automatically locked out for Player 2, 3, and 4 with a clear `🔒 Taken by Player 1` badge.
-- Player 1 can still swap or deselect their card, which instantly frees it up for everyone else.
+### 💾 Match Persistence & Crash Recovery
+- Active games automatically persist to `localStorage` with defensive schema validation.
+- Quick-resume banner on the home screen lets you jump straight back into your match.
+- Styled fallback error screen with instant recovery options to return home or start a fresh match.
 
-### 🚀 Direct Hand Transfer
-
-- Ran a standalone Primiera calculation before starting your match?
-- Once all hands are calculated, click **"Transfer to Scorecard"** to automatically initialize a fresh match and launch the Round 1 scorecard with the Primiera winner already pre-selected!
-
-### 📱 Mobile-First Emerald Felt Table Design
-
-- Styled with an immersive emerald-green card table aesthetic (`emerald-800`, `emerald-900`, `yellow-300`, `yellow-400`).
-- **Dynamic Flexbox Viewports (`dvh`)**: Designed to stretch and breathe dynamically across compact 320px screens and ultra-tall 20:9 mobile displays without dead space or static pixel cutoffs.
-- **Thumb-Friendly Bottom Navigation**: Easily hop between Home, Scorecard, and Primiera with a persistent bottom tab bar.
-- **Safe-Area Aware**: Accounts for mobile home indicators and browser address bars so action buttons are never trapped or covered.
-
-### 💾 Match Persistence & Game Resume
-
-- Never lose your game if you accidentally refresh or close your browser!
-- Active matches are automatically persisted to `localStorage`.
-- The home screen greets you with a handy "Scoring in Progress" resume card so you can jump right back into the action.
-
-### 📲 Progressive Web App (PWA)
-
+### 📲 100% Offline Progressive Web App (PWA)
 - Install Sweeper directly to your phone's home screen via Safari or Chrome.
-- Works offline, loads instantly, and runs full-screen without URL bars or browser chrome.
+- Complete offline precaching: all 40 Italian cards and assets load instantly without internet.
 
 ## Toolbelt
 
@@ -113,6 +92,8 @@ Here is what Sweeper brings to your game table:
 ![React Router](https://img.shields.io/badge/React_Router-%23CA4245.svg?style=for-the-badge&logo=react-router&logoColor=white)
 ![Vite](https://img.shields.io/badge/vite-%23646CFF.svg?style=for-the-badge&logo=vite&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![Vitest](https://img.shields.io/badge/Vitest-%23449C44.svg?style=for-the-badge&logo=vitest&logoColor=white)
+![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white)
 ![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)
 ![Markdown](https://img.shields.io/badge/Markdown-000000?style=for-the-badge&logo=markdown&logoColor=white)
 ![npm](https://img.shields.io/badge/npm-CB3837?style=for-the-badge&logo=npm&logoColor=white)
@@ -190,9 +171,15 @@ npm run dev
 
 Open [http://localhost:5173/](http://localhost:5173/) with your browser to see the local app.
 
+10. Run test suite:
+
+```bash
+npm run test
+```
+
 ### Optional (PWA)
 
-Vite's Progressive Web App plugin is configured out of the box.
+Vite's Progressive Web App plugin is configured out of the box with offline card precaching.
 
 Build:
 
@@ -212,17 +199,19 @@ npm run preview
 
 ### Phases
 
-- [x] **Phase 1**: Build Primiera calculator for 1 person
-- [x] **Phase 2**: Primiera calc for up to 4 players, assess winner and display
-- [x] **Phase 3**: Add Scopa scorecard for up to 4 players with smart round scoring
-- [x] **Phase 4**: Progressive Web App plugin with offline support
+- [x] **Phase 1**: Greenfield Primiera calculator for 1 person
+- [x] **Phase 2**: Primiera calculator for up to 4 players with deck uniqueness locks & winner detection
+- [x] **Phase 3**: Full Scopa scorecard (2–4 players, teams, smart count assistant, round history)
+- [x] **Phase 4**: Progressive Web App (PWA) with full offline Italian card precaching
 - [x] **Phase 5**: Game data persistence (`localStorage`) & active game resume flow
+- [x] **Phase 6**: Game history archive, head-to-head rivalry records & category dominance
+- [x] **Phase 7**: Comprehensive WCAG accessibility, 51 automated unit tests & CI pipeline
 
 ### Stretch
 
-- [ ] Stats - track game data for user via device.
-- [ ] Cribbage integration?
-- [ ] Custom sound effects or haptic feedback for sweeps (Scope!)
+- [ ] Cribbage companion integration
+- [ ] Custom sound effects or haptic feedback for sweeps (Scope!) Animation?
+- [ ] Multi-device game sharing
 
 ## Contact and Support
 
