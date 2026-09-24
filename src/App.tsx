@@ -11,10 +11,18 @@ const router = createHashRouter([
     path: "/",
     element: <Layout />,
     children: [
-      { index: true, element: <Home /> },
-      { path: "primiera", element: <Primiera /> },
-      { path: "score", element: <ScoreCard /> },
-      { path: "history", element: <GameHistory /> },
+      { index: true, element: <Home />, handle: { title: "Scopa Scorecard Home" } },
+      {
+        path: "primiera",
+        element: <Primiera />,
+        handle: { title: "Primiera Calculator" },
+      },
+      { path: "score", element: <ScoreCard />, handle: { title: "Scorecard" } },
+      {
+        path: "history",
+        element: <GameHistory />,
+        handle: { title: "Game History" },
+      },
     ],
   },
 ]);
