@@ -421,7 +421,7 @@ export default function PrimieraCalculator({
               ? "grid-cols-2"
               : activePlayers.length === 3
                 ? "grid-cols-3"
-                : "grid-cols-4"
+                : "grid-cols-2 sm:grid-cols-4"
           }`}
         >
           {activePlayers.map((p) => {
