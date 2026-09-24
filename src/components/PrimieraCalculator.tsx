@@ -288,7 +288,7 @@ export default function PrimieraCalculator({
           </button>
         )}
 
-        {!isModal && (
+        {!isModal && !allCalculated && (
           <button
             type="button"
             onClick={handleResetAllCards}
