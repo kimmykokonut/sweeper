@@ -202,7 +202,7 @@ export default function GameSetup({
                   type="button"
                   aria-pressed={!isTeams}
                   onClick={() => handleTeamsToggle(false)}
-                  className={`flex-1 py-2 font-semibold rounded-lg transition-colors focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none cursor-pointer ${
+                  className={`flex-1 min-h-[44px] py-2 px-3 font-semibold rounded-lg flex items-center justify-center transition-colors focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none cursor-pointer ${
                     !isTeams
                       ? "bg-emerald-600 text-white shadow-xs font-bold"
                       : "text-emerald-300 hover:text-white"
@@ -214,7 +214,7 @@ export default function GameSetup({
                   type="button"
                   aria-pressed={isTeams}
                   onClick={() => handleTeamsToggle(true)}
-                  className={`flex-1 py-2 font-semibold rounded-lg transition-colors focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none cursor-pointer ${
+                  className={`flex-1 min-h-[44px] py-2 px-3 font-semibold rounded-lg flex items-center justify-center transition-colors focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none cursor-pointer ${
                     isTeams
                       ? "bg-emerald-600 text-white shadow-xs font-bold"
                       : "text-emerald-300 hover:text-white"

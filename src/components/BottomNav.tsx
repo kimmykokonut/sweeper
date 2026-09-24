@@ -115,10 +115,11 @@ export default function BottomNav() {
             <Link
               key={item.name}
               to={item.path}
-              className={`relative flex flex-col items-center justify-center gap-0.5 transition-colors cursor-pointer ${
+              aria-current={isActive ? "page" : undefined}
+              className={`relative flex flex-col items-center justify-center gap-0.5 transition-colors cursor-pointer rounded-lg focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none min-h-[44px] ${
                 isActive
                   ? "text-yellow-400 font-bold"
-                  : "text-emerald-300/70 hover:text-white"
+                  : "text-emerald-200/90 hover:text-white"
               }`}
             >
               {isActive && (

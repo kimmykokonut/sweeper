@@ -348,7 +348,7 @@ export default function RoundScoreModal({
                       type="button"
                       onClick={() => handleScopeChange(p.id, -1)}
                       aria-label={`Decrease ${p.name}'s sweeps`}
-                      className="size-10 sm:size-11 rounded-lg bg-emerald-800 border border-emerald-600 text-xl font-bold text-white hover:bg-emerald-700 active:scale-95 flex items-center justify-center focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none cursor-pointer transition-colors"
+                      className="min-h-[44px] min-w-[44px] rounded-lg bg-emerald-800 border border-emerald-600 text-xl font-bold text-white hover:bg-emerald-700 active:scale-95 flex items-center justify-center focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none cursor-pointer transition-colors"
                     >
                       -
                     </button>
@@ -362,7 +362,7 @@ export default function RoundScoreModal({
                       type="button"
                       onClick={() => handleScopeChange(p.id, 1)}
                       aria-label={`Increase ${p.name}'s sweeps`}
-                      className="size-10 sm:size-11 rounded-lg bg-emerald-700 border border-emerald-500 text-xl font-bold text-white hover:bg-emerald-600 active:scale-95 flex items-center justify-center shadow-xs focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none cursor-pointer transition-colors"
+                      className="min-h-[44px] min-w-[44px] rounded-lg bg-emerald-700 border border-emerald-500 text-xl font-bold text-white hover:bg-emerald-600 active:scale-95 flex items-center justify-center shadow-xs focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none cursor-pointer transition-colors"
                     >
                       +
                     </button>
