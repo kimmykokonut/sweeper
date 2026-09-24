@@ -352,8 +352,72 @@ export default function PrimieraCalculator({
           </div>
         ))}
 
+      {/* Winner Announcement Banner (Rendered above the Player Selector Cards) */}
+      {allCalculated && (
+        <div
+          role="status"
+          aria-live="polite"
+          className="mx-3 sm:mx-4 mt-2 p-3 sm:p-3.5 rounded-2xl bg-gradient-to-r from-emerald-950 via-emerald-900 to-emerald-950 border border-yellow-400/60 shadow-lg text-center shrink-0"
+        >
+          {/* Winner Announcement */}
+          <div className="flex items-center justify-center gap-2 text-base sm:text-lg font-bold text-yellow-300">
+            {winnerId ? (
+              <div>
+                {activePlayers.find((p) => p.id === winnerId)?.name} wins the
+                Primiera point!
+              </div>
+            ) : isTie ? (
+              <>
+                <span className="text-xl" aria-hidden="true">
+                  ⚖️
+                </span>
+                <span className="text-amber-200">
+                  Tie! No Primiera point awarded.
+                </span>
+              </>
+            ) : null}
+          </div>
+
+          {/* Score summary chips */}
+          <div className="flex flex-wrap items-center justify-center gap-2 mt-2">
+            {activePlayers.map((p) => (
+              <span
+                key={p.id}
+                className={`text-xs sm:text-sm px-2.5 py-0.5 rounded-lg font-bold ${
+                  winnerId === p.id
+                    ? "bg-yellow-400 text-emerald-950 shadow-sm"
+                    : "bg-emerald-950/80 border border-emerald-700/60 text-emerald-200"
+                }`}
+              >
+                {p.name}: {playerScores[p.id]} pts
+              </span>
+            ))}
+          </div>
+
+          {/* Action buttons (Page Mode only) */}
+          {!isModal && (
+            <div className="grid grid-cols-2 gap-2.5 mt-2.5 pt-2.5 border-t border-yellow-400/25 w-full">
+              <button
+                type="button"
+                onClick={handleResetAllCards}
+                className="w-full min-h-[44px] py-2 px-3 rounded-xl bg-emerald-800 hover:bg-emerald-700 text-emerald-100 font-bold text-sm transition-colors cursor-pointer text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400"
+              >
+                Reset Hand
+              </button>
+              <button
+                type="button"
+                onClick={handleTransferToScorecard}
+                className="w-full min-h-[44px] py-2 px-3 rounded-xl bg-yellow-400 hover:bg-yellow-300 text-emerald-950 font-bold text-sm transition-colors cursor-pointer text-center shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+              >
+                Start Game with Result →
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Player Selector Comparison Cards */}
-      {activePlayers.length > 1 && (!allCalculated || isModal) && (
+      {activePlayers.length > 1 && (
         <div
           role="tablist"
           aria-label="Players primiera selection"
@@ -415,7 +479,7 @@ export default function PrimieraCalculator({
                     <span className="text-yellow-300 font-bold">Winner</span>
                   ) : isLeader && score > 0 ? (
                     <span className="text-yellow-300/90 font-bold">
-                      👑 Highest
+                      Highest
                     </span>
                   ) : suitsCount < 4 && suitsCount > 0 ? (
                     <span className="text-emerald-300">
@@ -435,70 +499,6 @@ export default function PrimieraCalculator({
 
       {/* Content Body */}
       <div className="flex-1 overflow-y-auto px-3 sm:px-4 py-3 space-y-3">
-        {/* Celebration / Action Card (Shown when all cards are selected) */}
-        {allCalculated && (
-          <div
-            role="status"
-            aria-live="polite"
-            className="rounded-2xl bg-gradient-to-b from-yellow-400/20 via-emerald-900/60 to-emerald-950/80 border border-yellow-400/50 p-3.5 sm:p-4 text-center shadow-lg"
-          >
-            {/* Winner Announcement */}
-            <div className="flex items-center justify-center gap-2 text-base sm:text-lg font-bold text-yellow-300 mb-1">
-              {winnerId ? (
-                <div>
-                  {activePlayers.find((p) => p.id === winnerId)?.name} wins the
-                  Primiera point!
-                </div>
-              ) : isTie ? (
-                <>
-                  <span className="text-xl" aria-hidden="true">
-                    ⚖️
-                  </span>
-                  <span className="text-amber-200">
-                    Tie! No Primiera point awarded.
-                  </span>
-                </>
-              ) : null}
-            </div>
-
-            {/* Score summary chips */}
-            <div className="flex flex-wrap items-center justify-center gap-2 my-2.5">
-              {activePlayers.map((p) => (
-                <span
-                  key={p.id}
-                  className={`text-xs sm:text-sm px-3 py-1 rounded-lg font-bold ${
-                    winnerId === p.id
-                      ? "bg-yellow-400 text-emerald-950 shadow"
-                      : "bg-emerald-950/70 border border-emerald-700/60 text-emerald-200"
-                  }`}
-                >
-                  {p.name}: {playerScores[p.id]} pts
-                </span>
-              ))}
-            </div>
-
-            {/* Action buttons (Page Mode only) */}
-            {!isModal && (
-              <div className="grid grid-cols-2 gap-2.5 mt-3 pt-2.5 border-t border-yellow-400/30 w-full">
-                <button
-                  type="button"
-                  onClick={handleResetAllCards}
-                  className="w-full min-h-[44px] py-2.5 px-3 rounded-xl bg-emerald-800 hover:bg-emerald-700 text-emerald-100 font-bold text-sm sm:text-base transition-colors cursor-pointer text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400"
-                >
-                  Reset Hand
-                </button>
-                <button
-                  type="button"
-                  onClick={handleTransferToScorecard}
-                  className="w-full min-h-[44px] py-2.5 px-3 rounded-xl bg-yellow-400 hover:bg-yellow-300 text-emerald-950 font-bold text-sm sm:text-base transition-colors cursor-pointer text-center shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
-                >
-                  Transfer to Scorecard
-                </button>
-              </div>
-            )}
-          </div>
-        )}
-
         {/* 4 Card Suit Slots */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {SUITS.map((suit) => {
@@ -542,9 +542,9 @@ export default function PrimieraCalculator({
                         className="h-full w-full object-contain drop-shadow-sm"
                       />
                     </div>
-                    <div className="mt-1 flex items-center justify-between w-full px-2 py-1 text-xs sm:text-sm font-bold text-emerald-950 bg-emerald-100 rounded-lg">
+                    <div className="mt-1 flex items-center justify-between w-full px-2.5 py-1 text-xs sm:text-sm font-bold bg-emerald-950 text-emerald-100 border border-emerald-800/80 rounded-lg shadow-xs">
                       <span className="capitalize">{suit}</span>
-                      <span className="text-emerald-800 font-extrabold">
+                      <span className="text-yellow-300 font-bold">
                         {primieraValues[selectedValue]} pts
                       </span>
                     </div>
