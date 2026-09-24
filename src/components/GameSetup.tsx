@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import type { GameSettings, GameState, Player } from "../types";
 import { CARD_DATA } from "../utils/cardData";
 import {
@@ -19,8 +19,9 @@ export default function GameSetup({
 }: GameSetupProps) {
   const [playerCount, setPlayerCount] = useState<2 | 3 | 4>(2);
   const [isTeams, setIsTeams] = useState<boolean>(false);
-  const [targetScore, setTargetScore] = useState<number>(11);
   const [customTarget, setCustomTarget] = useState<string>("");
+  const [isCustomTarget, setIsCustomTarget] = useState<boolean>(false);
+  const customInputRef = useRef<HTMLInputElement>(null);
   const [playerNames, setPlayerNames] = useState<Record<number, string>>(() => {
     const recent = loadRecentPlayerNames(2);
     if (recent && recent.length >= 2) {
@@ -97,9 +98,9 @@ export default function GameSetup({
       finalPlayers.map((p) => p.name),
     );
 
-    const finalTarget = customTarget
-      ? parseInt(customTarget, 10) || 11
-      : targetScore;
+    const finalTarget = isCustomTarget
+      ? parseInt(customTarget, 10) || 21
+      : 11;
 
     onStartNewGame(finalPlayers, {
       playerCount,
@@ -273,13 +274,13 @@ export default function GameSetup({
             <div className="flex gap-2.5 sm:gap-3">
               <button
                 type="button"
-                aria-pressed={targetScore === 11 && !customTarget}
+                aria-pressed={!isCustomTarget}
                 onClick={() => {
-                  setTargetScore(11);
+                  setIsCustomTarget(false);
                   setCustomTarget("");
                 }}
                 className={`flex-1 py-3 sm:py-3.5 px-2.5 sm:px-3 rounded-xl font-semibold text-base sm:text-lg border focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none transition-all cursor-pointer ${
-                  targetScore === 11 && !customTarget
+                  !isCustomTarget
                     ? "bg-yellow-400 text-emerald-950 border-yellow-300 shadow-md ring-2 ring-yellow-300 scale-101 font-bold"
                     : "bg-emerald-950/60 text-emerald-200 border-emerald-700 hover:bg-emerald-800"
                 }`}
@@ -290,20 +291,28 @@ export default function GameSetup({
                 </span>
               </button>
               <div
-                className={`flex-1 flex flex-col justify-center rounded-xl border px-3 py-2 transition-all ${
-                  customTarget
-                    ? "bg-yellow-400/20 border-yellow-400 ring-2 ring-yellow-400/80"
-                    : "bg-emerald-950/60 border-emerald-700"
+                role="button"
+                tabIndex={-1}
+                aria-pressed={isCustomTarget}
+                onClick={() => {
+                  setIsCustomTarget(true);
+                  customInputRef.current?.focus();
+                }}
+                className={`flex-1 flex flex-col justify-center rounded-xl border px-3 py-2 transition-all cursor-pointer ${
+                  isCustomTarget
+                    ? "bg-yellow-400/20 border-yellow-400 ring-2 ring-yellow-400/80 scale-101"
+                    : "bg-emerald-950/60 border-emerald-700 hover:bg-emerald-900/50"
                 }`}
               >
                 <label
                   htmlFor="custom-target-input"
-                  className="text-xs sm:text-sm text-emerald-200 font-semibold block"
+                  className="text-xs sm:text-sm text-emerald-200 font-semibold block cursor-pointer"
                 >
                   Custom Target:
                 </label>
                 <div className="flex items-center gap-1.5 mt-0.5">
                   <input
+                    ref={customInputRef}
                     id="custom-target-input"
                     type="number"
                     min="1"
@@ -311,10 +320,16 @@ export default function GameSetup({
                     placeholder="21"
                     aria-label="Custom target score in points"
                     value={customTarget}
+                    onFocus={() => setIsCustomTarget(true)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsCustomTarget(true);
+                      (e.target as HTMLInputElement).select();
+                    }}
                     onChange={(e) => {
                       const val = e.target.value;
+                      setIsCustomTarget(true);
                       setCustomTarget(val);
-                      if (val) setTargetScore(parseInt(val, 10) || 11);
                     }}
                     className="flex-1 min-w-0 min-h-[44px] rounded-lg bg-emerald-950 border border-emerald-600 px-2 py-1.5 text-center text-base sm:text-lg font-semibold text-yellow-300 placeholder:font-normal placeholder-emerald-500 focus:border-yellow-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400"
                   />
