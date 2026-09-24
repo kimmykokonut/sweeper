@@ -184,7 +184,7 @@ export default function GameSetup({
                   type="button"
                   aria-pressed={playerCount === count}
                   onClick={() => handlePlayerCountChange(count as 2 | 3 | 4)}
-                  className={`py-2 sm:py-3 px-1 sm:px-2.5 flex items-center justify-center text-center rounded-xl font-semibold text-base sm:text-lg border focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none transition-all cursor-pointer ${
+                  className={`min-h-[44px] py-2 sm:py-3 px-1 sm:px-2.5 flex items-center justify-center text-center rounded-xl font-semibold text-base sm:text-lg border focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none transition-all cursor-pointer ${
                     playerCount === count
                       ? "bg-yellow-400 text-emerald-950 border-yellow-300 shadow-md ring-2 ring-yellow-300 scale-102 font-bold"
                       : "bg-emerald-950/60 text-emerald-200 border-emerald-700 hover:bg-emerald-800"
@@ -316,7 +316,7 @@ export default function GameSetup({
                       setCustomTarget(val);
                       if (val) setTargetScore(parseInt(val, 10) || 11);
                     }}
-                    className="flex-1 min-w-0 rounded-lg bg-emerald-950 border border-emerald-600 px-2 py-1.5 text-center text-base sm:text-lg font-semibold text-yellow-300 placeholder:font-normal placeholder-emerald-500 focus:border-yellow-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400"
+                    className="flex-1 min-w-0 min-h-[44px] rounded-lg bg-emerald-950 border border-emerald-600 px-2 py-1.5 text-center text-base sm:text-lg font-semibold text-yellow-300 placeholder:font-normal placeholder-emerald-500 focus:border-yellow-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400"
                   />
                   <span className="text-sm sm:text-base text-emerald-300 font-medium shrink-0">
                     pts

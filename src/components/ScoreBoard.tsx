@@ -78,7 +78,7 @@ export default function ScoreBoard({
             type="button"
             onClick={() => setShowRules(true)}
             aria-label="View Scopa scoring rules"
-            className="rounded-lg bg-emerald-800/80 border border-emerald-600 px-3 py-1.5 min-h-[38px] text-xs sm:text-sm font-semibold text-emerald-100 hover:bg-emerald-700 focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none transition-colors cursor-pointer flex items-center gap-1.5"
+            className="rounded-lg bg-emerald-800/80 border border-emerald-600 px-3.5 py-2 min-h-[44px] text-xs sm:text-sm font-semibold text-emerald-100 hover:bg-emerald-700 focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none transition-colors cursor-pointer flex items-center gap-1.5"
           >
             <span aria-hidden="true">📖</span>
             <span>Rules</span>
@@ -87,7 +87,7 @@ export default function ScoreBoard({
             type="button"
             onClick={onResetGame}
             aria-label="Start a new game"
-            className="rounded-lg bg-emerald-800/80 border border-emerald-600 px-3 py-1.5 min-h-[38px] text-xs sm:text-sm font-semibold text-emerald-100 hover:bg-emerald-700 hover:text-white focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none transition-colors cursor-pointer flex items-center justify-center"
+            className="rounded-lg bg-emerald-800/80 border border-emerald-600 px-3.5 py-2 min-h-[44px] text-xs sm:text-sm font-semibold text-emerald-100 hover:bg-emerald-700 hover:text-white focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none transition-colors cursor-pointer flex items-center justify-center"
           >
             New Game
           </button>
@@ -244,7 +244,7 @@ export default function ScoreBoard({
             <button
               type="button"
               onClick={() => setIsHistoryCollapsed(!isHistoryCollapsed)}
-              className="text-xs font-semibold text-emerald-300 hover:text-white px-2.5 py-1.5 min-h-[36px] rounded-lg bg-emerald-900/80 hover:bg-emerald-800 border border-emerald-700/60 focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none transition-colors cursor-pointer flex items-center gap-1.5"
+              className="text-xs font-semibold text-emerald-300 hover:text-white px-3 py-2 min-h-[44px] rounded-lg bg-emerald-900/80 hover:bg-emerald-800 border border-emerald-700/60 focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none transition-colors cursor-pointer flex items-center gap-1.5"
               aria-expanded={!isHistoryCollapsed}
               aria-label={
                 isHistoryCollapsed
@@ -384,7 +384,7 @@ export default function ScoreBoard({
                     type="button"
                     onClick={() => onEditRound(round)}
                     aria-label={`Edit Round ${round.roundNumber}`}
-                    className="p-1.5 min-h-[36px] min-w-[36px] flex items-center justify-center text-emerald-300 hover:text-white rounded-lg hover:bg-emerald-800 focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none transition-colors text-sm hidden sm:flex cursor-pointer"
+                    className="p-1.5 min-h-[44px] min-w-[44px] flex items-center justify-center text-emerald-300 hover:text-white rounded-lg hover:bg-emerald-800 focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none transition-colors text-sm hidden sm:flex cursor-pointer"
                     title="Edit Round"
                   >
                     ✏️
