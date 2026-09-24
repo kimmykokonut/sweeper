@@ -140,7 +140,7 @@ function CardSelector({
                     />
                     {takenBy && (
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="text-xl drop-shadow-md">🔒</span>
+                        <span className="text-5xl drop-shadow-md">🔒</span>
                       </div>
                     )}
                   </div>
@@ -201,7 +201,7 @@ function CardSelector({
                     />
                     {takenBy && (
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="text-center bg-emerald-950/90 text-amber-300 px-1.5 py-0.5 rounded text-[10px] sm:text-xs font-bold shadow-md flex items-center gap-1 border border-emerald-800">
+                        <span className="text-center bg-emerald-950/90 text-amber-300 px-1.5 py-0.5 rounded text-xs sm:text-sm font-bold shadow-md flex items-center gap-1 border border-emerald-800">
                           <span>🔒</span>
                           <span className="truncate max-w-[70px] sm:max-w-[90px]">{takenBy}</span>
                         </span>

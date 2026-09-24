@@ -358,7 +358,7 @@ export default function PrimieraCalculator({
           className="w-full px-3 sm:px-4 pt-2.5 pb-1 text-center shrink-0 bg-transparent"
         >
           {/* Winner Announcement */}
-          <div className="flex items-center justify-center gap-2 text-base sm:text-lg font-bold text-yellow-300">
+          <div className="flex items-center justify-center gap-2 text-lg sm:text-xl font-bold text-yellow-300">
             {winnerId ? (
               <div>
                 {activePlayers.find((p) => p.id === winnerId)?.name} wins the
