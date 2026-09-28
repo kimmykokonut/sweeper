@@ -4,9 +4,13 @@
 
 _by [Kim Robinson](https://github.com/kimmykokonut)_
 
-| Home                            | Calculator                            | Scorecard                                                 | Setup                                                       | Scoring Action                                   | Stats                                             |
-| ------------------------------- | ------------------------------------- | --------------------------------------------------------- | ----------------------------------------------------------- | ------------------------------------------------ | ------------------------------------------------- |
-| ![Home](src/assets/ss-home.png) | ![Calculator](src/assets/ss-calc.png) | ![Scorecard page screenshot](src/assets/ss-scorecard.png) | ![Scorecard setup page screenshot](src/assets/ss-setup.png) | ![Scoring screenshot](src/assets/ss-scoring.png) | ![Stats page screenshot](src/assets/ss-stats.png) |
+| Home                            | Calculator                            | Scorecard                                                 |
+| ------------------------------- | ------------------------------------- | --------------------------------------------------------- |
+| ![Home](src/assets/ss-home.png) | ![Calculator](src/assets/ss-calc.png) | ![Scorecard page screenshot](src/assets/ss-scorecard.png) |
+
+| Setup                                                       | Scoring Action                                   | Stats                                             |
+| ----------------------------------------------------------- | ------------------------------------------------ | ------------------------------------------------- |
+| ![Scorecard setup page screenshot](src/assets/ss-setup.png) | ![Scoring screenshot](src/assets/ss-scoring.png) | ![Stats page screenshot](src/assets/ss-stats.png) |
 
 See app [live](https://kimmykokonut.github.io/sweeper/)
 _In Browser, choose `Add to Home Screen` for the best mobile experience._
@@ -51,37 +55,44 @@ Once that foundation was humming, I decided to use the project as an opportunity
 Here is what Sweeper brings to your game table:
 
 ### 🏆 Full Scopa Scorecard (2–4 Players)
+
 - Set up matches for 2, 3, or 4 players (individuals or 2-teams-of-2) with custom names and target scores (11 pts or custom).
 - Score rounds with live point previews across all 5 official categories: **Scope (Sweeps)**, **Carte (Cards)**, **Denari (Coins)**, **Settebello (7 of Coins)**, and **Primiera**.
 - Live leaderboard, progress bars, collapsible round breakdown, and instant victory banners.
 
 ### ⚡ Smart Count Verification Assistant
+
 - **Two-Way Auto-Fill**: In 2-player games, entering 23 cards for Player 1 immediately auto-balances Player 2 to 17 (out of 40 total), and vice versa.
 - **Remainder Balancing**: For 3+ players, enter counts for all players except the last and the remainder auto-fills instantly.
 - **Deck Safeguards**: Clean backspace deletion without snapbacks, strictly capped at 40 total cards and 10 total coins with auto-winner detection.
 
 ### 🃏 Authentic Primiera Calculator (Standalone & Embedded)
+
 - Available as a standalone tab in bottom navigation or embedded right inside the round scoring dialog.
 - Authentic Neapolitan deck imagery across all four suits (_Denari_, _Spade_, _Coppe_, _Bastoni_) with accurate Scopa Primiera point values ($7=21, 6=18, \dots$, face cards $=10$).
 - **Deck Uniqueness Locks**: Claimed cards automatically lock for other players with a `🔒 Taken by Player` badge.
 - **Direct Hand Transfer**: One-tap transfer from standalone calculator directly into a fresh Round 1 scorecard with the winner pre-selected.
 
 ### 📊 Game History & Head-to-Head Rivalry Records
+
 - Archived game history saved directly in browser `localStorage`—no accounts or database servers needed.
 - **Head-to-Head Rivalry View**: Tracks series records, win rates, total sweeps, and category dominance (Carte, Denari, Settebello, Primiera) between opponents.
 - Complete round-by-round reviews with individual game deletion and clear-all controls.
 
 ### 📱 Mobile-First Emerald Felt Table & WCAG Accessibility
+
 - Immersive emerald-green card table theme with dynamic viewport sizing (`dvh`) tailored for small phones through ultra-tall screens.
 - **WCAG Compliant**: Flexible 44px touch targets on all interactive controls, high-contrast gold focus rings, high contrast text (> 7:1 AAA), and full screen-reader semantics.
 - Consistent modal controls: tap the background or press `Escape` to dismiss.
 
 ### 💾 Match Persistence & Crash Recovery
+
 - Active games automatically persist to `localStorage` with defensive schema validation.
 - Quick-resume banner on the home screen lets you jump straight back into your match.
 - Styled fallback error screen with instant recovery options to return home or start a fresh match.
 
 ### 📲 100% Offline Progressive Web App (PWA)
+
 - Install Sweeper directly to your phone's home screen via Safari or Chrome.
 - Complete offline precaching: all 40 Italian cards and assets load instantly without internet.
 
