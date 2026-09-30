@@ -3,7 +3,8 @@ export type DeckStyle =
   | "napoletane"
   | "piacentine"
   | "siciliane"
-  | "bergamasche";
+  | "bergamasche"
+  | "sarde";
 
 export type CardValue =
   | "seven"

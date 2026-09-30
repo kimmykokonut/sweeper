@@ -181,6 +181,51 @@ import bergEightSwords from "../assets/decks/bergamasche/spade-8.webp";
 import bergNineSwords from "../assets/decks/bergamasche/spade-9.webp";
 import bergTenSwords from "../assets/decks/bergamasche/spade-10.webp";
 
+// Sarde Deck
+import sardeSevenCoins from "../assets/decks/sarde/denari-7.webp";
+import sardeSixCoins from "../assets/decks/sarde/denari-6.webp";
+import sardeAceCoins from "../assets/decks/sarde/denari-1.webp";
+import sardeFiveCoins from "../assets/decks/sarde/denari-5.webp";
+import sardeFourCoins from "../assets/decks/sarde/denari-4.webp";
+import sardeThreeCoins from "../assets/decks/sarde/denari-3.webp";
+import sardeTwoCoins from "../assets/decks/sarde/denari-2.webp";
+import sardeEightCoins from "../assets/decks/sarde/denari-8.webp";
+import sardeNineCoins from "../assets/decks/sarde/denari-9.webp";
+import sardeTenCoins from "../assets/decks/sarde/denari-10.webp";
+
+import sardeSevenCups from "../assets/decks/sarde/coppe-7.webp";
+import sardeSixCups from "../assets/decks/sarde/coppe-6.webp";
+import sardeAceCups from "../assets/decks/sarde/coppe-1.webp";
+import sardeFiveCups from "../assets/decks/sarde/coppe-5.webp";
+import sardeFourCups from "../assets/decks/sarde/coppe-4.webp";
+import sardeThreeCups from "../assets/decks/sarde/coppe-3.webp";
+import sardeTwoCups from "../assets/decks/sarde/coppe-2.webp";
+import sardeEightCups from "../assets/decks/sarde/coppe-8.webp";
+import sardeNineCups from "../assets/decks/sarde/coppe-9.webp";
+import sardeTenCups from "../assets/decks/sarde/coppe-10.webp";
+
+import sardeSevenClubs from "../assets/decks/sarde/bastoni-7.webp";
+import sardeSixClubs from "../assets/decks/sarde/bastoni-6.webp";
+import sardeAceClubs from "../assets/decks/sarde/bastoni-1.webp";
+import sardeFiveClubs from "../assets/decks/sarde/bastoni-5.webp";
+import sardeFourClubs from "../assets/decks/sarde/bastoni-4.webp";
+import sardeThreeClubs from "../assets/decks/sarde/bastoni-3.webp";
+import sardeTwoClubs from "../assets/decks/sarde/bastoni-2.webp";
+import sardeEightClubs from "../assets/decks/sarde/bastoni-8.webp";
+import sardeNineClubs from "../assets/decks/sarde/bastoni-9.webp";
+import sardeTenClubs from "../assets/decks/sarde/bastoni-10.webp";
+
+import sardeSevenSwords from "../assets/decks/sarde/spade-7.webp";
+import sardeSixSwords from "../assets/decks/sarde/spade-6.webp";
+import sardeAceSwords from "../assets/decks/sarde/spade-1.webp";
+import sardeFiveSwords from "../assets/decks/sarde/spade-5.webp";
+import sardeFourSwords from "../assets/decks/sarde/spade-4.webp";
+import sardeThreeSwords from "../assets/decks/sarde/spade-3.webp";
+import sardeTwoSwords from "../assets/decks/sarde/spade-2.webp";
+import sardeEightSwords from "../assets/decks/sarde/spade-8.webp";
+import sardeNineSwords from "../assets/decks/sarde/spade-9.webp";
+import sardeTenSwords from "../assets/decks/sarde/spade-10.webp";
+
 // Suit icons (shared across card table)
 import coin from "../assets/denare.png";
 import cup from "../assets/coppa.png";
@@ -196,7 +241,8 @@ export function loadSelectedDeck(): DeckStyle {
       saved === "piacentine" ||
       saved === "napoletane" ||
       saved === "siciliane" ||
-      saved === "bergamasche"
+      saved === "bergamasche" ||
+      saved === "sarde"
     ) {
       return saved;
     }
@@ -435,6 +481,56 @@ const DECK_IMAGES: Record<DeckStyle, Record<Suits, Record<CardValue, string>>> =
       jack: bergEightSwords,
       horse: bergNineSwords,
       king: bergTenSwords,
+    },
+  },
+  sarde: {
+    coins: {
+      seven: sardeSevenCoins,
+      six: sardeSixCoins,
+      ace: sardeAceCoins,
+      five: sardeFiveCoins,
+      four: sardeFourCoins,
+      three: sardeThreeCoins,
+      two: sardeTwoCoins,
+      jack: sardeEightCoins,
+      horse: sardeNineCoins,
+      king: sardeTenCoins,
+    },
+    cups: {
+      seven: sardeSevenCups,
+      six: sardeSixCups,
+      ace: sardeAceCups,
+      five: sardeFiveCups,
+      four: sardeFourCups,
+      three: sardeThreeCups,
+      two: sardeTwoCups,
+      jack: sardeEightCups,
+      horse: sardeNineCups,
+      king: sardeTenCups,
+    },
+    clubs: {
+      seven: sardeSevenClubs,
+      six: sardeSixClubs,
+      ace: sardeAceClubs,
+      five: sardeFiveClubs,
+      four: sardeFourClubs,
+      three: sardeThreeClubs,
+      two: sardeTwoClubs,
+      jack: sardeEightClubs,
+      horse: sardeNineClubs,
+      king: sardeTenClubs,
+    },
+    swords: {
+      seven: sardeSevenSwords,
+      six: sardeSixSwords,
+      ace: sardeAceSwords,
+      five: sardeFiveSwords,
+      four: sardeFourSwords,
+      three: sardeThreeSwords,
+      two: sardeTwoSwords,
+      jack: sardeEightSwords,
+      horse: sardeNineSwords,
+      king: sardeTenSwords,
     },
   },
 };

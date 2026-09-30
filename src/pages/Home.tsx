@@ -1,10 +1,22 @@
 import { useState } from "react";
 import { Link } from "react-router";
-import type { GameState } from "../types";
+import type { DeckStyle, GameState } from "../types";
 import { loadGameState } from "../utils/scorecardHelpers";
 import { getCardImage, useDeckStyle } from "../utils/cardData";
 import swordIcon from "../assets/spada.png";
 import logo from "../assets/logo-192x192.png";
+
+const DECK_OPTIONS: Array<{
+  id: DeckStyle;
+  label: string;
+  sublabel?: string;
+}> = [
+  { id: "napoletane", label: "Napoletane", sublabel: "(Default)" },
+  { id: "piacentine", label: "Piacentine" },
+  { id: "siciliane", label: "Siciliane" },
+  { id: "bergamasche", label: "Bergamasche" },
+  { id: "sarde", label: "Sarde" },
+];
 
 function Home() {
   const [activeGame] = useState<GameState | null>(() => loadGameState());
@@ -175,69 +187,42 @@ function Home() {
           <div
             role="radiogroup"
             aria-label="Card deck style"
-            className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 rounded-xl bg-emerald-950/80 p-1.5 border border-emerald-800/80 w-full max-w-sm sm:max-w-md"
+            className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 rounded-xl bg-emerald-950/80 p-1.5 border border-emerald-800/80 w-full max-w-sm sm:max-w-md"
           >
-            <button
-              type="button"
-              role="radio"
-              aria-checked={deckStyle === "napoletane"}
-              onClick={() => setDeckStyle("napoletane")}
-              className={`min-h-[44px] py-1.5 px-2 rounded-lg text-xs sm:text-sm font-bold transition-all cursor-pointer flex flex-col items-center justify-center focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none ${
-                deckStyle === "napoletane"
-                  ? "bg-yellow-400 text-emerald-950 shadow-sm"
-                  : "text-emerald-200 hover:text-white hover:bg-emerald-900/60"
-              }`}
-            >
-              <span>Napoletane</span>
-              <span
-                className={`text-[10px] font-normal ${
-                  deckStyle === "napoletane"
-                    ? "text-emerald-900"
-                    : "text-emerald-400/80"
-                }`}
-              >
-                (Default)
-              </span>
-            </button>
-            <button
-              type="button"
-              role="radio"
-              aria-checked={deckStyle === "piacentine"}
-              onClick={() => setDeckStyle("piacentine")}
-              className={`min-h-[44px] py-1.5 px-2 rounded-lg text-xs sm:text-sm font-bold transition-all cursor-pointer flex flex-col items-center justify-center focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none ${
-                deckStyle === "piacentine"
-                  ? "bg-yellow-400 text-emerald-950 shadow-sm"
-                  : "text-emerald-200 hover:text-white hover:bg-emerald-900/60"
-              }`}
-            >
-              <span>Piacentine</span>
-            </button>
-            <button
-              type="button"
-              role="radio"
-              aria-checked={deckStyle === "siciliane"}
-              onClick={() => setDeckStyle("siciliane")}
-              className={`min-h-[44px] py-1.5 px-2 rounded-lg text-xs sm:text-sm font-bold transition-all cursor-pointer flex flex-col items-center justify-center focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none ${
-                deckStyle === "siciliane"
-                  ? "bg-yellow-400 text-emerald-950 shadow-sm"
-                  : "text-emerald-200 hover:text-white hover:bg-emerald-900/60"
-              }`}
-            >
-              <span>Siciliane</span>
-            </button>
-            <button
-              type="button"
-              role="radio"
-              aria-checked={deckStyle === "bergamasche"}
-              onClick={() => setDeckStyle("bergamasche")}
-              className={`min-h-[44px] py-1.5 px-2 rounded-lg text-xs sm:text-sm font-bold transition-all cursor-pointer flex flex-col items-center justify-center focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none ${
-                deckStyle === "bergamasche"
-                  ? "bg-yellow-400 text-emerald-950 shadow-sm"
-                  : "text-emerald-200 hover:text-white hover:bg-emerald-900/60"
-              }`}
-            >
-              <span>Bergamasche</span>
-            </button>
+            {DECK_OPTIONS.map((opt, idx) => {
+              const isSelected = deckStyle === opt.id;
+              const isLastOdd =
+                idx === DECK_OPTIONS.length - 1 &&
+                DECK_OPTIONS.length % 2 === 1;
+
+              return (
+                <button
+                  key={opt.id}
+                  type="button"
+                  role="radio"
+                  aria-checked={isSelected}
+                  onClick={() => setDeckStyle(opt.id)}
+                  className={`min-h-[44px] py-1.5 px-2 rounded-lg text-xs sm:text-sm font-bold transition-all cursor-pointer flex flex-col items-center justify-center focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none ${
+                    isLastOdd ? "col-span-2 sm:col-span-1" : ""
+                  } ${
+                    isSelected
+                      ? "bg-yellow-400 text-emerald-950 shadow-sm"
+                      : "text-emerald-200 hover:text-white hover:bg-emerald-900/60"
+                  }`}
+                >
+                  <span>{opt.label}</span>
+                  {opt.sublabel && (
+                    <span
+                      className={`text-[10px] font-normal ${
+                        isSelected ? "text-emerald-900" : "text-emerald-400/80"
+                      }`}
+                    >
+                      {opt.sublabel}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>

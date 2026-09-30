@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import {
   CARD_DATA,
   getCardData,
@@ -9,6 +9,24 @@ import {
 import type { CardValue, Suits } from "../types";
 
 describe("cardData (40-card Italian Scopa deck)", () => {
+  let mockStorage: Record<string, string> = {};
+
+  beforeEach(() => {
+    mockStorage = {};
+    vi.stubGlobal("localStorage", {
+      getItem: (key: string) => mockStorage[key] ?? null,
+      setItem: (key: string, value: string) => {
+        mockStorage[key] = value.toString();
+      },
+      removeItem: (key: string) => {
+        delete mockStorage[key];
+      },
+      clear: () => {
+        mockStorage = {};
+      },
+    });
+  });
+
   const suits: Suits[] = ["coins", "cups", "clubs", "swords"];
   const expectedValues: CardValue[] = [
     "seven",
@@ -97,35 +115,40 @@ describe("cardData (40-card Italian Scopa deck)", () => {
     expect(result).toBeUndefined();
   });
 
-  describe("Multi-deck support (Napoletane, Piacentine, Siciliane & Bergamasche)", () => {
-    it("getCardData should support all four decks with 40 cards each", () => {
+  describe("Multi-deck support (Napoletane, Piacentine, Siciliane, Bergamasche & Sarde)", () => {
+    it("getCardData should support all five decks with 40 cards each", () => {
       const nap = getCardData("napoletane");
       const piac = getCardData("piacentine");
       const sic = getCardData("siciliane");
       const berg = getCardData("bergamasche");
+      const sarde = getCardData("sarde");
 
       for (const suit of suits) {
         expect(nap[suit].cards).toHaveLength(10);
         expect(piac[suit].cards).toHaveLength(10);
         expect(sic[suit].cards).toHaveLength(10);
         expect(berg[suit].cards).toHaveLength(10);
+        expect(sarde[suit].cards).toHaveLength(10);
 
         for (let i = 0; i < 10; i++) {
           expect(nap[suit].cards[i].value).toBe(piac[suit].cards[i].value);
           expect(piac[suit].cards[i].value).toBe(sic[suit].cards[i].value);
           expect(sic[suit].cards[i].value).toBe(berg[suit].cards[i].value);
-          expect(nap[suit].cards[i].points).toBe(berg[suit].cards[i].points);
+          expect(berg[suit].cards[i].value).toBe(sarde[suit].cards[i].value);
+          expect(nap[suit].cards[i].points).toBe(sarde[suit].cards[i].points);
 
-          // Images should be distinct across all four decks
+          // Images should be distinct across all five decks
           const imgNap = nap[suit].cards[i].image;
           const imgPiac = piac[suit].cards[i].image;
           const imgSic = sic[suit].cards[i].image;
           const imgBerg = berg[suit].cards[i].image;
+          const imgSarde = sarde[suit].cards[i].image;
 
           expect(imgNap).not.toBe(imgPiac);
           expect(imgPiac).not.toBe(imgSic);
           expect(imgSic).not.toBe(imgBerg);
-          expect(imgNap).not.toBe(imgBerg);
+          expect(imgBerg).not.toBe(imgSarde);
+          expect(imgNap).not.toBe(imgSarde);
         }
       }
     });
@@ -135,16 +158,19 @@ describe("cardData (40-card Italian Scopa deck)", () => {
       const piacSettebello = getCardImage("coins", "seven", "piacentine");
       const sicSettebello = getCardImage("coins", "seven", "siciliane");
       const bergSettebello = getCardImage("coins", "seven", "bergamasche");
+      const sardeSettebello = getCardImage("coins", "seven", "sarde");
 
       expect(napSettebello).toBeTruthy();
       expect(piacSettebello).toBeTruthy();
       expect(sicSettebello).toBeTruthy();
       expect(bergSettebello).toBeTruthy();
+      expect(sardeSettebello).toBeTruthy();
 
       expect(napSettebello).not.toBe(piacSettebello);
       expect(piacSettebello).not.toBe(sicSettebello);
       expect(sicSettebello).not.toBe(bergSettebello);
-      expect(napSettebello).not.toBe(bergSettebello);
+      expect(bergSettebello).not.toBe(sardeSettebello);
+      expect(napSettebello).not.toBe(sardeSettebello);
     });
 
     it("loadSelectedDeck should default to napoletane when storage is empty or invalid", () => {
@@ -164,6 +190,9 @@ describe("cardData (40-card Italian Scopa deck)", () => {
 
       saveSelectedDeck("bergamasche");
       expect(loadSelectedDeck()).toBe("bergamasche");
+
+      saveSelectedDeck("sarde");
+      expect(loadSelectedDeck()).toBe("sarde");
 
       saveSelectedDeck("napoletane");
       expect(loadSelectedDeck()).toBe("napoletane");
