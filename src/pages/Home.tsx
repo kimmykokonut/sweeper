@@ -16,6 +16,7 @@ const DECK_OPTIONS: Array<{
   { id: "siciliane", label: "Siciliane" },
   { id: "bergamasche", label: "Bergamasche" },
   { id: "sarde", label: "Sarde" },
+  { id: "romagnole", label: "Romagnole" },
 ];
 
 function Home() {

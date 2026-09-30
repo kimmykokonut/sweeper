@@ -4,7 +4,8 @@ export type DeckStyle =
   | "piacentine"
   | "siciliane"
   | "bergamasche"
-  | "sarde";
+  | "sarde"
+  | "romagnole";
 
 export type CardValue =
   | "seven"

@@ -226,6 +226,51 @@ import sardeEightSwords from "../assets/decks/sarde/spade-8.webp";
 import sardeNineSwords from "../assets/decks/sarde/spade-9.webp";
 import sardeTenSwords from "../assets/decks/sarde/spade-10.webp";
 
+// Romagnole Deck
+import romSevenCoins from "../assets/decks/romagnole/denari-7.webp";
+import romSixCoins from "../assets/decks/romagnole/denari-6.webp";
+import romAceCoins from "../assets/decks/romagnole/denari-1.webp";
+import romFiveCoins from "../assets/decks/romagnole/denari-5.webp";
+import romFourCoins from "../assets/decks/romagnole/denari-4.webp";
+import romThreeCoins from "../assets/decks/romagnole/denari-3.webp";
+import romTwoCoins from "../assets/decks/romagnole/denari-2.webp";
+import romEightCoins from "../assets/decks/romagnole/denari-8.webp";
+import romNineCoins from "../assets/decks/romagnole/denari-9.webp";
+import romTenCoins from "../assets/decks/romagnole/denari-10.webp";
+
+import romSevenCups from "../assets/decks/romagnole/coppe-7.webp";
+import romSixCups from "../assets/decks/romagnole/coppe-6.webp";
+import romAceCups from "../assets/decks/romagnole/coppe-1.webp";
+import romFiveCups from "../assets/decks/romagnole/coppe-5.webp";
+import romFourCups from "../assets/decks/romagnole/coppe-4.webp";
+import romThreeCups from "../assets/decks/romagnole/coppe-3.webp";
+import romTwoCups from "../assets/decks/romagnole/coppe-2.webp";
+import romEightCups from "../assets/decks/romagnole/coppe-8.webp";
+import romNineCups from "../assets/decks/romagnole/coppe-9.webp";
+import romTenCups from "../assets/decks/romagnole/coppe-10.webp";
+
+import romSevenClubs from "../assets/decks/romagnole/bastoni-7.webp";
+import romSixClubs from "../assets/decks/romagnole/bastoni-6.webp";
+import romAceClubs from "../assets/decks/romagnole/bastoni-1.webp";
+import romFiveClubs from "../assets/decks/romagnole/bastoni-5.webp";
+import romFourClubs from "../assets/decks/romagnole/bastoni-4.webp";
+import romThreeClubs from "../assets/decks/romagnole/bastoni-3.webp";
+import romTwoClubs from "../assets/decks/romagnole/bastoni-2.webp";
+import romEightClubs from "../assets/decks/romagnole/bastoni-8.webp";
+import romNineClubs from "../assets/decks/romagnole/bastoni-9.webp";
+import romTenClubs from "../assets/decks/romagnole/bastoni-10.webp";
+
+import romSevenSwords from "../assets/decks/romagnole/spade-7.webp";
+import romSixSwords from "../assets/decks/romagnole/spade-6.webp";
+import romAceSwords from "../assets/decks/romagnole/spade-1.webp";
+import romFiveSwords from "../assets/decks/romagnole/spade-5.webp";
+import romFourSwords from "../assets/decks/romagnole/spade-4.webp";
+import romThreeSwords from "../assets/decks/romagnole/spade-3.webp";
+import romTwoSwords from "../assets/decks/romagnole/spade-2.webp";
+import romEightSwords from "../assets/decks/romagnole/spade-8.webp";
+import romNineSwords from "../assets/decks/romagnole/spade-9.webp";
+import romTenSwords from "../assets/decks/romagnole/spade-10.webp";
+
 // Suit icons (shared across card table)
 import coin from "../assets/denare.png";
 import cup from "../assets/coppa.png";
@@ -242,7 +287,8 @@ export function loadSelectedDeck(): DeckStyle {
       saved === "napoletane" ||
       saved === "siciliane" ||
       saved === "bergamasche" ||
-      saved === "sarde"
+      saved === "sarde" ||
+      saved === "romagnole"
     ) {
       return saved;
     }
@@ -531,6 +577,56 @@ const DECK_IMAGES: Record<DeckStyle, Record<Suits, Record<CardValue, string>>> =
       jack: sardeEightSwords,
       horse: sardeNineSwords,
       king: sardeTenSwords,
+    },
+  },
+  romagnole: {
+    coins: {
+      seven: romSevenCoins,
+      six: romSixCoins,
+      ace: romAceCoins,
+      five: romFiveCoins,
+      four: romFourCoins,
+      three: romThreeCoins,
+      two: romTwoCoins,
+      jack: romEightCoins,
+      horse: romNineCoins,
+      king: romTenCoins,
+    },
+    cups: {
+      seven: romSevenCups,
+      six: romSixCups,
+      ace: romAceCups,
+      five: romFiveCups,
+      four: romFourCups,
+      three: romThreeCups,
+      two: romTwoCups,
+      jack: romEightCups,
+      horse: romNineCups,
+      king: romTenCups,
+    },
+    clubs: {
+      seven: romSevenClubs,
+      six: romSixClubs,
+      ace: romAceClubs,
+      five: romFiveClubs,
+      four: romFourClubs,
+      three: romThreeClubs,
+      two: romTwoClubs,
+      jack: romEightClubs,
+      horse: romNineClubs,
+      king: romTenClubs,
+    },
+    swords: {
+      seven: romSevenSwords,
+      six: romSixSwords,
+      ace: romAceSwords,
+      five: romFiveSwords,
+      four: romFourSwords,
+      three: romThreeSwords,
+      two: romTwoSwords,
+      jack: romEightSwords,
+      horse: romNineSwords,
+      king: romTenSwords,
     },
   },
 };

@@ -115,13 +115,14 @@ describe("cardData (40-card Italian Scopa deck)", () => {
     expect(result).toBeUndefined();
   });
 
-  describe("Multi-deck support (Napoletane, Piacentine, Siciliane, Bergamasche & Sarde)", () => {
-    it("getCardData should support all five decks with 40 cards each", () => {
+  describe("Multi-deck support (Napoletane, Piacentine, Siciliane, Bergamasche, Sarde & Romagnole)", () => {
+    it("getCardData should support all six decks with 40 cards each", () => {
       const nap = getCardData("napoletane");
       const piac = getCardData("piacentine");
       const sic = getCardData("siciliane");
       const berg = getCardData("bergamasche");
       const sarde = getCardData("sarde");
+      const rom = getCardData("romagnole");
 
       for (const suit of suits) {
         expect(nap[suit].cards).toHaveLength(10);
@@ -129,26 +130,30 @@ describe("cardData (40-card Italian Scopa deck)", () => {
         expect(sic[suit].cards).toHaveLength(10);
         expect(berg[suit].cards).toHaveLength(10);
         expect(sarde[suit].cards).toHaveLength(10);
+        expect(rom[suit].cards).toHaveLength(10);
 
         for (let i = 0; i < 10; i++) {
           expect(nap[suit].cards[i].value).toBe(piac[suit].cards[i].value);
           expect(piac[suit].cards[i].value).toBe(sic[suit].cards[i].value);
           expect(sic[suit].cards[i].value).toBe(berg[suit].cards[i].value);
           expect(berg[suit].cards[i].value).toBe(sarde[suit].cards[i].value);
-          expect(nap[suit].cards[i].points).toBe(sarde[suit].cards[i].points);
+          expect(sarde[suit].cards[i].value).toBe(rom[suit].cards[i].value);
+          expect(nap[suit].cards[i].points).toBe(rom[suit].cards[i].points);
 
-          // Images should be distinct across all five decks
+          // Images should be distinct across all six decks
           const imgNap = nap[suit].cards[i].image;
           const imgPiac = piac[suit].cards[i].image;
           const imgSic = sic[suit].cards[i].image;
           const imgBerg = berg[suit].cards[i].image;
           const imgSarde = sarde[suit].cards[i].image;
+          const imgRom = rom[suit].cards[i].image;
 
           expect(imgNap).not.toBe(imgPiac);
           expect(imgPiac).not.toBe(imgSic);
           expect(imgSic).not.toBe(imgBerg);
           expect(imgBerg).not.toBe(imgSarde);
-          expect(imgNap).not.toBe(imgSarde);
+          expect(imgSarde).not.toBe(imgRom);
+          expect(imgNap).not.toBe(imgRom);
         }
       }
     });
@@ -159,18 +164,21 @@ describe("cardData (40-card Italian Scopa deck)", () => {
       const sicSettebello = getCardImage("coins", "seven", "siciliane");
       const bergSettebello = getCardImage("coins", "seven", "bergamasche");
       const sardeSettebello = getCardImage("coins", "seven", "sarde");
+      const romSettebello = getCardImage("coins", "seven", "romagnole");
 
       expect(napSettebello).toBeTruthy();
       expect(piacSettebello).toBeTruthy();
       expect(sicSettebello).toBeTruthy();
       expect(bergSettebello).toBeTruthy();
       expect(sardeSettebello).toBeTruthy();
+      expect(romSettebello).toBeTruthy();
 
       expect(napSettebello).not.toBe(piacSettebello);
       expect(piacSettebello).not.toBe(sicSettebello);
       expect(sicSettebello).not.toBe(bergSettebello);
       expect(bergSettebello).not.toBe(sardeSettebello);
-      expect(napSettebello).not.toBe(sardeSettebello);
+      expect(sardeSettebello).not.toBe(romSettebello);
+      expect(napSettebello).not.toBe(romSettebello);
     });
 
     it("loadSelectedDeck should default to napoletane when storage is empty or invalid", () => {
@@ -193,6 +201,9 @@ describe("cardData (40-card Italian Scopa deck)", () => {
 
       saveSelectedDeck("sarde");
       expect(loadSelectedDeck()).toBe("sarde");
+
+      saveSelectedDeck("romagnole");
+      expect(loadSelectedDeck()).toBe("romagnole");
 
       saveSelectedDeck("napoletane");
       expect(loadSelectedDeck()).toBe("napoletane");
