@@ -9,6 +9,10 @@ import {
   groupHistoryByMatchup,
   saveRecentPlayerNames,
   loadRecentPlayerNames,
+  saveGameHistory,
+  exportGameHistoryJson,
+  parseAndValidateHistoryBackup,
+  mergeGameHistories,
   HISTORY_STORAGE_KEY,
 } from "./scorecardHelpers";
 import type { GameState, Player } from "../types";
@@ -37,7 +41,10 @@ describe("historyStorage (sweeper_game_history)", () => {
     });
   });
 
-  const createSampleFinishedGame = (id: string, winnerId: string = "p1"): GameState => ({
+  const createSampleFinishedGame = (
+    id: string,
+    winnerId: string = "p1",
+  ): GameState => ({
     id,
     createdAt: 1700000000,
     players,
@@ -314,6 +321,136 @@ describe("historyStorage (sweeper_game_history)", () => {
       expect(loaded).toEqual(["Player 1", "Player 2"]);
     });
   });
+
+  describe("backup and restore helpers", () => {
+    it("should save full game history array to localStorage with saveGameHistory", () => {
+      const g1 = saveFinishedGame(createSampleFinishedGame("game_backup_1"))!;
+      const g2 = saveFinishedGame(createSampleFinishedGame("game_backup_2"))!;
+
+      const customList = [g2, g1];
+      saveGameHistory(customList);
+
+      const loaded = loadGameHistory();
+      expect(loaded).toHaveLength(2);
+      expect(loaded[0].id).toBe("game_backup_2");
+      expect(loaded[1].id).toBe("game_backup_1");
+    });
+
+    it("should export history into formatted Sweeper backup JSON payload", () => {
+      const g1 = saveFinishedGame(createSampleFinishedGame("game_export_1"))!;
+      const jsonStr = exportGameHistoryJson([g1]);
+
+      const parsed = JSON.parse(jsonStr);
+      expect(parsed.app).toBe("sweeper");
+      expect(parsed.version).toBe(1);
+      expect(parsed.gameCount).toBe(1);
+      expect(typeof parsed.exportedAt).toBe("number");
+      expect(parsed.games).toHaveLength(1);
+      expect(parsed.games[0].id).toBe("game_export_1");
+    });
+
+    it("should parse and validate standard Sweeper backup payload", () => {
+      const g1 = saveFinishedGame(createSampleFinishedGame("game_val_1"))!;
+      const payload = {
+        app: "sweeper",
+        version: 1,
+        exportedAt: 1727720000000,
+        gameCount: 1,
+        games: [g1],
+      };
+
+      const result = parseAndValidateHistoryBackup(JSON.stringify(payload));
+      expect(result.isValid).toBe(true);
+      expect(result.games).toHaveLength(1);
+      expect(result.games[0].id).toBe("game_val_1");
+      expect(result.error).toBeUndefined();
+    });
+
+    it("should parse and validate raw array of FinishedGame objects", () => {
+      const g1 = saveFinishedGame(createSampleFinishedGame("game_raw_1"))!;
+      const g2 = saveFinishedGame(createSampleFinishedGame("game_raw_2"))!;
+
+      const result = parseAndValidateHistoryBackup(JSON.stringify([g1, g2]));
+      expect(result.isValid).toBe(true);
+      expect(result.games).toHaveLength(2);
+    });
+
+    it("should handle empty games array gracefully", () => {
+      const result = parseAndValidateHistoryBackup(JSON.stringify([]));
+      expect(result.isValid).toBe(true);
+      expect(result.games).toEqual([]);
+    });
+
+    it("should return invalid when JSON is malformed", () => {
+      const result = parseAndValidateHistoryBackup("{ not-valid-json ]");
+      expect(result.isValid).toBe(false);
+      expect(result.games).toEqual([]);
+      expect(result.error).toContain("Could not parse JSON");
+    });
+
+    it("should return invalid when payload structure is unrecognized", () => {
+      const result = parseAndValidateHistoryBackup(
+        JSON.stringify({ randomKey: 123 }),
+      );
+      expect(result.isValid).toBe(false);
+      expect(result.games).toEqual([]);
+      expect(result.error).toContain("Unrecognized backup format");
+    });
+
+    it("should filter out malformed games and reject if no valid games found", () => {
+      const malformedGames = [
+        { id: "" },
+        { id: "bad_2", players: [] },
+        { id: "bad_3", players: [{ id: "p1" }] }, // only 1 player
+        {
+          id: "bad_4",
+          players: [
+            { id: "p1", name: "P1" },
+            { id: "p2", name: "P2" },
+          ],
+        }, // missing rounds
+      ];
+
+      const result = parseAndValidateHistoryBackup(
+        JSON.stringify(malformedGames),
+      );
+      expect(result.isValid).toBe(false);
+      expect(result.games).toEqual([]);
+      expect(result.error).toContain("No valid Sweeper game records found");
+    });
+
+    it("should merge imported games without duplicating existing game IDs and sort by completedAt", () => {
+      const g1 = {
+        ...saveFinishedGame(createSampleFinishedGame("game_merge_1"))!,
+        completedAt: 1000,
+      };
+      const g2 = {
+        ...saveFinishedGame(createSampleFinishedGame("game_merge_2"))!,
+        completedAt: 2000,
+      };
+      const g3 = {
+        ...saveFinishedGame(createSampleFinishedGame("game_merge_3"))!,
+        completedAt: 3000,
+      };
+
+      const currentHistory = [g2, g1]; // g2 (2000), g1 (1000)
+      const importedGames = [
+        g2, // duplicate
+        g3, // new (3000)
+      ];
+
+      const { merged, addedCount, duplicateCount } = mergeGameHistories(
+        currentHistory,
+        importedGames,
+      );
+
+      expect(addedCount).toBe(1);
+      expect(duplicateCount).toBe(1);
+      expect(merged).toHaveLength(3);
+      // Sorted descending by completedAt: g3 (3000), g2 (2000), g1 (1000)
+      expect(merged[0].id).toBe("game_merge_3");
+      expect(merged[1].id).toBe("game_merge_2");
+      expect(merged[2].id).toBe("game_merge_1");
+    });
+  });
 });
-
-

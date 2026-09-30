@@ -85,3 +85,17 @@ export interface MatchupSummary {
   };
   games: FinishedGame[];
 }
+
+export interface HistoryBackupPayload {
+  version: number;
+  app: "sweeper";
+  exportedAt: number;
+  gameCount: number;
+  games: FinishedGame[];
+}
+
+export interface HistoryValidationResult {
+  isValid: boolean;
+  games: FinishedGame[];
+  error?: string;
+}

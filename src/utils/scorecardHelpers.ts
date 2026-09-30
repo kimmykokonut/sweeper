@@ -1,4 +1,12 @@
-import type { FinishedGame, GameState, MatchupSummary, Player, RoundEntry } from "../types";
+import type {
+  FinishedGame,
+  GameState,
+  HistoryBackupPayload,
+  HistoryValidationResult,
+  MatchupSummary,
+  Player,
+  RoundEntry,
+} from "../types";
 
 export const STORAGE_KEY = "sweeper_active_game";
 export const HISTORY_STORAGE_KEY = "sweeper_game_history";
@@ -341,13 +349,16 @@ export function saveFinishedGame(game: GameState): FinishedGame | null {
     updatedHistory = [finishedGame, ...history];
   }
 
-  try {
-    localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(updatedHistory));
-  } catch (err) {
-    console.error("Failed to save finished game to history in localStorage", err);
-  }
-
+  saveGameHistory(updatedHistory);
   return finishedGame;
+}
+
+export function saveGameHistory(history: FinishedGame[]): void {
+  try {
+    localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(history));
+  } catch (err) {
+    console.error("Failed to save game history to localStorage", err);
+  }
 }
 
 export function loadGameHistory(): FinishedGame[] {
@@ -364,13 +375,9 @@ export function loadGameHistory(): FinishedGame[] {
 }
 
 export function deleteGameFromHistory(gameId: string): void {
-  try {
-    const history = loadGameHistory();
-    const updated = history.filter((g) => g.id !== gameId);
-    localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(updated));
-  } catch (err) {
-    console.error("Failed to delete game from history in localStorage", err);
-  }
+  const history = loadGameHistory();
+  const updated = history.filter((g) => g.id !== gameId);
+  saveGameHistory(updated);
 }
 
 export function clearGameHistory(): void {
@@ -379,6 +386,158 @@ export function clearGameHistory(): void {
   } catch (err) {
     console.error("Failed to clear game history from localStorage", err);
   }
+}
+
+function isValidFinishedGame(item: unknown): item is FinishedGame {
+  if (!item || typeof item !== "object") return false;
+  const g = item as Partial<FinishedGame>;
+  if (typeof g.id !== "string" || !g.id.trim()) return false;
+  if (!Array.isArray(g.players) || g.players.length < 2) return false;
+  for (const p of g.players) {
+    if (
+      !p ||
+      typeof p !== "object" ||
+      typeof p.id !== "string" ||
+      typeof p.name !== "string"
+    ) {
+      return false;
+    }
+  }
+  if (!Array.isArray(g.rounds)) return false;
+  if (!g.finalScores || typeof g.finalScores !== "object") return false;
+  if (!g.totalScope || typeof g.totalScope !== "object") return false;
+  return true;
+}
+
+/**
+ * Serializes the games array into a human-readable Sweeper backup JSON string.
+ */
+export function exportGameHistoryJson(history: FinishedGame[]): string {
+  const payload: HistoryBackupPayload = {
+    version: 1,
+    app: "sweeper",
+    exportedAt: Date.now(),
+    gameCount: history.length,
+    games: history,
+  };
+  return JSON.stringify(payload, null, 2);
+}
+
+/**
+ * Defensively parses and validates raw JSON input from an imported backup file.
+ * Accepts either:
+ * 1. A Sweeper backup payload object: { app: "sweeper", games: [...] }
+ * 2. A direct array of FinishedGame objects: [...]
+ */
+export function parseAndValidateHistoryBackup(
+  rawJson: string,
+): HistoryValidationResult {
+  try {
+    const parsed = JSON.parse(rawJson);
+    let candidateGames: unknown[] = [];
+
+    if (Array.isArray(parsed)) {
+      candidateGames = parsed;
+    } else if (
+      parsed &&
+      typeof parsed === "object" &&
+      Array.isArray((parsed as { games?: unknown[] }).games)
+    ) {
+      candidateGames = (parsed as { games: unknown[] }).games;
+    } else {
+      return {
+        isValid: false,
+        games: [],
+        error:
+          "Unrecognized backup format. Please select a valid Sweeper backup file.",
+      };
+    }
+
+    if (candidateGames.length === 0) {
+      return {
+        isValid: true,
+        games: [],
+      };
+    }
+
+    const validGames: FinishedGame[] = [];
+    for (const item of candidateGames) {
+      if (isValidFinishedGame(item)) {
+        validGames.push({
+          ...item,
+          createdAt:
+            typeof item.createdAt === "number" && !isNaN(item.createdAt)
+              ? item.createdAt
+              : Date.now(),
+          completedAt:
+            typeof item.completedAt === "number" && !isNaN(item.completedAt)
+              ? item.completedAt
+              : Date.now(),
+          settings: item.settings || {
+            playerCount: item.players.length,
+            targetScore: 11,
+          },
+          winnerId: item.winnerId ?? null,
+        });
+      }
+    }
+
+    if (validGames.length === 0) {
+      return {
+        isValid: false,
+        games: [],
+        error: "No valid Sweeper game records found in file.",
+      };
+    }
+
+    return {
+      isValid: true,
+      games: validGames,
+    };
+  } catch {
+    return {
+      isValid: false,
+      games: [],
+      error: "Could not parse JSON. The file might be corrupted.",
+    };
+  }
+}
+
+/**
+ * Merges imported games into current history.
+ * Existing games matching game.id are skipped to prevent duplicates.
+ * Returns the merged list sorted by completedAt (most recent first).
+ */
+export function mergeGameHistories(
+  currentHistory: FinishedGame[],
+  importedGames: FinishedGame[],
+): {
+  merged: FinishedGame[];
+  addedCount: number;
+  duplicateCount: number;
+} {
+  const existingIds = new Set(currentHistory.map((g) => g.id));
+  const newGames: FinishedGame[] = [];
+  let duplicateCount = 0;
+
+  for (const game of importedGames) {
+    if (existingIds.has(game.id)) {
+      duplicateCount += 1;
+    } else {
+      newGames.push(game);
+      existingIds.add(game.id);
+    }
+  }
+
+  const merged = [...newGames, ...currentHistory].sort(
+    (a, b) => (b.completedAt || 0) - (a.completedAt || 0),
+  );
+
+  return {
+    merged,
+    addedCount: newGames.length,
+    duplicateCount,
+  };
 }
 
 export function formatGameDate(timestamp: number): string {
