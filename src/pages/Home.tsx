@@ -175,14 +175,14 @@ function Home() {
           <div
             role="radiogroup"
             aria-label="Card deck style"
-            className="flex rounded-xl bg-emerald-950/80 p-1 border border-emerald-800/80 w-full max-w-xs"
+            className="grid grid-cols-3 gap-1 rounded-xl bg-emerald-950/80 p-1 border border-emerald-800/80 w-full max-w-sm"
           >
             <button
               type="button"
               role="radio"
               aria-checked={deckStyle === "napoletane"}
               onClick={() => setDeckStyle("napoletane")}
-              className={`flex-1 min-h-[44px] py-1.5 px-3 rounded-lg text-xs sm:text-sm font-bold transition-all cursor-pointer flex flex-col items-center justify-center focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none ${
+              className={`min-h-[44px] py-1.5 px-2 rounded-lg text-xs sm:text-sm font-bold transition-all cursor-pointer flex flex-col items-center justify-center focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none ${
                 deckStyle === "napoletane"
                   ? "bg-yellow-400 text-emerald-950 shadow-sm"
                   : "text-emerald-200 hover:text-white hover:bg-emerald-900/60"
@@ -204,13 +204,26 @@ function Home() {
               role="radio"
               aria-checked={deckStyle === "piacentine"}
               onClick={() => setDeckStyle("piacentine")}
-              className={`flex-1 min-h-[44px] py-1.5 px-3 rounded-lg text-xs sm:text-sm font-bold transition-all cursor-pointer flex flex-col items-center justify-center focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none ${
+              className={`min-h-[44px] py-1.5 px-2 rounded-lg text-xs sm:text-sm font-bold transition-all cursor-pointer flex flex-col items-center justify-center focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none ${
                 deckStyle === "piacentine"
                   ? "bg-yellow-400 text-emerald-950 shadow-sm"
                   : "text-emerald-200 hover:text-white hover:bg-emerald-900/60"
               }`}
             >
-              Piacentine
+              <span>Piacentine</span>
+            </button>
+            <button
+              type="button"
+              role="radio"
+              aria-checked={deckStyle === "siciliane"}
+              onClick={() => setDeckStyle("siciliane")}
+              className={`min-h-[44px] py-1.5 px-2 rounded-lg text-xs sm:text-sm font-bold transition-all cursor-pointer flex flex-col items-center justify-center focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none ${
+                deckStyle === "siciliane"
+                  ? "bg-yellow-400 text-emerald-950 shadow-sm"
+                  : "text-emerald-200 hover:text-white hover:bg-emerald-900/60"
+              }`}
+            >
+              <span>Siciliane</span>
             </button>
           </div>
         </div>

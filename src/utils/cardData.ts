@@ -91,6 +91,51 @@ import piacEightSwords from "../assets/decks/piacentine/spade-8.webp";
 import piacNineSwords from "../assets/decks/piacentine/spade-9.webp";
 import piacTenSwords from "../assets/decks/piacentine/spade-10.webp";
 
+// Siciliane Deck Images
+import sicSevenCoins from "../assets/decks/siciliane/denari-7.webp";
+import sicSixCoins from "../assets/decks/siciliane/denari-6.webp";
+import sicAceCoins from "../assets/decks/siciliane/denari-1.webp";
+import sicFiveCoins from "../assets/decks/siciliane/denari-5.webp";
+import sicFourCoins from "../assets/decks/siciliane/denari-4.webp";
+import sicThreeCoins from "../assets/decks/siciliane/denari-3.webp";
+import sicTwoCoins from "../assets/decks/siciliane/denari-2.webp";
+import sicEightCoins from "../assets/decks/siciliane/denari-8.webp";
+import sicNineCoins from "../assets/decks/siciliane/denari-9.webp";
+import sicTenCoins from "../assets/decks/siciliane/denari-10.webp";
+
+import sicSevenCups from "../assets/decks/siciliane/coppe-7.webp";
+import sicSixCups from "../assets/decks/siciliane/coppe-6.webp";
+import sicAceCups from "../assets/decks/siciliane/coppe-1.webp";
+import sicFiveCups from "../assets/decks/siciliane/coppe-5.webp";
+import sicFourCups from "../assets/decks/siciliane/coppe-4.webp";
+import sicThreeCups from "../assets/decks/siciliane/coppe-3.webp";
+import sicTwoCups from "../assets/decks/siciliane/coppe-2.webp";
+import sicEightCups from "../assets/decks/siciliane/coppe-8.webp";
+import sicNineCups from "../assets/decks/siciliane/coppe-9.webp";
+import sicTenCups from "../assets/decks/siciliane/coppe-10.webp";
+
+import sicSevenClubs from "../assets/decks/siciliane/bastoni-7.webp";
+import sicSixClubs from "../assets/decks/siciliane/bastoni-6.webp";
+import sicAceClubs from "../assets/decks/siciliane/bastoni-1.webp";
+import sicFiveClubs from "../assets/decks/siciliane/bastoni-5.webp";
+import sicFourClubs from "../assets/decks/siciliane/bastoni-4.webp";
+import sicThreeClubs from "../assets/decks/siciliane/bastoni-3.webp";
+import sicTwoClubs from "../assets/decks/siciliane/bastoni-2.webp";
+import sicEightClubs from "../assets/decks/siciliane/bastoni-8.webp";
+import sicNineClubs from "../assets/decks/siciliane/bastoni-9.webp";
+import sicTenClubs from "../assets/decks/siciliane/bastoni-10.webp";
+
+import sicSevenSwords from "../assets/decks/siciliane/spade-7.webp";
+import sicSixSwords from "../assets/decks/siciliane/spade-6.webp";
+import sicAceSwords from "../assets/decks/siciliane/spade-1.webp";
+import sicFiveSwords from "../assets/decks/siciliane/spade-5.webp";
+import sicFourSwords from "../assets/decks/siciliane/spade-4.webp";
+import sicThreeSwords from "../assets/decks/siciliane/spade-3.webp";
+import sicTwoSwords from "../assets/decks/siciliane/spade-2.webp";
+import sicEightSwords from "../assets/decks/siciliane/spade-8.webp";
+import sicNineSwords from "../assets/decks/siciliane/spade-9.webp";
+import sicTenSwords from "../assets/decks/siciliane/spade-10.webp";
+
 // Suit icons (shared across card table)
 import coin from "../assets/denare.png";
 import cup from "../assets/coppa.png";
@@ -102,7 +147,11 @@ export const DECK_STORAGE_KEY = "sweeper_selected_deck";
 export function loadSelectedDeck(): DeckStyle {
   try {
     const saved = localStorage.getItem(DECK_STORAGE_KEY);
-    if (saved === "piacentine" || saved === "napoletane") {
+    if (
+      saved === "piacentine" ||
+      saved === "napoletane" ||
+      saved === "siciliane"
+    ) {
       return saved;
     }
   } catch (e) {
@@ -240,6 +289,56 @@ const DECK_IMAGES: Record<DeckStyle, Record<Suits, Record<CardValue, string>>> =
       jack: piacEightSwords,
       horse: piacNineSwords,
       king: piacTenSwords,
+    },
+  },
+  siciliane: {
+    coins: {
+      seven: sicSevenCoins,
+      six: sicSixCoins,
+      ace: sicAceCoins,
+      five: sicFiveCoins,
+      four: sicFourCoins,
+      three: sicThreeCoins,
+      two: sicTwoCoins,
+      jack: sicEightCoins,
+      horse: sicNineCoins,
+      king: sicTenCoins,
+    },
+    cups: {
+      seven: sicSevenCups,
+      six: sicSixCups,
+      ace: sicAceCups,
+      five: sicFiveCups,
+      four: sicFourCups,
+      three: sicThreeCups,
+      two: sicTwoCups,
+      jack: sicEightCups,
+      horse: sicNineCups,
+      king: sicTenCups,
+    },
+    clubs: {
+      seven: sicSevenClubs,
+      six: sicSixClubs,
+      ace: sicAceClubs,
+      five: sicFiveClubs,
+      four: sicFourClubs,
+      three: sicThreeClubs,
+      two: sicTwoClubs,
+      jack: sicEightClubs,
+      horse: sicNineClubs,
+      king: sicTenClubs,
+    },
+    swords: {
+      seven: sicSevenSwords,
+      six: sicSixSwords,
+      ace: sicAceSwords,
+      five: sicFiveSwords,
+      four: sicFourSwords,
+      three: sicThreeSwords,
+      two: sicTwoSwords,
+      jack: sicEightSwords,
+      horse: sicNineSwords,
+      king: sicTenSwords,
     },
   },
 };
