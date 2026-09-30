@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
 import type { Player, RoundEntry, RoundRawCounts } from "../types";
-import setteBelloImg from "../assets/decks/napoletane/denari-7.jpg";
-import oneSpadesImg from "../assets/decks/napoletane/spade-1.jpg";
 import coinIcon from "../assets/denare.png";
 import PrimieraModal from "./PrimieraModal";
 import {
   calculateAutoFillCards,
 } from "../utils/scorecardHelpers";
+import { getCardImage, useDeckStyle } from "../utils/cardData";
 
 interface RoundScoreModalProps {
   players: Player[];
@@ -25,6 +24,10 @@ export default function RoundScoreModal({
   onSave,
   onClose,
 }: RoundScoreModalProps) {
+  const [deckStyle] = useDeckStyle();
+  const setteBelloImg = getCardImage("coins", "seven", deckStyle);
+  const oneSpadesImg = getCardImage("swords", "ace", deckStyle);
+
   // State for Scope sweeps
   const [scope, setScope] = useState<Record<string, number>>(() => {
     if (existingRound) return { ...existingRound.scope };

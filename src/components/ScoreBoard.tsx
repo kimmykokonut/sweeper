@@ -1,9 +1,7 @@
 import { useState, useEffect } from "react";
 import type { GameState, RoundEntry } from "../types";
-import setteBelloImg from "../assets/decks/napoletane/denari-7.jpg";
 import coinIcon from "../assets/denare.png";
-import aceCoinsImg from "../assets/decks/napoletane/denari-1.jpg";
-import kingSpadesImg from "../assets/decks/napoletane/spade-10.jpg";
+import { getCardImage, useDeckStyle } from "../utils/cardData";
 
 interface ScoreBoardProps {
   game: GameState;
@@ -19,6 +17,11 @@ export default function ScoreBoard({
   onEditRound,
   onResetGame,
 }: ScoreBoardProps) {
+  const [deckStyle] = useDeckStyle();
+  const setteBelloImg = getCardImage("coins", "seven", deckStyle);
+  const aceCoinsImg = getCardImage("coins", "ace", deckStyle);
+  const kingSpadesImg = getCardImage("swords", "king", deckStyle);
+
   const [showRules, setShowRules] = useState(false);
   const [isHistoryCollapsed, setIsHistoryCollapsed] = useState(
     () => game.rounds.length > 0,

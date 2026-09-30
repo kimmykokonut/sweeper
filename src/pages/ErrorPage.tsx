@@ -2,9 +2,11 @@ import { useState } from "react";
 import { Link, useRouteError, isRouteErrorResponse } from "react-router";
 import type { GameState } from "../types";
 import { loadGameState } from "../utils/scorecardHelpers";
-import eightSpades from "../assets/decks/napoletane/spade-8.jpg";
+import { getCardImage, useDeckStyle } from "../utils/cardData";
 
 export default function ErrorPage() {
+  const [deckStyle] = useDeckStyle();
+  const eightSpades = getCardImage("swords", "jack", deckStyle);
   const error = useRouteError();
   const [activeGame] = useState<GameState | null>(() => loadGameState());
 

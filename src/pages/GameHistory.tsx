@@ -13,10 +13,12 @@ import {
   parseAndValidateHistoryBackup,
   saveGameHistory,
 } from "../utils/scorecardHelpers";
-import aceCoins from "../assets/decks/napoletane/denari-1.jpg";
+import { getCardImage, useDeckStyle } from "../utils/cardData";
 import swordIcon from "../assets/spada.png";
 
 export default function GameHistory() {
+  const [deckStyle] = useDeckStyle();
+  const aceCoins = getCardImage("coins", "ace", deckStyle);
   const [history, setHistory] = useState<FinishedGame[]>(() =>
     loadGameHistory(),
   );
