@@ -14,6 +14,7 @@ import {
   saveGameHistory,
 } from "../utils/scorecardHelpers";
 import aceCoins from "../assets/1-denari.jpg";
+import swordIcon from "../assets/spada.png";
 
 export default function GameHistory() {
   const [history, setHistory] = useState<FinishedGame[]>(() =>
@@ -31,13 +32,22 @@ export default function GameHistory() {
   const [deletingGameId, setDeletingGameId] = useState<string | null>(null);
   const [showClearModal, setShowClearModal] = useState<boolean>(false);
   const [showSettingsModal, setShowSettingsModal] = useState<boolean>(false);
-  const [exportSuccess, setExportSuccess] = useState<string | null>(null);
-  const [importError, setImportError] = useState<string | null>(null);
-  const [importSuccess, setImportSuccess] = useState<string | null>(null);
+  const [toast, setToast] = useState<{
+    text: string;
+    type?: "success" | "error";
+  } | null>(null);
+  const [modalError, setModalError] = useState<string | null>(null);
   const [pendingImportGames, setPendingImportGames] = useState<
     FinishedGame[] | null
   >(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const showToast = (text: string, type: "success" | "error" = "success") => {
+    setToast({ text, type });
+    setTimeout(() => {
+      setToast((prev) => (prev?.text === text ? null : prev));
+    }, 4500);
+  };
 
   // Close modals on Escape key press
   useEffect(() => {
@@ -47,7 +57,7 @@ export default function GameHistory() {
         setShowClearModal(false);
         setShowSettingsModal(false);
         setPendingImportGames(null);
-        setImportError(null);
+        setModalError(null);
       }
     };
     window.addEventListener("keydown", handleKeyDown);
@@ -100,11 +110,11 @@ export default function GameHistory() {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
 
-      setExportSuccess(
-        `Exported ${history.length} ${history.length === 1 ? "game" : "games"}!`,
-      );
       setShowSettingsModal(false);
-      setTimeout(() => setExportSuccess(null), 4000);
+      showToast(
+        `Exported ${history.length} ${history.length === 1 ? "game" : "games"}!`,
+        "success",
+      );
     } catch (err) {
       console.error("Export failed", err);
     }
@@ -114,25 +124,24 @@ export default function GameHistory() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    setImportError(null);
-    setImportSuccess(null);
+    setModalError(null);
 
     const reader = new FileReader();
     reader.onload = (event) => {
       const content = event.target?.result;
       if (typeof content !== "string") {
-        setImportError("Could not read file content.");
+        setModalError("Could not read file content.");
         return;
       }
 
       const result = parseAndValidateHistoryBackup(content);
       if (!result.isValid) {
-        setImportError(result.error || "Invalid Sweeper backup file.");
+        setModalError(result.error || "Invalid Sweeper backup file.");
         return;
       }
 
       if (result.games.length === 0) {
-        setImportError("The backup file contains no completed games.");
+        setModalError("The backup file contains no completed games.");
         return;
       }
 
@@ -141,12 +150,12 @@ export default function GameHistory() {
         setShowSettingsModal(false);
         saveGameHistory(result.games);
         setHistory(result.games);
-        setImportSuccess(
+        showToast(
           `Successfully imported ${result.games.length} ${
             result.games.length === 1 ? "game" : "games"
           }!`,
+          "success",
         );
-        setTimeout(() => setImportSuccess(null), 5000);
       } else {
         // Prompt for Merge vs Replace
         setPendingImportGames(result.games);
@@ -154,7 +163,7 @@ export default function GameHistory() {
     };
 
     reader.onerror = () => {
-      setImportError("Error reading the selected file.");
+      setModalError("Error reading the selected file.");
     };
 
     reader.readAsText(file);
@@ -172,11 +181,12 @@ export default function GameHistory() {
     setPendingImportGames(null);
     setShowSettingsModal(false);
     if (addedCount === 0 && duplicateCount > 0) {
-      setImportSuccess(
+      showToast(
         `All ${duplicateCount} games already exist in your history.`,
+        "success",
       );
     } else {
-      setImportSuccess(
+      showToast(
         `Added ${addedCount} new ${addedCount === 1 ? "game" : "games"}${
           duplicateCount > 0
             ? ` (${duplicateCount} duplicate${
@@ -184,9 +194,9 @@ export default function GameHistory() {
               } skipped)`
             : ""
         }!`,
+        "success",
       );
     }
-    setTimeout(() => setImportSuccess(null), 5000);
   };
 
   const handleConfirmReplace = () => {
@@ -194,13 +204,13 @@ export default function GameHistory() {
     saveGameHistory(pendingImportGames);
     setHistory(pendingImportGames);
     setShowSettingsModal(false);
-    setImportSuccess(
+    showToast(
       `Replaced history with ${pendingImportGames.length} ${
         pendingImportGames.length === 1 ? "game" : "games"
       } from backup!`,
+      "success",
     );
     setPendingImportGames(null);
-    setTimeout(() => setImportSuccess(null), 5000);
   };
 
   return (
@@ -218,9 +228,7 @@ export default function GameHistory() {
         <button
           type="button"
           onClick={() => {
-            setImportError(null);
-            setImportSuccess(null);
-            setExportSuccess(null);
+            setModalError(null);
             setPendingImportGames(null);
             setShowSettingsModal(true);
           }}
@@ -251,25 +259,39 @@ export default function GameHistory() {
       </div>
 
       {/* 1.1 Status Toast Banner on Main Page */}
-      {(exportSuccess || importSuccess) && (
+      {toast && (
         <div
           role="status"
-          className="mb-3 p-3 rounded-xl bg-emerald-900/90 border border-emerald-500/80 text-emerald-100 text-xs sm:text-sm flex items-center justify-between gap-2 shadow-lg animate-fade-in shrink-0"
+          className={`mb-3 p-2 rounded-xl border text-sm sm:text-md flex items-center justify-between gap-2 shadow-lg animate-fade-in shrink-0 ${
+            toast.type === "error"
+              ? "bg-red-900/90 border-red-600/80 text-red-200"
+              : "bg-emerald-900/90 border-emerald-500/80 text-emerald-100"
+          }`}
         >
-          <div className="flex items-center gap-2">
-            <span className="text-emerald-400 text-base" aria-hidden="true">
-              ✓
+          <div className="flex items-center gap-2.5 min-w-0">
+            {toast.type === "error" ? (
+              <span className="text-base shrink-0" aria-hidden="true">
+                ⚠️
+              </span>
+            ) : (
+              <div className="flex items-center justify-center size-7 rounded-full bg-amber-50/95 border border-yellow-400 shadow-xs shrink-0 p-0.5">
+                <img
+                  src={swordIcon}
+                  alt=""
+                  aria-hidden="true"
+                  className="size-full object-contain"
+                />
+              </div>
+            )}
+            <span className="font-medium truncate sm:whitespace-normal">
+              {toast.text}
             </span>
-            <span>{exportSuccess || importSuccess}</span>
           </div>
           <button
             type="button"
-            onClick={() => {
-              setExportSuccess(null);
-              setImportSuccess(null);
-            }}
+            onClick={() => setToast(null)}
             aria-label="Dismiss notification"
-            className="text-emerald-300 hover:text-white text-xs font-bold px-1.5 py-0.5 rounded cursor-pointer"
+            className="text-emerald-300 hover:text-white text-xs font-bold px-1.5 py-0.5 rounded cursor-pointer shrink-0"
           >
             ✕
           </button>
@@ -1154,7 +1176,7 @@ export default function GameHistory() {
                 onClick={() => {
                   setShowSettingsModal(false);
                   setPendingImportGames(null);
-                  setImportError(null);
+                  setModalError(null);
                 }}
                 aria-label="Close settings"
                 className="min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl text-emerald-200 hover:text-white hover:bg-emerald-800/70 transition-colors cursor-pointer text-lg font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 shrink-0"
@@ -1165,38 +1187,8 @@ export default function GameHistory() {
 
             {/* Modal Body */}
             <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-5 space-y-4">
-              {/* Status alerts */}
-              {exportSuccess && (
-                <div
-                  role="status"
-                  className="p-3 rounded-xl bg-emerald-900/90 border border-emerald-500/80 text-emerald-100 text-xs sm:text-sm flex items-center gap-2 animate-fade-in"
-                >
-                  <span
-                    className="text-emerald-400 text-base"
-                    aria-hidden="true"
-                  >
-                    ✓
-                  </span>
-                  <span>{exportSuccess}</span>
-                </div>
-              )}
-
-              {importSuccess && (
-                <div
-                  role="status"
-                  className="p-3 rounded-xl bg-emerald-900/90 border border-emerald-500/80 text-emerald-100 text-xs sm:text-sm flex items-center gap-2 animate-fade-in"
-                >
-                  <span
-                    className="text-emerald-400 text-base"
-                    aria-hidden="true"
-                  >
-                    ✓
-                  </span>
-                  <span>{importSuccess}</span>
-                </div>
-              )}
-
-              {importError && (
+              {/* Modal Error Alert */}
+              {modalError && (
                 <div
                   role="alert"
                   className="p-3 rounded-xl bg-red-950/90 border border-red-600/80 text-red-200 text-xs sm:text-sm flex items-center gap-2 animate-fade-in"
@@ -1207,7 +1199,7 @@ export default function GameHistory() {
                   >
                     ⚠️
                   </span>
-                  <span>{importError}</span>
+                  <span>{modalError}</span>
                 </div>
               )}
 
