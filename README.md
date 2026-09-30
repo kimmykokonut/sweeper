@@ -69,7 +69,7 @@ Here is what Sweeper brings to your game table:
 ### 🃏 Authentic Primiera Calculator (Standalone & Embedded)
 
 - Available as a standalone tab in bottom navigation or embedded right inside the round scoring dialog.
-- Authentic Neapolitan deck imagery across all four suits (_Denari_, _Spade_, _Coppe_, _Bastoni_) with accurate Scopa Primiera point values ($7=21, 6=18, \dots$, face cards $=10$).
+- Authentic Italian regional deck imagery across all four suits (_Denari_, _Spade_, _Coppe_, _Bastoni_) with selectable deck styles (**Napoletane**, **Piacentine**, **Siciliane**, **Bergamasche**, **Sarde**, **Romagnole**, and **Bresciane**) and accurate Scopa Primiera point values ($7=21, 6=18, \dots$, face cards $=10$).
 - **Deck Uniqueness Locks**: Claimed cards automatically lock for other players with a `🔒 Taken by Player` badge.
 - **Direct Hand Transfer**: One-tap transfer from standalone calculator directly into a fresh Round 1 scorecard with the winner pre-selected.
 
@@ -227,7 +227,7 @@ npm run preview
 
 ### Stretch
 
-- [ ] Regional Italian deck art selection (Piacentine, Siciliane, Trevigiane)
+- [x] Regional Italian deck art selection (Napoletane, Piacentine, Siciliane, Bergamasche, Sarde, Romagnole, Bresciane)
 - [ ] Cribbage companion integration
 - [ ] Custom sound effects or haptic feedback for sweeps (Scope!) Animation?
 - [ ] Multi-device live game sync
@@ -248,4 +248,5 @@ If you have any feedback or concerns:
 Card images:
 
 - [Wikimedia Commons (Naples deck)](https://commons.wikimedia.org/wiki/Category:Naples_deck)
+- [Wikimedia Commons (Brescia deck)](https://commons.wikimedia.org/wiki/Category:Brescia_deck)
 - [vlvoch gitHub](https://github.com/vlvovch/scopa-ai)
