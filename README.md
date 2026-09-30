@@ -245,4 +245,7 @@ If you have any feedback or concerns:
 
 ## Acknowledgements
 
-Card images attributed to [Wikimedia Commons (Naples deck)](https://commons.wikimedia.org/wiki/Category:Naples_deck)
+Card images:
+
+- [Wikimedia Commons (Naples deck)](https://commons.wikimedia.org/wiki/Category:Naples_deck)
+- [vlvoch gitHub](https://github.com/vlvovch/scopa-ai)
