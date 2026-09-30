@@ -79,6 +79,12 @@ Here is what Sweeper brings to your game table:
 - **Head-to-Head Rivalry View**: Tracks series records, win rates, total sweeps, and category dominance (Carte, Denari, Settebello, Primiera) between opponents.
 - Complete round-by-round reviews with individual game deletion and clear-all controls.
 
+### 💾 Backup, Export & Restore (Zero-Cloud Match Transfer)
+
+- **JSON Backup Export**: Download your completed match history as a portable `.json` file (`sweeper-history-YYYY-MM-DD.json`) with one tap.
+- **Cross-Device Restore & Merge**: Transfer your match history between phones, tablets, or browsers with intelligent duplicate detection—choose to **Merge** new games safely or **Replace** completely.
+- **Defensive & Private**: 100% client-side validation against corrupted files with zero accounts, cloud tracking, or external server dependencies.
+
 ### 📱 Mobile-First Emerald Felt Table & WCAG Accessibility
 
 - Immersive emerald-green card table theme with dynamic viewport sizing (`dvh`) tailored for small phones through ultra-tall screens.
@@ -216,13 +222,15 @@ npm run preview
 - [x] **Phase 4**: Progressive Web App (PWA) with full offline Italian card precaching
 - [x] **Phase 5**: Game data persistence (`localStorage`) & active game resume flow
 - [x] **Phase 6**: Game history archive, head-to-head rivalry records & category dominance
-- [x] **Phase 7**: Comprehensive WCAG accessibility, 51 automated unit tests & CI pipeline
+- [x] **Phase 7**: Comprehensive WCAG accessibility, 60 automated unit tests & CI pipeline
+- [x] **Phase 8**: Match history backup, JSON export & cross-device restore with duplicate detection
 
 ### Stretch
 
+- [ ] Regional Italian deck art selection (Piacentine, Siciliane, Trevigiane)
 - [ ] Cribbage companion integration
 - [ ] Custom sound effects or haptic feedback for sweeps (Scope!) Animation?
-- [ ] Multi-device game sharing
+- [ ] Multi-device live game sync
 
 ## Contact and Support
 
