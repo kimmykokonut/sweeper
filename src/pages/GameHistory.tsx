@@ -1155,7 +1155,7 @@ export default function GameHistory() {
             if (e.target === e.currentTarget) {
               setShowSettingsModal(false);
               setPendingImportGames(null);
-              setImportError(null);
+              setModalError(null);
             }
           }}
         >
