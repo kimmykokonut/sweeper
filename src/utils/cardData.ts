@@ -1,50 +1,304 @@
-import type { CardValue, Suits } from "../types";
-import tenCoins from "../assets/decks/napoletane/denari-10.jpg";
-import nineCoins from "../assets/decks/napoletane/denari-9.jpg";
-import eightCoins from "../assets/decks/napoletane/denari-8.jpg";
-import sevenCoins from "../assets/decks/napoletane/denari-7.jpg";
-import sixCoins from "../assets/decks/napoletane/denari-6.jpg";
-import fiveCoins from "../assets/decks/napoletane/denari-5.jpg";
-import fourCoins from "../assets/decks/napoletane/denari-4.jpg";
-import threeCoins from "../assets/decks/napoletane/denari-3.jpg";
-import twoCoins from "../assets/decks/napoletane/denari-2.jpg";
-import aceCoins from "../assets/decks/napoletane/denari-1.jpg";
-import aceCups from "../assets/decks/napoletane/coppe-1.jpg";
-import twoCups from "../assets/decks/napoletane/coppe-2.jpg";
-import threeCups from "../assets/decks/napoletane/coppe-3.jpg";
-import fourCups from "../assets/decks/napoletane/coppe-4.jpg";
-import fiveCups from "../assets/decks/napoletane/coppe-5.jpg";
-import sixCups from "../assets/decks/napoletane/coppe-6.jpg";
-import sevenCups from "../assets/decks/napoletane/coppe-7.jpg";
-import eightCups from "../assets/decks/napoletane/coppe-8.jpg";
-import nineCups from "../assets/decks/napoletane/coppe-9.jpg";
-import tenCups from "../assets/decks/napoletane/coppe-10.jpg";
-import aceClubs from "../assets/decks/napoletane/bastoni-1.jpg";
-import twoClubs from "../assets/decks/napoletane/bastoni-2.jpg";
-import threeClubs from "../assets/decks/napoletane/bastoni-3.jpg";
-import fourClubs from "../assets/decks/napoletane/bastoni-4.jpg";
-import fiveClubs from "../assets/decks/napoletane/bastoni-5.jpg";
-import sixClubs from "../assets/decks/napoletane/bastoni-6.jpg";
-import sevenClubs from "../assets/decks/napoletane/bastoni-7.jpg";
-import eightClubs from "../assets/decks/napoletane/bastoni-8.jpg";
-import nineClubs from "../assets/decks/napoletane/bastoni-9.jpg";
-import tenClubs from "../assets/decks/napoletane/bastoni-10.jpg";
-import aceSwords from "../assets/decks/napoletane/spade-1.jpg";
-import twoSwords from "../assets/decks/napoletane/spade-2.jpg";
-import threeSwords from "../assets/decks/napoletane/spade-3.jpg";
-import fourSwords from "../assets/decks/napoletane/spade-4.jpg";
-import fiveSwords from "../assets/decks/napoletane/spade-5.jpg";
-import sixSwords from "../assets/decks/napoletane/spade-6.jpg";
-import sevenSwords from "../assets/decks/napoletane/spade-7.jpg";
-import eightSwords from "../assets/decks/napoletane/spade-8.jpg";
-import nineSwords from "../assets/decks/napoletane/spade-9.jpg";
-import tenSwords from "../assets/decks/napoletane/spade-10.jpg";
+import { useState, useEffect } from "react";
+import type { CardValue, DeckStyle, Suits } from "../types";
+
+// Napoletane Deck Images
+import napSevenCoins from "../assets/decks/napoletane/denari-7.jpg";
+import napSixCoins from "../assets/decks/napoletane/denari-6.jpg";
+import napAceCoins from "../assets/decks/napoletane/denari-1.jpg";
+import napFiveCoins from "../assets/decks/napoletane/denari-5.jpg";
+import napFourCoins from "../assets/decks/napoletane/denari-4.jpg";
+import napThreeCoins from "../assets/decks/napoletane/denari-3.jpg";
+import napTwoCoins from "../assets/decks/napoletane/denari-2.jpg";
+import napEightCoins from "../assets/decks/napoletane/denari-8.jpg";
+import napNineCoins from "../assets/decks/napoletane/denari-9.jpg";
+import napTenCoins from "../assets/decks/napoletane/denari-10.jpg";
+
+import napSevenCups from "../assets/decks/napoletane/coppe-7.jpg";
+import napSixCups from "../assets/decks/napoletane/coppe-6.jpg";
+import napAceCups from "../assets/decks/napoletane/coppe-1.jpg";
+import napFiveCups from "../assets/decks/napoletane/coppe-5.jpg";
+import napFourCups from "../assets/decks/napoletane/coppe-4.jpg";
+import napThreeCups from "../assets/decks/napoletane/coppe-3.jpg";
+import napTwoCups from "../assets/decks/napoletane/coppe-2.jpg";
+import napEightCups from "../assets/decks/napoletane/coppe-8.jpg";
+import napNineCups from "../assets/decks/napoletane/coppe-9.jpg";
+import napTenCups from "../assets/decks/napoletane/coppe-10.jpg";
+
+import napSevenClubs from "../assets/decks/napoletane/bastoni-7.jpg";
+import napSixClubs from "../assets/decks/napoletane/bastoni-6.jpg";
+import napAceClubs from "../assets/decks/napoletane/bastoni-1.jpg";
+import napFiveClubs from "../assets/decks/napoletane/bastoni-5.jpg";
+import napFourClubs from "../assets/decks/napoletane/bastoni-4.jpg";
+import napThreeClubs from "../assets/decks/napoletane/bastoni-3.jpg";
+import napTwoClubs from "../assets/decks/napoletane/bastoni-2.jpg";
+import napEightClubs from "../assets/decks/napoletane/bastoni-8.jpg";
+import napNineClubs from "../assets/decks/napoletane/bastoni-9.jpg";
+import napTenClubs from "../assets/decks/napoletane/bastoni-10.jpg";
+
+import napSevenSwords from "../assets/decks/napoletane/spade-7.jpg";
+import napSixSwords from "../assets/decks/napoletane/spade-6.jpg";
+import napAceSwords from "../assets/decks/napoletane/spade-1.jpg";
+import napFiveSwords from "../assets/decks/napoletane/spade-5.jpg";
+import napFourSwords from "../assets/decks/napoletane/spade-4.jpg";
+import napThreeSwords from "../assets/decks/napoletane/spade-3.jpg";
+import napTwoSwords from "../assets/decks/napoletane/spade-2.jpg";
+import napEightSwords from "../assets/decks/napoletane/spade-8.jpg";
+import napNineSwords from "../assets/decks/napoletane/spade-9.jpg";
+import napTenSwords from "../assets/decks/napoletane/spade-10.jpg";
+
+// Piacentine Deck Images
+import piacSevenCoins from "../assets/decks/piacentine/denari-7.webp";
+import piacSixCoins from "../assets/decks/piacentine/denari-6.webp";
+import piacAceCoins from "../assets/decks/piacentine/denari-1.webp";
+import piacFiveCoins from "../assets/decks/piacentine/denari-5.webp";
+import piacFourCoins from "../assets/decks/piacentine/denari-4.webp";
+import piacThreeCoins from "../assets/decks/piacentine/denari-3.webp";
+import piacTwoCoins from "../assets/decks/piacentine/denari-2.webp";
+import piacEightCoins from "../assets/decks/piacentine/denari-8.webp";
+import piacNineCoins from "../assets/decks/piacentine/denari-9.webp";
+import piacTenCoins from "../assets/decks/piacentine/denari-10.webp";
+
+import piacSevenCups from "../assets/decks/piacentine/coppe-7.webp";
+import piacSixCups from "../assets/decks/piacentine/coppe-6.webp";
+import piacAceCups from "../assets/decks/piacentine/coppe-1.webp";
+import piacFiveCups from "../assets/decks/piacentine/coppe-5.webp";
+import piacFourCups from "../assets/decks/piacentine/coppe-4.webp";
+import piacThreeCups from "../assets/decks/piacentine/coppe-3.webp";
+import piacTwoCups from "../assets/decks/piacentine/coppe-2.webp";
+import piacEightCups from "../assets/decks/piacentine/coppe-8.webp";
+import piacNineCups from "../assets/decks/piacentine/coppe-9.webp";
+import piacTenCups from "../assets/decks/piacentine/coppe-10.webp";
+
+import piacSevenClubs from "../assets/decks/piacentine/bastoni-7.webp";
+import piacSixClubs from "../assets/decks/piacentine/bastoni-6.webp";
+import piacAceClubs from "../assets/decks/piacentine/bastoni-1.webp";
+import piacFiveClubs from "../assets/decks/piacentine/bastoni-5.webp";
+import piacFourClubs from "../assets/decks/piacentine/bastoni-4.webp";
+import piacThreeClubs from "../assets/decks/piacentine/bastoni-3.webp";
+import piacTwoClubs from "../assets/decks/piacentine/bastoni-2.webp";
+import piacEightClubs from "../assets/decks/piacentine/bastoni-8.webp";
+import piacNineClubs from "../assets/decks/piacentine/bastoni-9.webp";
+import piacTenClubs from "../assets/decks/piacentine/bastoni-10.webp";
+
+import piacSevenSwords from "../assets/decks/piacentine/spade-7.webp";
+import piacSixSwords from "../assets/decks/piacentine/spade-6.webp";
+import piacAceSwords from "../assets/decks/piacentine/spade-1.webp";
+import piacFiveSwords from "../assets/decks/piacentine/spade-5.webp";
+import piacFourSwords from "../assets/decks/piacentine/spade-4.webp";
+import piacThreeSwords from "../assets/decks/piacentine/spade-3.webp";
+import piacTwoSwords from "../assets/decks/piacentine/spade-2.webp";
+import piacEightSwords from "../assets/decks/piacentine/spade-8.webp";
+import piacNineSwords from "../assets/decks/piacentine/spade-9.webp";
+import piacTenSwords from "../assets/decks/piacentine/spade-10.webp";
+
+// Suit icons (shared across card table)
 import coin from "../assets/denare.png";
 import cup from "../assets/coppa.png";
 import club from "../assets/bastone.png";
 import sword from "../assets/spada.png";
 
-export const CARD_DATA: Record<
+export const DECK_STORAGE_KEY = "sweeper_selected_deck";
+
+export function loadSelectedDeck(): DeckStyle {
+  try {
+    const saved = localStorage.getItem(DECK_STORAGE_KEY);
+    if (saved === "piacentine" || saved === "napoletane") {
+      return saved;
+    }
+  } catch (e) {
+    console.error("Failed to load deck preference", e);
+  }
+  return "napoletane";
+}
+
+export function saveSelectedDeck(deck: DeckStyle): void {
+  try {
+    localStorage.setItem(DECK_STORAGE_KEY, deck);
+  } catch (e) {
+    console.error("Failed to save deck preference", e);
+  }
+}
+
+export function useDeckStyle(): [DeckStyle, (deck: DeckStyle) => void] {
+  const [deck, setDeck] = useState<DeckStyle>(() => loadSelectedDeck());
+
+  useEffect(() => {
+    const handleDeckChange = () => setDeck(loadSelectedDeck());
+    window.addEventListener("sweeper-deck-change", handleDeckChange);
+    window.addEventListener("storage", handleDeckChange);
+    return () => {
+      window.removeEventListener("sweeper-deck-change", handleDeckChange);
+      window.removeEventListener("storage", handleDeckChange);
+    };
+  }, []);
+
+  const updateDeck = (newDeck: DeckStyle) => {
+    saveSelectedDeck(newDeck);
+    setDeck(newDeck);
+    window.dispatchEvent(new Event("sweeper-deck-change"));
+  };
+
+  return [deck, updateDeck];
+}
+
+const DECK_IMAGES: Record<DeckStyle, Record<Suits, Record<CardValue, string>>> = {
+  napoletane: {
+    coins: {
+      seven: napSevenCoins,
+      six: napSixCoins,
+      ace: napAceCoins,
+      five: napFiveCoins,
+      four: napFourCoins,
+      three: napThreeCoins,
+      two: napTwoCoins,
+      jack: napEightCoins,
+      horse: napNineCoins,
+      king: napTenCoins,
+    },
+    cups: {
+      seven: napSevenCups,
+      six: napSixCups,
+      ace: napAceCups,
+      five: napFiveCups,
+      four: napFourCups,
+      three: napThreeCups,
+      two: napTwoCups,
+      jack: napEightCups,
+      horse: napNineCups,
+      king: napTenCups,
+    },
+    clubs: {
+      seven: napSevenClubs,
+      six: napSixClubs,
+      ace: napAceClubs,
+      five: napFiveClubs,
+      four: napFourClubs,
+      three: napThreeClubs,
+      two: napTwoClubs,
+      jack: napEightClubs,
+      horse: napNineClubs,
+      king: napTenClubs,
+    },
+    swords: {
+      seven: napSevenSwords,
+      six: napSixSwords,
+      ace: napAceSwords,
+      five: napFiveSwords,
+      four: napFourSwords,
+      three: napThreeSwords,
+      two: napTwoSwords,
+      jack: napEightSwords,
+      horse: napNineSwords,
+      king: napTenSwords,
+    },
+  },
+  piacentine: {
+    coins: {
+      seven: piacSevenCoins,
+      six: piacSixCoins,
+      ace: piacAceCoins,
+      five: piacFiveCoins,
+      four: piacFourCoins,
+      three: piacThreeCoins,
+      two: piacTwoCoins,
+      jack: piacEightCoins,
+      horse: piacNineCoins,
+      king: piacTenCoins,
+    },
+    cups: {
+      seven: piacSevenCups,
+      six: piacSixCups,
+      ace: piacAceCups,
+      five: piacFiveCups,
+      four: piacFourCups,
+      three: piacThreeCups,
+      two: piacTwoCups,
+      jack: piacEightCups,
+      horse: piacNineCups,
+      king: piacTenCups,
+    },
+    clubs: {
+      seven: piacSevenClubs,
+      six: piacSixClubs,
+      ace: piacAceClubs,
+      five: piacFiveClubs,
+      four: piacFourClubs,
+      three: piacThreeClubs,
+      two: piacTwoClubs,
+      jack: piacEightClubs,
+      horse: piacNineClubs,
+      king: piacTenClubs,
+    },
+    swords: {
+      seven: piacSevenSwords,
+      six: piacSixSwords,
+      ace: piacAceSwords,
+      five: piacFiveSwords,
+      four: piacFourSwords,
+      three: piacThreeSwords,
+      two: piacTwoSwords,
+      jack: piacEightSwords,
+      horse: piacNineSwords,
+      king: piacTenSwords,
+    },
+  },
+};
+
+export const CARD_DEFINITIONS: Record<
+  Suits,
+  Array<{ value: CardValue; displayName: string; points: number }>
+> = {
+  coins: [
+    { value: "seven", displayName: "7", points: 21 },
+    { value: "six", displayName: "6", points: 18 },
+    { value: "ace", displayName: "A", points: 16 },
+    { value: "five", displayName: "5", points: 15 },
+    { value: "four", displayName: "4", points: 14 },
+    { value: "three", displayName: "3", points: 13 },
+    { value: "two", displayName: "2", points: 12 },
+    { value: "jack", displayName: "Jack", points: 10 },
+    { value: "horse", displayName: "Horse", points: 10 },
+    { value: "king", displayName: "King", points: 10 },
+  ],
+  cups: [
+    { value: "seven", displayName: "7", points: 21 },
+    { value: "six", displayName: "6", points: 18 },
+    { value: "ace", displayName: "A", points: 16 },
+    { value: "five", displayName: "5", points: 15 },
+    { value: "four", displayName: "4", points: 14 },
+    { value: "three", displayName: "3", points: 13 },
+    { value: "two", displayName: "2", points: 12 },
+    { value: "jack", displayName: "Jack", points: 10 },
+    { value: "horse", displayName: "Horse", points: 10 },
+    { value: "king", displayName: "King", points: 10 },
+  ],
+  clubs: [
+    { value: "seven", displayName: "7", points: 21 },
+    { value: "six", displayName: "6", points: 18 },
+    { value: "ace", displayName: "A", points: 16 },
+    { value: "five", displayName: "5", points: 15 },
+    { value: "four", displayName: "4", points: 14 },
+    { value: "three", displayName: "3", points: 13 },
+    { value: "two", displayName: "2", points: 12 },
+    { value: "jack", displayName: "Jack", points: 10 },
+    { value: "horse", displayName: "Horse", points: 10 },
+    { value: "king", displayName: "King", points: 10 },
+  ],
+  swords: [
+    { value: "seven", displayName: "7", points: 21 },
+    { value: "six", displayName: "6", points: 18 },
+    { value: "ace", displayName: "A", points: 16 },
+    { value: "five", displayName: "5", points: 15 },
+    { value: "four", displayName: "4", points: 14 },
+    { value: "three", displayName: "3", points: 13 },
+    { value: "two", displayName: "2", points: 12 },
+    { value: "jack", displayName: "Jack", points: 10 },
+    { value: "horse", displayName: "Horse", points: 10 },
+    { value: "king", displayName: "King", points: 10 },
+  ],
+};
+
+export function getCardData(deckStyle: DeckStyle = loadSelectedDeck()): Record<
   Suits,
   {
     name: string;
@@ -57,77 +311,53 @@ export const CARD_DATA: Record<
       points: number;
     }>;
   }
-> = {
-  coins: {
-    name: "Coins",
-    displayName: "Denari",
-    icon: coin,
-    cards: [
-      { value: "seven", image: sevenCoins, displayName: "7", points: 21 },
-      { value: "six", image: sixCoins, displayName: "6", points: 18 },
-      { value: "ace", image: aceCoins, displayName: "A", points: 16 },
-      { value: "five", image: fiveCoins, displayName: "5", points: 15 },
-      { value: "four", image: fourCoins, displayName: "4", points: 14 },
-      { value: "three", image: threeCoins, displayName: "3", points: 13 },
-      { value: "two", image: twoCoins, displayName: "2", points: 12 },
-      { value: "jack", image: eightCoins, displayName: "Jack", points: 10 },
-      { value: "horse", image: nineCoins, displayName: "Horse", points: 10 },
-      { value: "king", image: tenCoins, displayName: "King", points: 10 },
-    ],
-  },
-  cups: {
-    name: "Cups",
-    displayName: "Coppe",
-    icon: cup,
-    cards: [
-      { value: "seven", image: sevenCups, displayName: "7", points: 21 },
-      { value: "six", image: sixCups, displayName: "6", points: 18 },
-      { value: "ace", image: aceCups, displayName: "A", points: 16 },
-      { value: "five", image: fiveCups, displayName: "5", points: 15 },
-      { value: "four", image: fourCups, displayName: "4", points: 14 },
-      { value: "three", image: threeCups, displayName: "3", points: 13 },
-      { value: "two", image: twoCups, displayName: "2", points: 12 },
-      { value: "jack", image: eightCups, displayName: "Jack", points: 10 },
-      { value: "horse", image: nineCups, displayName: "Horse", points: 10 },
-      { value: "king", image: tenCups, displayName: "King", points: 10 },
-    ],
-  },
-  clubs: {
-    name: "Clubs",
-    displayName: "Bastoni",
-    icon: club,
-    cards: [
-      { value: "seven", image: sevenClubs, displayName: "7", points: 21 },
-      { value: "six", image: sixClubs, displayName: "6", points: 18 },
-      { value: "ace", image: aceClubs, displayName: "A", points: 16 },
-      { value: "five", image: fiveClubs, displayName: "5", points: 15 },
-      { value: "four", image: fourClubs, displayName: "4", points: 14 },
-      { value: "three", image: threeClubs, displayName: "3", points: 13 },
-      { value: "two", image: twoClubs, displayName: "2", points: 12 },
-      { value: "jack", image: eightClubs, displayName: "Jack", points: 10 },
-      { value: "horse", image: nineClubs, displayName: "Horse", points: 10 },
-      { value: "king", image: tenClubs, displayName: "King", points: 10 },
-    ],
-  },
-  swords: {
-    name: "Swords",
-    displayName: "Spade",
-    icon: sword,
-    cards: [
-      { value: "seven", image: sevenSwords, displayName: "7", points: 21 },
-      { value: "six", image: sixSwords, displayName: "6", points: 18 },
-      { value: "ace", image: aceSwords, displayName: "A", points: 16 },
-      { value: "five", image: fiveSwords, displayName: "5", points: 15 },
-      { value: "four", image: fourSwords, displayName: "4", points: 14 },
-      { value: "three", image: threeSwords, displayName: "3", points: 13 },
-      { value: "two", image: twoSwords, displayName: "2", points: 12 },
-      { value: "jack", image: eightSwords, displayName: "Jack", points: 10 },
-      { value: "horse", image: nineSwords, displayName: "Horse", points: 10 },
-      { value: "king", image: tenSwords, displayName: "King", points: 10 },
-    ],
-  },
-};
+> {
+  return {
+    coins: {
+      name: "Coins",
+      displayName: "Denari",
+      icon: coin,
+      cards: CARD_DEFINITIONS.coins.map((def) => ({
+        ...def,
+        image: DECK_IMAGES[deckStyle].coins[def.value],
+      })),
+    },
+    cups: {
+      name: "Cups",
+      displayName: "Coppe",
+      icon: cup,
+      cards: CARD_DEFINITIONS.cups.map((def) => ({
+        ...def,
+        image: DECK_IMAGES[deckStyle].cups[def.value],
+      })),
+    },
+    clubs: {
+      name: "Clubs",
+      displayName: "Bastoni",
+      icon: club,
+      cards: CARD_DEFINITIONS.clubs.map((def) => ({
+        ...def,
+        image: DECK_IMAGES[deckStyle].clubs[def.value],
+      })),
+    },
+    swords: {
+      name: "Swords",
+      displayName: "Spade",
+      icon: sword,
+      cards: CARD_DEFINITIONS.swords.map((def) => ({
+        ...def,
+        image: DECK_IMAGES[deckStyle].swords[def.value],
+      })),
+    },
+  };
+}
 
-export const getCardImage = (suit: Suits, value: CardValue) => {
-  return CARD_DATA[suit].cards.find((card) => card.value === value)?.image;
+export const CARD_DATA = getCardData("napoletane");
+
+export const getCardImage = (
+  suit: Suits,
+  value: CardValue,
+  deckStyle: DeckStyle = loadSelectedDeck(),
+): string | undefined => {
+  return DECK_IMAGES[deckStyle]?.[suit]?.[value];
 };

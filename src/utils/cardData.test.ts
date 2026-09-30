@@ -1,5 +1,11 @@
 import { describe, it, expect } from "vitest";
-import { CARD_DATA, getCardImage } from "./cardData";
+import {
+  CARD_DATA,
+  getCardData,
+  getCardImage,
+  loadSelectedDeck,
+  saveSelectedDeck,
+} from "./cardData";
 import type { CardValue, Suits } from "../types";
 
 describe("cardData (40-card Italian Scopa deck)", () => {
@@ -89,5 +95,49 @@ describe("cardData (40-card Italian Scopa deck)", () => {
     // @ts-expect-error Testing non-existent card value
     const result = getCardImage("coins", "joker");
     expect(result).toBeUndefined();
+  });
+
+  describe("Multi-deck support (Piacentine & Napoletane)", () => {
+    it("getCardData should support both Napoletane and Piacentine with 40 cards each", () => {
+      const nap = getCardData("napoletane");
+      const piac = getCardData("piacentine");
+
+      for (const suit of suits) {
+        expect(nap[suit].cards).toHaveLength(10);
+        expect(piac[suit].cards).toHaveLength(10);
+
+        for (let i = 0; i < 10; i++) {
+          expect(nap[suit].cards[i].value).toBe(piac[suit].cards[i].value);
+          expect(nap[suit].cards[i].points).toBe(piac[suit].cards[i].points);
+          // Images should be distinct between decks
+          expect(nap[suit].cards[i].image).not.toBe(piac[suit].cards[i].image);
+        }
+      }
+    });
+
+    it("getCardImage should return distinct images for the same card across decks", () => {
+      const napSettebello = getCardImage("coins", "seven", "napoletane");
+      const piacSettebello = getCardImage("coins", "seven", "piacentine");
+
+      expect(napSettebello).toBeTruthy();
+      expect(piacSettebello).toBeTruthy();
+      expect(napSettebello).not.toBe(piacSettebello);
+    });
+
+    it("loadSelectedDeck should default to napoletane when storage is empty or invalid", () => {
+      localStorage.clear();
+      expect(loadSelectedDeck()).toBe("napoletane");
+
+      localStorage.setItem("sweeper_selected_deck", "invalid_deck");
+      expect(loadSelectedDeck()).toBe("napoletane");
+    });
+
+    it("saveSelectedDeck and loadSelectedDeck should persist deck preference", () => {
+      saveSelectedDeck("piacentine");
+      expect(loadSelectedDeck()).toBe("piacentine");
+
+      saveSelectedDeck("napoletane");
+      expect(loadSelectedDeck()).toBe("napoletane");
+    });
   });
 });
