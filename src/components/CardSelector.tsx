@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import type { Suits, CardValue } from "../types";
-import { CARD_DATA } from "../utils/cardData";
+import { getCardData, useDeckStyle } from "../utils/cardData";
 
 interface CardSelectorProps {
   activeSuit: Suits | null;
@@ -17,6 +17,8 @@ function CardSelector({
   takenCards,
   currentSelection,
 }: CardSelectorProps) {
+  const [deckStyle] = useDeckStyle();
+
   // Close card selector on Escape key press without closing parent modal
   useEffect(() => {
     if (!activeSuit) return;
@@ -32,7 +34,8 @@ function CardSelector({
 
   if (!activeSuit) return null;
 
-  const cards = CARD_DATA[activeSuit].cards;
+  const cardData = getCardData(deckStyle);
+  const cards = cardData[activeSuit].cards;
   const sevenCard = cards.find((c) => c.value === "seven");
   const remainingCards = cards.filter((c) => c.value !== "seven");
 
@@ -57,7 +60,7 @@ function CardSelector({
         <div className="flex shrink-0 items-center justify-between border-b border-emerald-800 bg-emerald-950/80 px-4 py-2.5 sm:py-3">
           <div className="flex items-center gap-2">
             <img
-              src={CARD_DATA[activeSuit].icon}
+              src={cardData[activeSuit].icon}
               alt=""
               aria-hidden="true"
               className="size-6 sm:size-7 object-contain"
@@ -66,7 +69,7 @@ function CardSelector({
               id="card-selector-title"
               className="text-base sm:text-lg font-bold text-white"
             >
-              {CARD_DATA[activeSuit].displayName}
+              {cardData[activeSuit].displayName}
             </span>
             <span className="text-xs sm:text-sm text-emerald-300 font-medium">
               • Select highest card
@@ -194,7 +197,7 @@ function CardSelector({
                   <div className="relative w-full flex-1 flex items-center justify-center min-h-0">
                     <img
                       src={card.image}
-                      alt={`${card.displayName} of ${CARD_DATA[activeSuit].name}`}
+                      alt={`${card.displayName} of ${cardData[activeSuit].name}`}
                       className={`h-full w-full object-contain ${
                         isDisabled ? "opacity-40 grayscale-40" : ""
                       }`}

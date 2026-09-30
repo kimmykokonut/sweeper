@@ -7,7 +7,7 @@ import type {
   Player,
   Suits,
 } from "../types";
-import { CARD_DATA, getCardImage } from "../utils/cardData";
+import { getCardData, getCardImage, useDeckStyle } from "../utils/cardData";
 import {
   calculatePrimieraScore,
   primieraValues,
@@ -84,6 +84,7 @@ export default function PrimieraCalculator({
   onClose,
 }: PrimieraCalculatorProps) {
   const isModal = mode === "modal";
+  const [deckStyle] = useDeckStyle();
 
   // Standalone mode: player count configuration (2-4 players)
   const [standalonePlayerCount, setStandalonePlayerCount] = useState<number>(2);
@@ -494,7 +495,7 @@ export default function PrimieraCalculator({
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {SUITS.map((suit) => {
             const selectedValue = currentSelections[suit];
-            const suitInfo = CARD_DATA[suit];
+            const suitInfo = getCardData(deckStyle)[suit];
             return (
               <button
                 key={suit}
@@ -528,7 +529,7 @@ export default function PrimieraCalculator({
                     </button>
                     <div className="min-h-0 w-full flex-1 flex items-center justify-center p-1">
                       <img
-                        src={getCardImage(suit, selectedValue)}
+                        src={getCardImage(suit, selectedValue, deckStyle)}
                         alt={`${selectedValue} of ${suit}`}
                         className="h-full w-full object-contain drop-shadow-sm"
                       />
