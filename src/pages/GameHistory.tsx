@@ -153,9 +153,9 @@ export default function GameHistory() {
         saveGameHistory(result.games);
         setHistory(result.games);
         showToast(
-          `Successfully imported ${result.games.length} ${
+          `Success! ${result.games.length} ${
             result.games.length === 1 ? "game" : "games"
-          }!`,
+          } imported.`,
           "success",
         );
       } else {
@@ -183,10 +183,7 @@ export default function GameHistory() {
     setPendingImportGames(null);
     setShowSettingsModal(false);
     if (addedCount === 0 && duplicateCount > 0) {
-      showToast(
-        `All ${duplicateCount} games already exist in your history.`,
-        "success",
-      );
+      showToast(`All ${duplicateCount} games already exist.`, "success");
     } else {
       showToast(
         `Added ${addedCount} new ${addedCount === 1 ? "game" : "games"}${
@@ -207,9 +204,9 @@ export default function GameHistory() {
     setHistory(pendingImportGames);
     setShowSettingsModal(false);
     showToast(
-      `Replaced history with ${pendingImportGames.length} ${
+      `Replaced history (${pendingImportGames.length} ${
         pendingImportGames.length === 1 ? "game" : "games"
-      } from backup!`,
+      })`,
       "success",
     );
     setPendingImportGames(null);
