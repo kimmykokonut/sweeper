@@ -1,5 +1,9 @@
 export type Suits = "coins" | "cups" | "swords" | "clubs";
-export type DeckStyle = "napoletane" | "piacentine" | "siciliane";
+export type DeckStyle =
+  | "napoletane"
+  | "piacentine"
+  | "siciliane"
+  | "bergamasche";
 
 export type CardValue =
   | "seven"

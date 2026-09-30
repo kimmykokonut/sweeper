@@ -136,6 +136,51 @@ import sicEightSwords from "../assets/decks/siciliane/spade-8.webp";
 import sicNineSwords from "../assets/decks/siciliane/spade-9.webp";
 import sicTenSwords from "../assets/decks/siciliane/spade-10.webp";
 
+// Bergamasche Deck Images
+import bergSevenCoins from "../assets/decks/bergamasche/denari-7.webp";
+import bergSixCoins from "../assets/decks/bergamasche/denari-6.webp";
+import bergAceCoins from "../assets/decks/bergamasche/denari-1.webp";
+import bergFiveCoins from "../assets/decks/bergamasche/denari-5.webp";
+import bergFourCoins from "../assets/decks/bergamasche/denari-4.webp";
+import bergThreeCoins from "../assets/decks/bergamasche/denari-3.webp";
+import bergTwoCoins from "../assets/decks/bergamasche/denari-2.webp";
+import bergEightCoins from "../assets/decks/bergamasche/denari-8.webp";
+import bergNineCoins from "../assets/decks/bergamasche/denari-9.webp";
+import bergTenCoins from "../assets/decks/bergamasche/denari-10.webp";
+
+import bergSevenCups from "../assets/decks/bergamasche/coppe-7.webp";
+import bergSixCups from "../assets/decks/bergamasche/coppe-6.webp";
+import bergAceCups from "../assets/decks/bergamasche/coppe-1.webp";
+import bergFiveCups from "../assets/decks/bergamasche/coppe-5.webp";
+import bergFourCups from "../assets/decks/bergamasche/coppe-4.webp";
+import bergThreeCups from "../assets/decks/bergamasche/coppe-3.webp";
+import bergTwoCups from "../assets/decks/bergamasche/coppe-2.webp";
+import bergEightCups from "../assets/decks/bergamasche/coppe-8.webp";
+import bergNineCups from "../assets/decks/bergamasche/coppe-9.webp";
+import bergTenCups from "../assets/decks/bergamasche/coppe-10.webp";
+
+import bergSevenClubs from "../assets/decks/bergamasche/bastoni-7.webp";
+import bergSixClubs from "../assets/decks/bergamasche/bastoni-6.webp";
+import bergAceClubs from "../assets/decks/bergamasche/bastoni-1.webp";
+import bergFiveClubs from "../assets/decks/bergamasche/bastoni-5.webp";
+import bergFourClubs from "../assets/decks/bergamasche/bastoni-4.webp";
+import bergThreeClubs from "../assets/decks/bergamasche/bastoni-3.webp";
+import bergTwoClubs from "../assets/decks/bergamasche/bastoni-2.webp";
+import bergEightClubs from "../assets/decks/bergamasche/bastoni-8.webp";
+import bergNineClubs from "../assets/decks/bergamasche/bastoni-9.webp";
+import bergTenClubs from "../assets/decks/bergamasche/bastoni-10.webp";
+
+import bergSevenSwords from "../assets/decks/bergamasche/spade-7.webp";
+import bergSixSwords from "../assets/decks/bergamasche/spade-6.webp";
+import bergAceSwords from "../assets/decks/bergamasche/spade-1.webp";
+import bergFiveSwords from "../assets/decks/bergamasche/spade-5.webp";
+import bergFourSwords from "../assets/decks/bergamasche/spade-4.webp";
+import bergThreeSwords from "../assets/decks/bergamasche/spade-3.webp";
+import bergTwoSwords from "../assets/decks/bergamasche/spade-2.webp";
+import bergEightSwords from "../assets/decks/bergamasche/spade-8.webp";
+import bergNineSwords from "../assets/decks/bergamasche/spade-9.webp";
+import bergTenSwords from "../assets/decks/bergamasche/spade-10.webp";
+
 // Suit icons (shared across card table)
 import coin from "../assets/denare.png";
 import cup from "../assets/coppa.png";
@@ -150,7 +195,8 @@ export function loadSelectedDeck(): DeckStyle {
     if (
       saved === "piacentine" ||
       saved === "napoletane" ||
-      saved === "siciliane"
+      saved === "siciliane" ||
+      saved === "bergamasche"
     ) {
       return saved;
     }
@@ -339,6 +385,56 @@ const DECK_IMAGES: Record<DeckStyle, Record<Suits, Record<CardValue, string>>> =
       jack: sicEightSwords,
       horse: sicNineSwords,
       king: sicTenSwords,
+    },
+  },
+  bergamasche: {
+    coins: {
+      seven: bergSevenCoins,
+      six: bergSixCoins,
+      ace: bergAceCoins,
+      five: bergFiveCoins,
+      four: bergFourCoins,
+      three: bergThreeCoins,
+      two: bergTwoCoins,
+      jack: bergEightCoins,
+      horse: bergNineCoins,
+      king: bergTenCoins,
+    },
+    cups: {
+      seven: bergSevenCups,
+      six: bergSixCups,
+      ace: bergAceCups,
+      five: bergFiveCups,
+      four: bergFourCups,
+      three: bergThreeCups,
+      two: bergTwoCups,
+      jack: bergEightCups,
+      horse: bergNineCups,
+      king: bergTenCups,
+    },
+    clubs: {
+      seven: bergSevenClubs,
+      six: bergSixClubs,
+      ace: bergAceClubs,
+      five: bergFiveClubs,
+      four: bergFourClubs,
+      three: bergThreeClubs,
+      two: bergTwoClubs,
+      jack: bergEightClubs,
+      horse: bergNineClubs,
+      king: bergTenClubs,
+    },
+    swords: {
+      seven: bergSevenSwords,
+      six: bergSixSwords,
+      ace: bergAceSwords,
+      five: bergFiveSwords,
+      four: bergFourSwords,
+      three: bergThreeSwords,
+      two: bergTwoSwords,
+      jack: bergEightSwords,
+      horse: bergNineSwords,
+      king: bergTenSwords,
     },
   },
 };

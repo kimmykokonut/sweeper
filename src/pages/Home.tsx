@@ -175,7 +175,7 @@ function Home() {
           <div
             role="radiogroup"
             aria-label="Card deck style"
-            className="grid grid-cols-3 gap-1 rounded-xl bg-emerald-950/80 p-1 border border-emerald-800/80 w-full max-w-sm"
+            className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 rounded-xl bg-emerald-950/80 p-1.5 border border-emerald-800/80 w-full max-w-sm sm:max-w-md"
           >
             <button
               type="button"
@@ -224,6 +224,19 @@ function Home() {
               }`}
             >
               <span>Siciliane</span>
+            </button>
+            <button
+              type="button"
+              role="radio"
+              aria-checked={deckStyle === "bergamasche"}
+              onClick={() => setDeckStyle("bergamasche")}
+              className={`min-h-[44px] py-1.5 px-2 rounded-lg text-xs sm:text-sm font-bold transition-all cursor-pointer flex flex-col items-center justify-center focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none ${
+                deckStyle === "bergamasche"
+                  ? "bg-yellow-400 text-emerald-950 shadow-sm"
+                  : "text-emerald-200 hover:text-white hover:bg-emerald-900/60"
+              }`}
+            >
+              <span>Bergamasche</span>
             </button>
           </div>
         </div>
