@@ -2,13 +2,16 @@ import { useState } from "react";
 import { Link } from "react-router";
 import type { GameState } from "../types";
 import { loadGameState } from "../utils/scorecardHelpers";
-import setteBello from "../assets/decks/napoletane/denari-7.jpg";
-import assoDenari from "../assets/decks/napoletane/denari-1.jpg";
+import { getCardImage, useDeckStyle } from "../utils/cardData";
 import swordIcon from "../assets/spada.png";
 import logo from "../assets/logo-192x192.png";
 
 function Home() {
   const [activeGame] = useState<GameState | null>(() => loadGameState());
+  const [deckStyle, setDeckStyle] = useDeckStyle();
+
+  const assoDenari = getCardImage("coins", "ace", deckStyle);
+  const setteBello = getCardImage("coins", "seven", deckStyle);
 
   return (
     <div className="w-full flex-1 flex flex-col justify-between items-center px-4 py-3 sm:py-5 overflow-y-auto">
@@ -165,6 +168,51 @@ function Home() {
               </span>
             </div>
           </Link>
+        </div>
+
+        {/* Deck Style Selector */}
+        <div className="mt-5 sm:mt-6 w-full flex flex-col items-center">
+          <div
+            role="radiogroup"
+            aria-label="Card deck style"
+            className="flex rounded-xl bg-emerald-950/80 p-1 border border-emerald-800/80 w-full max-w-xs"
+          >
+            <button
+              type="button"
+              role="radio"
+              aria-checked={deckStyle === "napoletane"}
+              onClick={() => setDeckStyle("napoletane")}
+              className={`flex-1 min-h-[44px] py-1.5 px-3 rounded-lg text-xs sm:text-sm font-bold transition-all cursor-pointer flex flex-col items-center justify-center focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none ${
+                deckStyle === "napoletane"
+                  ? "bg-yellow-400 text-emerald-950 shadow-sm"
+                  : "text-emerald-200 hover:text-white hover:bg-emerald-900/60"
+              }`}
+            >
+              <span>Napoletane</span>
+              <span
+                className={`text-[10px] font-normal ${
+                  deckStyle === "napoletane"
+                    ? "text-emerald-900"
+                    : "text-emerald-400/80"
+                }`}
+              >
+                (Default)
+              </span>
+            </button>
+            <button
+              type="button"
+              role="radio"
+              aria-checked={deckStyle === "piacentine"}
+              onClick={() => setDeckStyle("piacentine")}
+              className={`flex-1 min-h-[44px] py-1.5 px-3 rounded-lg text-xs sm:text-sm font-bold transition-all cursor-pointer flex flex-col items-center justify-center focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none ${
+                deckStyle === "piacentine"
+                  ? "bg-yellow-400 text-emerald-950 shadow-sm"
+                  : "text-emerald-200 hover:text-white hover:bg-emerald-900/60"
+              }`}
+            >
+              Piacentine
+            </button>
+          </div>
         </div>
       </div>
     </div>
