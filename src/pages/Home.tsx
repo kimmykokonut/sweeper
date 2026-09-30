@@ -2,8 +2,8 @@ import { useState } from "react";
 import { Link } from "react-router";
 import type { GameState } from "../types";
 import { loadGameState } from "../utils/scorecardHelpers";
-import setteBello from "../assets/7-denari.jpg";
-import assoDenari from "../assets/1-denari.jpg";
+import setteBello from "../assets/decks/napoletane/denari-7.jpg";
+import assoDenari from "../assets/decks/napoletane/denari-1.jpg";
 import swordIcon from "../assets/spada.png";
 import logo from "../assets/logo-192x192.png";
 

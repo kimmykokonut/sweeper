@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useRouteError, isRouteErrorResponse } from "react-router";
 import type { GameState } from "../types";
 import { loadGameState } from "../utils/scorecardHelpers";
-import eightSpades from "../assets/8-spade.jpg";
+import eightSpades from "../assets/decks/napoletane/spade-8.jpg";
 
 export default function ErrorPage() {
   const error = useRouteError();

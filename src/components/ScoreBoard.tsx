@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import type { GameState, RoundEntry } from "../types";
-import setteBelloImg from "../assets/7-denari.jpg";
+import setteBelloImg from "../assets/decks/napoletane/denari-7.jpg";
 import coinIcon from "../assets/denare.png";
-import aceCoinsImg from "../assets/1-denari.jpg";
-import kingSpadesImg from "../assets/10-spade.jpg";
+import aceCoinsImg from "../assets/decks/napoletane/denari-1.jpg";
+import kingSpadesImg from "../assets/decks/napoletane/spade-10.jpg";
 
 interface ScoreBoardProps {
   game: GameState;

@@ -13,7 +13,7 @@ import {
   parseAndValidateHistoryBackup,
   saveGameHistory,
 } from "../utils/scorecardHelpers";
-import aceCoins from "../assets/1-denari.jpg";
+import aceCoins from "../assets/decks/napoletane/denari-1.jpg";
 import swordIcon from "../assets/spada.png";
 
 export default function GameHistory() {

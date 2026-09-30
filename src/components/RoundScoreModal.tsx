@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import type { Player, RoundEntry, RoundRawCounts } from "../types";
-import setteBelloImg from "../assets/7-denari.jpg";
-import oneSpadesImg from "../assets/1-spade.jpg";
+import setteBelloImg from "../assets/decks/napoletane/denari-7.jpg";
+import oneSpadesImg from "../assets/decks/napoletane/spade-1.jpg";
 import coinIcon from "../assets/denare.png";
 import PrimieraModal from "./PrimieraModal";
 import {
