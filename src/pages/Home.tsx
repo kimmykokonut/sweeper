@@ -17,6 +17,7 @@ const DECK_OPTIONS: Array<{
   { id: "bergamasche", label: "Bergamasche" },
   { id: "sarde", label: "Sarde" },
   { id: "romagnole", label: "Romagnole" },
+  { id: "bresciane", label: "Bresciane" },
 ];
 
 function Home() {
@@ -188,7 +189,7 @@ function Home() {
           <div
             role="radiogroup"
             aria-label="Card deck style"
-            className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 rounded-xl bg-emerald-950/80 p-1.5 border border-emerald-800/80 w-full max-w-sm sm:max-w-md"
+            className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 rounded-xl bg-emerald-950/80 p-1.5 border border-emerald-800/80 w-full max-w-sm sm:max-w-md"
           >
             {DECK_OPTIONS.map((opt, idx) => {
               const isSelected = deckStyle === opt.id;

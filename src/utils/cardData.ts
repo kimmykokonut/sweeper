@@ -271,6 +271,51 @@ import romEightSwords from "../assets/decks/romagnole/spade-8.webp";
 import romNineSwords from "../assets/decks/romagnole/spade-9.webp";
 import romTenSwords from "../assets/decks/romagnole/spade-10.webp";
 
+// Bresciane Deck (Wikimedia Commons Brescia deck, 40 cards omitting 8, 9, 10 numerals)
+import bresSevenCoins from "../assets/decks/bresciane/denari-7.svg";
+import bresSixCoins from "../assets/decks/bresciane/denari-6.svg";
+import bresAceCoins from "../assets/decks/bresciane/denari-1.svg";
+import bresFiveCoins from "../assets/decks/bresciane/denari-5.svg";
+import bresFourCoins from "../assets/decks/bresciane/denari-4.svg";
+import bresThreeCoins from "../assets/decks/bresciane/denari-3.svg";
+import bresTwoCoins from "../assets/decks/bresciane/denari-2.svg";
+import bresEightCoins from "../assets/decks/bresciane/denari-8.svg";
+import bresNineCoins from "../assets/decks/bresciane/denari-9.svg";
+import bresTenCoins from "../assets/decks/bresciane/denari-10.svg";
+
+import bresSevenCups from "../assets/decks/bresciane/coppe-7.svg";
+import bresSixCups from "../assets/decks/bresciane/coppe-6.svg";
+import bresAceCups from "../assets/decks/bresciane/coppe-1.svg";
+import bresFiveCups from "../assets/decks/bresciane/coppe-5.svg";
+import bresFourCups from "../assets/decks/bresciane/coppe-4.svg";
+import bresThreeCups from "../assets/decks/bresciane/coppe-3.svg";
+import bresTwoCups from "../assets/decks/bresciane/coppe-2.svg";
+import bresEightCups from "../assets/decks/bresciane/coppe-8.svg";
+import bresNineCups from "../assets/decks/bresciane/coppe-9.svg";
+import bresTenCups from "../assets/decks/bresciane/coppe-10.svg";
+
+import bresSevenClubs from "../assets/decks/bresciane/bastoni-7.svg";
+import bresSixClubs from "../assets/decks/bresciane/bastoni-6.svg";
+import bresAceClubs from "../assets/decks/bresciane/bastoni-1.svg";
+import bresFiveClubs from "../assets/decks/bresciane/bastoni-5.svg";
+import bresFourClubs from "../assets/decks/bresciane/bastoni-4.svg";
+import bresThreeClubs from "../assets/decks/bresciane/bastoni-3.svg";
+import bresTwoClubs from "../assets/decks/bresciane/bastoni-2.svg";
+import bresEightClubs from "../assets/decks/bresciane/bastoni-8.svg";
+import bresNineClubs from "../assets/decks/bresciane/bastoni-9.svg";
+import bresTenClubs from "../assets/decks/bresciane/bastoni-10.svg";
+
+import bresSevenSwords from "../assets/decks/bresciane/spade-7.svg";
+import bresSixSwords from "../assets/decks/bresciane/spade-6.svg";
+import bresAceSwords from "../assets/decks/bresciane/spade-1.svg";
+import bresFiveSwords from "../assets/decks/bresciane/spade-5.svg";
+import bresFourSwords from "../assets/decks/bresciane/spade-4.svg";
+import bresThreeSwords from "../assets/decks/bresciane/spade-3.svg";
+import bresTwoSwords from "../assets/decks/bresciane/spade-2.svg";
+import bresEightSwords from "../assets/decks/bresciane/spade-8.svg";
+import bresNineSwords from "../assets/decks/bresciane/spade-9.svg";
+import bresTenSwords from "../assets/decks/bresciane/spade-10.svg";
+
 // Suit icons (shared across card table)
 import coin from "../assets/denare.png";
 import cup from "../assets/coppa.png";
@@ -288,7 +333,8 @@ export function loadSelectedDeck(): DeckStyle {
       saved === "siciliane" ||
       saved === "bergamasche" ||
       saved === "sarde" ||
-      saved === "romagnole"
+      saved === "romagnole" ||
+      saved === "bresciane"
     ) {
       return saved;
     }
@@ -627,6 +673,56 @@ const DECK_IMAGES: Record<DeckStyle, Record<Suits, Record<CardValue, string>>> =
       jack: romEightSwords,
       horse: romNineSwords,
       king: romTenSwords,
+    },
+  },
+  bresciane: {
+    coins: {
+      seven: bresSevenCoins,
+      six: bresSixCoins,
+      ace: bresAceCoins,
+      five: bresFiveCoins,
+      four: bresFourCoins,
+      three: bresThreeCoins,
+      two: bresTwoCoins,
+      jack: bresEightCoins,
+      horse: bresNineCoins,
+      king: bresTenCoins,
+    },
+    cups: {
+      seven: bresSevenCups,
+      six: bresSixCups,
+      ace: bresAceCups,
+      five: bresFiveCups,
+      four: bresFourCups,
+      three: bresThreeCups,
+      two: bresTwoCups,
+      jack: bresEightCups,
+      horse: bresNineCups,
+      king: bresTenCups,
+    },
+    clubs: {
+      seven: bresSevenClubs,
+      six: bresSixClubs,
+      ace: bresAceClubs,
+      five: bresFiveClubs,
+      four: bresFourClubs,
+      three: bresThreeClubs,
+      two: bresTwoClubs,
+      jack: bresEightClubs,
+      horse: bresNineClubs,
+      king: bresTenClubs,
+    },
+    swords: {
+      seven: bresSevenSwords,
+      six: bresSixSwords,
+      ace: bresAceSwords,
+      five: bresFiveSwords,
+      four: bresFourSwords,
+      three: bresThreeSwords,
+      two: bresTwoSwords,
+      jack: bresEightSwords,
+      horse: bresNineSwords,
+      king: bresTenSwords,
     },
   },
 };
