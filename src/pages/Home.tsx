@@ -1,24 +1,10 @@
 import { useState } from "react";
 import { Link } from "react-router";
-import type { DeckStyle, GameState } from "../types";
+import type { GameState } from "../types";
 import { loadGameState } from "../utils/scorecardHelpers";
-import { getCardImage, useDeckStyle } from "../utils/cardData";
+import { getCardImage, useDeckStyle, DECK_OPTIONS } from "../utils/cardData";
 import swordIcon from "../assets/spada.png";
 import logo from "../assets/logo-192x192.png";
-
-const DECK_OPTIONS: Array<{
-  id: DeckStyle;
-  label: string;
-  sublabel?: string;
-}> = [
-  { id: "napoletane", label: "Napoletane", sublabel: "(Default)" },
-  { id: "piacentine", label: "Piacentine" },
-  { id: "siciliane", label: "Siciliane" },
-  { id: "bergamasche", label: "Bergamasche" },
-  { id: "sarde", label: "Sarde" },
-  { id: "romagnole", label: "Romagnole" },
-  { id: "bresciane", label: "Bresciane" },
-];
 
 function Home() {
   const [activeGame] = useState<GameState | null>(() => loadGameState());
