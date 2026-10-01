@@ -14,13 +14,13 @@ export interface DeckOption {
 }
 
 export const DECK_OPTIONS: DeckOption[] = [
+  { id: "bergamasche", label: "Bergamasche" },
+  { id: "bresciane", label: "Bresciane" },
   { id: "napoletane", label: "Napoletane", sublabel: "(Default)" },
   { id: "piacentine", label: "Piacentine" },
-  { id: "siciliane", label: "Siciliane" },
-  { id: "bergamasche", label: "Bergamasche" },
-  { id: "sarde", label: "Sarde" },
   { id: "romagnole", label: "Romagnole" },
-  { id: "bresciane", label: "Bresciane" },
+  { id: "sarde", label: "Sarde" },
+  { id: "siciliane", label: "Siciliane" },
 ];
 
 const VALID_DECKS: Set<string> = new Set(DECK_OPTIONS.map((d) => d.id));
