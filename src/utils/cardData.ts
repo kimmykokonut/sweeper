@@ -92,11 +92,17 @@ const NUM_TO_CARD_VALUE: Record<number, CardValue> = {
 // Dynamically glob all card images across all deck directories in src/assets/decks/
 const deckAssetModules = import.meta.glob<string>(
   "../assets/decks/*/*.{jpg,webp,svg}",
-  { eager: true, import: "default" }
+  { eager: true, import: "default" },
 );
 
-function initDeckImages(): Record<DeckStyle, Record<Suits, Record<CardValue, string>>> {
-  const images = {} as Record<DeckStyle, Record<Suits, Record<CardValue, string>>>;
+function initDeckImages(): Record<
+  DeckStyle,
+  Record<Suits, Record<CardValue, string>>
+> {
+  const images = {} as Record<
+    DeckStyle,
+    Record<Suits, Record<CardValue, string>>
+  >;
   for (const opt of DECK_OPTIONS) {
     images[opt.id] = {
       coins: {} as Record<CardValue, string>,
@@ -126,55 +132,60 @@ const DECK_IMAGES = initDeckImages();
 
 export const CARD_DEFINITIONS: Record<
   Suits,
-  Array<{ value: CardValue; displayName: string; points: number }>
+  Array<{
+    value: CardValue;
+    displayName: string;
+    shortName: string;
+    points: number;
+  }>
 > = {
   coins: [
-    { value: "seven", displayName: "7", points: 21 },
-    { value: "six", displayName: "6", points: 18 },
-    { value: "ace", displayName: "A", points: 16 },
-    { value: "five", displayName: "5", points: 15 },
-    { value: "four", displayName: "4", points: 14 },
-    { value: "three", displayName: "3", points: 13 },
-    { value: "two", displayName: "2", points: 12 },
-    { value: "jack", displayName: "Jack", points: 10 },
-    { value: "horse", displayName: "Horse", points: 10 },
-    { value: "king", displayName: "King", points: 10 },
+    { value: "seven", displayName: "7", shortName: "7", points: 21 },
+    { value: "six", displayName: "6", shortName: "6", points: 18 },
+    { value: "ace", displayName: "Ace", shortName: "A", points: 16 },
+    { value: "five", displayName: "5", shortName: "5", points: 15 },
+    { value: "four", displayName: "4", shortName: "4", points: 14 },
+    { value: "three", displayName: "3", shortName: "3", points: 13 },
+    { value: "two", displayName: "2", shortName: "2", points: 12 },
+    { value: "jack", displayName: "Jack", shortName: "J", points: 10 },
+    { value: "horse", displayName: "Horse", shortName: "H", points: 10 },
+    { value: "king", displayName: "King", shortName: "K", points: 10 },
   ],
   cups: [
-    { value: "seven", displayName: "7", points: 21 },
-    { value: "six", displayName: "6", points: 18 },
-    { value: "ace", displayName: "A", points: 16 },
-    { value: "five", displayName: "5", points: 15 },
-    { value: "four", displayName: "4", points: 14 },
-    { value: "three", displayName: "3", points: 13 },
-    { value: "two", displayName: "2", points: 12 },
-    { value: "jack", displayName: "Jack", points: 10 },
-    { value: "horse", displayName: "Horse", points: 10 },
-    { value: "king", displayName: "King", points: 10 },
+    { value: "seven", displayName: "7", shortName: "7", points: 21 },
+    { value: "six", displayName: "6", shortName: "6", points: 18 },
+    { value: "ace", displayName: "Ace", shortName: "A", points: 16 },
+    { value: "five", displayName: "5", shortName: "5", points: 15 },
+    { value: "four", displayName: "4", shortName: "4", points: 14 },
+    { value: "three", displayName: "3", shortName: "3", points: 13 },
+    { value: "two", displayName: "2", shortName: "2", points: 12 },
+    { value: "jack", displayName: "Jack", shortName: "J", points: 10 },
+    { value: "horse", displayName: "Horse", shortName: "H", points: 10 },
+    { value: "king", displayName: "King", shortName: "K", points: 10 },
   ],
   clubs: [
-    { value: "seven", displayName: "7", points: 21 },
-    { value: "six", displayName: "6", points: 18 },
-    { value: "ace", displayName: "A", points: 16 },
-    { value: "five", displayName: "5", points: 15 },
-    { value: "four", displayName: "4", points: 14 },
-    { value: "three", displayName: "3", points: 13 },
-    { value: "two", displayName: "2", points: 12 },
-    { value: "jack", displayName: "Jack", points: 10 },
-    { value: "horse", displayName: "Horse", points: 10 },
-    { value: "king", displayName: "King", points: 10 },
+    { value: "seven", displayName: "7", shortName: "7", points: 21 },
+    { value: "six", displayName: "6", shortName: "6", points: 18 },
+    { value: "ace", displayName: "Ace", shortName: "A", points: 16 },
+    { value: "five", displayName: "5", shortName: "5", points: 15 },
+    { value: "four", displayName: "4", shortName: "4", points: 14 },
+    { value: "three", displayName: "3", shortName: "3", points: 13 },
+    { value: "two", displayName: "2", shortName: "2", points: 12 },
+    { value: "jack", displayName: "Jack", shortName: "J", points: 10 },
+    { value: "horse", displayName: "Horse", shortName: "H", points: 10 },
+    { value: "king", displayName: "King", shortName: "K", points: 10 },
   ],
   swords: [
-    { value: "seven", displayName: "7", points: 21 },
-    { value: "six", displayName: "6", points: 18 },
-    { value: "ace", displayName: "A", points: 16 },
-    { value: "five", displayName: "5", points: 15 },
-    { value: "four", displayName: "4", points: 14 },
-    { value: "three", displayName: "3", points: 13 },
-    { value: "two", displayName: "2", points: 12 },
-    { value: "jack", displayName: "Jack", points: 10 },
-    { value: "horse", displayName: "Horse", points: 10 },
-    { value: "king", displayName: "King", points: 10 },
+    { value: "seven", displayName: "7", shortName: "7", points: 21 },
+    { value: "six", displayName: "6", shortName: "6", points: 18 },
+    { value: "ace", displayName: "Ace", shortName: "A", points: 16 },
+    { value: "five", displayName: "5", shortName: "5", points: 15 },
+    { value: "four", displayName: "4", shortName: "4", points: 14 },
+    { value: "three", displayName: "3", shortName: "3", points: 13 },
+    { value: "two", displayName: "2", shortName: "2", points: 12 },
+    { value: "jack", displayName: "Jack", shortName: "J", points: 10 },
+    { value: "horse", displayName: "Horse", shortName: "H", points: 10 },
+    { value: "king", displayName: "King", shortName: "K", points: 10 },
   ],
 };
 
@@ -188,6 +199,7 @@ export function getCardData(deckStyle: DeckStyle = loadSelectedDeck()): Record<
       value: CardValue;
       image: string;
       displayName: string;
+      shortName: string;
       points: number;
     }>;
   }

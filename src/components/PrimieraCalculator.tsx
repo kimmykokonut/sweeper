@@ -496,6 +496,11 @@ export default function PrimieraCalculator({
           {SUITS.map((suit) => {
             const selectedValue = currentSelections[suit];
             const suitInfo = getCardData(deckStyle)[suit];
+            const selectedCard = selectedValue
+              ? suitInfo.cards.find((c) => c.value === selectedValue)
+              : null;
+            const cardRank = selectedCard?.displayName ?? "";
+
             return (
               <button
                 key={suit}
@@ -503,7 +508,7 @@ export default function PrimieraCalculator({
                 onClick={() => setActiveSuit(suit)}
                 aria-label={
                   selectedValue
-                    ? `${selectedValue} of ${suit}, ${primieraValues[selectedValue]} points. Tap to change.`
+                    ? `${cardRank} of ${suitInfo.name}, ${primieraValues[selectedValue]} points. Tap to change.`
                     : `Select highest card for ${suitInfo.displayName}`
                 }
                 className={`group relative flex aspect-[2/3] flex-col items-center justify-center rounded-2xl p-2 transition-all shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 cursor-pointer ${
@@ -522,21 +527,21 @@ export default function PrimieraCalculator({
                         handleRemoveCard(suit);
                       }}
                       className="absolute -top-3 -right-3 z-10 size-8 sm:size-9 rounded-full bg-emerald-950 hover:bg-red-600 text-white text-sm font-bold flex items-center justify-center shadow-lg border border-emerald-700 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
-                      title={`Clear ${suit}`}
-                      aria-label={`Clear ${suit}`}
+                      title={`Clear ${suitInfo.name}`}
+                      aria-label={`Clear ${suitInfo.name}`}
                     >
                       ✕
                     </button>
                     <div className="min-h-0 w-full flex-1 flex items-center justify-center p-1">
                       <img
                         src={getCardImage(suit, selectedValue, deckStyle)}
-                        alt={`${selectedValue} of ${suit}`}
+                        alt={`${cardRank} of ${suitInfo.name}`}
                         className="h-full w-full object-contain drop-shadow-sm"
                       />
                     </div>
-                    <div className="mt-1 flex items-center justify-between w-full px-2.5 py-1 text-xs sm:text-sm font-bold bg-emerald-950 text-emerald-100 border border-emerald-800/80 rounded-lg shadow-xs">
-                      <span className="capitalize">{suit}</span>
-                      <span className="text-yellow-300 font-bold">
+                    <div className="mt-1 flex items-center justify-between w-full px-2 sm:px-2.5 py-1 text-xs sm:text-sm font-bold bg-emerald-950 text-emerald-100 border border-emerald-800/80 rounded-lg shadow-xs">
+                      <span className="truncate">{cardRank}</span>
+                      <span className="text-yellow-300 font-bold shrink-0">
                         {primieraValues[selectedValue]} pts
                       </span>
                     </div>

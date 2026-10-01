@@ -89,86 +89,89 @@ function CardSelector({
         {/* Body */}
         <div className="flex-1 min-h-0 overflow-y-auto p-2.5 sm:p-3 flex flex-col gap-2 sm:gap-2.5">
           {/* Top Hero: 7 (Best Card in Suit) */}
-          {sevenCard && (() => {
-            const takenBy = takenCards?.[sevenCard.value];
-            const isSelectedByCurrent = currentSelection === sevenCard.value;
-            const isDisabled = Boolean(takenBy);
+          {sevenCard &&
+            (() => {
+              const takenBy = takenCards?.[sevenCard.value];
+              const isSelectedByCurrent = currentSelection === sevenCard.value;
+              const isDisabled = Boolean(takenBy);
 
-            return (
-              <button
-                type="button"
-                disabled={isDisabled}
-                onClick={() => !isDisabled && onCardSelect(activeSuit, sevenCard.value)}
-                className={`w-full grid grid-cols-3 items-center px-3 py-1.5 sm:py-2 rounded-xl transition-all shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 ${
-                  isDisabled
-                    ? "bg-emerald-950/40 border border-emerald-900/60 opacity-60 cursor-not-allowed"
-                    : isSelectedByCurrent
-                      ? "bg-emerald-800/90 border-2 border-yellow-400 ring-2 ring-yellow-400/50 shadow-lg cursor-pointer"
-                      : "bg-emerald-950/60 border border-emerald-700/80 hover:bg-emerald-800/50 hover:border-emerald-500 cursor-pointer group"
-                }`}
-                title={takenBy ? `Taken by ${takenBy}` : undefined}
-                aria-disabled={isDisabled}
-              >
-                {/* Left Column: 7 / Status */}
-                <div className="flex flex-col items-center sm:items-start text-center sm:text-left pl-1 sm:pl-3">
-                  <span
-                    className={`text-3xl sm:text-4xl font-extrabold leading-none ${
-                      isDisabled ? "text-emerald-500/70" : "text-white"
-                    }`}
-                  >
-                    7
-                  </span>
-                  <span
-                    className={`text-xs sm:text-sm font-bold uppercase tracking-wider mt-1 ${
-                      takenBy
-                        ? "text-amber-300 flex items-center gap-1"
-                        : "text-yellow-400"
-                    }`}
-                  >
-                    {takenBy ? `Taken by ${takenBy}` : "Best Card"}
-                  </span>
-                </div>
-
-                {/* Center Column: Card Image */}
-                <div className="flex items-center justify-center">
-                  <div className="relative">
-                    <img
-                      src={sevenCard.image}
-                      alt="7"
-                      className={`h-24 sm:h-28 aspect-[2/3] object-contain rounded-lg bg-white p-1 shadow-sm border border-emerald-800/50 transition-transform ${
-                        isDisabled
-                          ? "opacity-50 grayscale-40"
-                          : "group-hover:scale-105"
+              return (
+                <button
+                  type="button"
+                  disabled={isDisabled}
+                  onClick={() =>
+                    !isDisabled && onCardSelect(activeSuit, sevenCard.value)
+                  }
+                  className={`w-full grid grid-cols-3 items-center px-3 py-1.5 sm:py-2 rounded-xl transition-all shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 ${
+                    isDisabled
+                      ? "bg-emerald-950/40 border border-emerald-900/60 opacity-60 cursor-not-allowed"
+                      : isSelectedByCurrent
+                        ? "bg-emerald-800/90 border-2 border-yellow-400 ring-2 ring-yellow-400/50 shadow-lg cursor-pointer"
+                        : "bg-emerald-950/60 border border-emerald-700/80 hover:bg-emerald-800/50 hover:border-emerald-500 cursor-pointer group"
+                  }`}
+                  title={takenBy ? `Taken by ${takenBy}` : undefined}
+                  aria-disabled={isDisabled}
+                >
+                  {/* Left Column: 7 / Status */}
+                  <div className="flex flex-col items-center sm:items-start text-center sm:text-left pl-1 sm:pl-3">
+                    <span
+                      className={`text-3xl sm:text-4xl font-extrabold leading-none ${
+                        isDisabled ? "text-emerald-500/70" : "text-white"
                       }`}
-                    />
-                    {takenBy && (
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="text-5xl drop-shadow-md">🔒</span>
-                      </div>
-                    )}
+                    >
+                      7
+                    </span>
+                    <span
+                      className={`text-xs sm:text-sm font-bold uppercase tracking-wider mt-1 ${
+                        takenBy
+                          ? "text-amber-300 flex items-center gap-1"
+                          : "text-yellow-400"
+                      }`}
+                    >
+                      {takenBy ? `Taken by ${takenBy}` : "Best Card"}
+                    </span>
                   </div>
-                </div>
 
-                {/* Right Column: 21 / POINTS */}
-                <div className="flex flex-col items-center sm:items-end text-center sm:text-right pr-1 sm:pr-3">
-                  <span
-                    className={`text-3xl sm:text-4xl font-extrabold leading-none ${
-                      isDisabled ? "text-emerald-500/70" : "text-yellow-300"
-                    }`}
-                  >
-                    21
-                  </span>
-                  <span
-                    className={`text-xs sm:text-sm font-bold uppercase tracking-wider mt-1 ${
-                      isDisabled ? "text-emerald-500/70" : "text-emerald-300"
-                    }`}
-                  >
-                    Points
-                  </span>
-                </div>
-              </button>
-            );
-          })()}
+                  {/* Center Column: Card Image */}
+                  <div className="flex items-center justify-center">
+                    <div className="relative">
+                      <img
+                        src={sevenCard.image}
+                        alt="7"
+                        className={`h-24 sm:h-28 aspect-[2/3] object-contain rounded-lg bg-white p-1 shadow-sm border border-emerald-800/50 transition-transform ${
+                          isDisabled
+                            ? "opacity-50 grayscale-40"
+                            : "group-hover:scale-105"
+                        }`}
+                      />
+                      {takenBy && (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <span className="text-5xl drop-shadow-md">🔒</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Right Column: 21 / POINTS */}
+                  <div className="flex flex-col items-center sm:items-end text-center sm:text-right pr-1 sm:pr-3">
+                    <span
+                      className={`text-3xl sm:text-4xl font-extrabold leading-none ${
+                        isDisabled ? "text-emerald-500/70" : "text-yellow-300"
+                      }`}
+                    >
+                      21
+                    </span>
+                    <span
+                      className={`text-xs sm:text-sm font-bold uppercase tracking-wider mt-1 ${
+                        isDisabled ? "text-emerald-500/70" : "text-emerald-300"
+                      }`}
+                    >
+                      Points
+                    </span>
+                  </div>
+                </button>
+              );
+            })()}
 
           {/* 3x3 Grid for Remaining 9 Cards */}
           <div className="grid grid-cols-3 gap-2 sm:gap-2.5">
@@ -183,7 +186,9 @@ function CardSelector({
                   key={card.value}
                   type="button"
                   disabled={isDisabled}
-                  onClick={() => !isDisabled && onCardSelect(activeSuit, card.value)}
+                  onClick={() =>
+                    !isDisabled && onCardSelect(activeSuit, card.value)
+                  }
                   className={`group relative flex aspect-[2/3] flex-col items-center justify-between overflow-hidden rounded-xl p-1.5 shadow transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 ${
                     isDisabled
                       ? "bg-emerald-950/40 border border-emerald-900/60 opacity-60 cursor-not-allowed"
@@ -206,7 +211,9 @@ function CardSelector({
                       <div className="absolute inset-0 flex items-center justify-center">
                         <span className="text-center bg-emerald-950/90 text-amber-300 px-1.5 py-0.5 rounded text-xs sm:text-sm font-bold shadow-md flex items-center gap-1 border border-emerald-800">
                           <span>🔒</span>
-                          <span className="truncate max-w-[70px] sm:max-w-[90px]">{takenBy}</span>
+                          <span className="truncate max-w-[70px] sm:max-w-[90px]">
+                            {takenBy}
+                          </span>
                         </span>
                       </div>
                     )}
@@ -220,7 +227,9 @@ function CardSelector({
                           : "bg-emerald-950/90 text-emerald-100 border-emerald-800/70"
                     }`}
                   >
-                    {takenBy ? `Taken` : `${card.points} pts`}
+                    {takenBy
+                      ? `Taken`
+                      : `${card.shortName} • ${card.points} pts`}
                   </div>
                 </button>
               );

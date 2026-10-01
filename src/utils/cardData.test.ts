@@ -95,6 +95,7 @@ describe("cardData (40-card Italian Scopa deck)", () => {
         expect(typeof card.image).toBe("string");
         expect(card.image.length).toBeGreaterThan(0);
         expect(card.displayName).toBeTruthy();
+        expect(card.shortName).toBeTruthy();
       }
     }
   });
