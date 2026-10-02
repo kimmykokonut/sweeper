@@ -176,7 +176,7 @@ function CardSelector({
           {/* 3x3 Grid for Remaining 9 Cards */}
           <div className="grid grid-cols-3 gap-2 sm:gap-2.5">
             {remainingCards.map((card) => {
-              const isHighTier = card.points >= 15;
+              const isHighValue = card.points >= 15;
               const takenBy = takenCards?.[card.value];
               const isSelectedByCurrent = currentSelection === card.value;
               const isDisabled = Boolean(takenBy);
@@ -219,17 +219,32 @@ function CardSelector({
                     )}
                   </div>
                   <div
-                    className={`w-full py-0.5 sm:py-1 text-center text-xs sm:text-sm font-bold rounded-md leading-tight mt-1 truncate px-0.5 border ${
+                    className={`w-full py-0.5 sm:py-1 px-1.5 sm:px-2 flex items-center ${
+                      takenBy ? "justify-center" : "justify-between"
+                    } text-xs sm:text-sm font-bold rounded-md leading-tight mt-1 border ${
                       takenBy
                         ? "bg-emerald-950/90 text-amber-300/90 border-emerald-800 text-[11px]"
-                        : isHighTier
-                          ? "bg-emerald-950 text-yellow-300 border-yellow-400/40 shadow-xs"
-                          : "bg-emerald-950/90 text-emerald-100 border-emerald-800/70"
+                        : "bg-emerald-950/90 text-emerald-100 border-emerald-800/80 shadow-xs"
                     }`}
                   >
-                    {takenBy
-                      ? `Taken`
-                      : `${card.shortName} • ${card.points} pts`}
+                    {takenBy ? (
+                      <span className="truncate">Taken</span>
+                    ) : (
+                      <>
+                        <span className="truncate text-white font-bold">
+                          {card.shortName}
+                        </span>
+                        <span
+                          className={`shrink-0 ${
+                            isHighValue
+                              ? "text-yellow-300 font-bold"
+                              : "text-emerald-300 font-semibold"
+                          }`}
+                        >
+                          {card.points} pts
+                        </span>
+                      </>
+                    )}
                   </div>
                 </button>
               );
