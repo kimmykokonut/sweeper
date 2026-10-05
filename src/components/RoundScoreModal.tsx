@@ -268,56 +268,7 @@ export default function RoundScoreModal({
             </div>
           </div>
 
-          {/* Section 2: Settebello */}
-          <div className="rounded-xl bg-emerald-950/60 border border-emerald-800 p-3 sm:p-4">
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-2.5">
-                <img
-                  src={setteBelloImg}
-                  alt=""
-                  aria-hidden="true"
-                  className="h-8 w-auto rounded border border-yellow-400 shrink-0"
-                />
-                <div>
-                  <h3 className="font-bold text-white text-base sm:text-lg">
-                    Il Settebello (7 of Coins)
-                  </h3>
-                  <p className="text-xs sm:text-sm text-emerald-200">1 point</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex flex-wrap gap-2 mt-2">
-              {players.map((p) => {
-                const isSelected = settebelloWinnerId === p.id;
-                return (
-                  <button
-                    key={p.id}
-                    type="button"
-                    onClick={() => setSettebelloWinnerId(p.id)}
-                    aria-pressed={isSelected}
-                    className={`flex-1 min-w-[100px] min-h-[44px] py-2 px-3 rounded-lg text-sm sm:text-base font-semibold transition-all border flex items-center justify-center gap-2 cursor-pointer focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none ${
-                      isSelected
-                        ? "bg-emerald-600 text-white border-emerald-400 shadow-md font-bold ring-2 ring-yellow-400"
-                        : "bg-emerald-900/80 text-emerald-100 border-emerald-700 hover:bg-emerald-800"
-                    }`}
-                  >
-                    {isSelected && (
-                      <img
-                        src={coinIcon}
-                        alt=""
-                        aria-hidden="true"
-                        className="size-5 object-contain inline-block shrink-0"
-                      />
-                    )}
-                    <span>{p.name}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Section 3: Carte (Cards) */}
+          {/* Section 2: Carte (Cards) */}
           <div className="rounded-xl bg-emerald-950/60 border border-emerald-800 p-3 sm:p-4">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2.5">
@@ -446,7 +397,7 @@ export default function RoundScoreModal({
             </div>
           </div>
 
-          {/* Section 4: Denari (Coins) */}
+          {/* Section 3: Denari (Coins) */}
           <div className="rounded-xl bg-emerald-950/60 border border-emerald-800 p-3 sm:p-4">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2.5">
@@ -498,6 +449,55 @@ export default function RoundScoreModal({
               >
                 Tie (0 pts)
               </button>
+            </div>
+          </div>
+
+          {/* Section 2: Settebello */}
+          <div className="rounded-xl bg-emerald-950/60 border border-emerald-800 p-3 sm:p-4">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2.5">
+                <img
+                  src={setteBelloImg}
+                  alt=""
+                  aria-hidden="true"
+                  className="h-8 w-auto rounded border border-yellow-400 shrink-0"
+                />
+                <div>
+                  <h3 className="font-bold text-white text-base sm:text-lg">
+                    Il Settebello (7 of Coins)
+                  </h3>
+                  <p className="text-xs sm:text-sm text-emerald-200">1 point</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap gap-2 mt-2">
+              {players.map((p) => {
+                const isSelected = settebelloWinnerId === p.id;
+                return (
+                  <button
+                    key={p.id}
+                    type="button"
+                    onClick={() => setSettebelloWinnerId(p.id)}
+                    aria-pressed={isSelected}
+                    className={`flex-1 min-w-[100px] min-h-[44px] py-2 px-3 rounded-lg text-sm sm:text-base font-semibold transition-all border flex items-center justify-center gap-2 cursor-pointer focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none ${
+                      isSelected
+                        ? "bg-emerald-600 text-white border-emerald-400 shadow-md font-bold ring-2 ring-yellow-400"
+                        : "bg-emerald-900/80 text-emerald-100 border-emerald-700 hover:bg-emerald-800"
+                    }`}
+                  >
+                    {isSelected && (
+                      <img
+                        src={coinIcon}
+                        alt=""
+                        aria-hidden="true"
+                        className="size-5 object-contain inline-block shrink-0"
+                      />
+                    )}
+                    <span>{p.name}</span>
+                  </button>
+                );
+              })}
             </div>
           </div>
 
