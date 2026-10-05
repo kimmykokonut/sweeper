@@ -224,33 +224,38 @@ export default function RoundScoreModal({
                     Scope (Sweeps)
                   </h3>
                   <p className="text-xs sm:text-sm text-emerald-200">
-                    1 point for each sweep during play
+                    1 point per scopa
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-              {players.map((p) => (
+            <div className="grid grid-cols-2 gap-2 sm:gap-2.5">
+              {players.map((p, index) => (
                 <div
                   key={p.id}
-                  className="flex items-center justify-between bg-emerald-900/80 border border-emerald-700 rounded-lg p-2.5 sm:p-3"
+                  className={`flex flex-col items-center justify-between bg-emerald-900/80 border border-emerald-700 rounded-lg p-1.5 sm:p-3 ${
+                    players.length === 3 && index === 2 ? "col-span-2" : ""
+                  }`}
                 >
-                  <span className="font-semibold text-sm sm:text-base truncate mr-2">
+                  <span
+                    className="font-semibold text-sm sm:text-base text-white truncate max-w-full mb-2 text-center"
+                    title={p.name}
+                  >
                     {p.name}
                   </span>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center sm:gap-1">
                     <button
                       type="button"
                       onClick={() => handleScopeChange(p.id, -1)}
                       aria-label={`Decrease ${p.name}'s sweeps`}
-                      className="min-h-[44px] min-w-[44px] rounded-lg bg-emerald-800 border border-emerald-600 text-xl font-bold text-white hover:bg-emerald-700 active:scale-95 flex items-center justify-center focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none cursor-pointer transition-colors"
+                      className="min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] bg-emerald-800 rounded-full text-lg sm:text-xl font-bold text-white hover:bg-emerald-700 active:scale-95 flex items-center justify-center focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none cursor-pointer transition-colors"
                     >
                       -
                     </button>
                     <span
                       aria-label={`${p.name}: ${scope[p.id] || 0} sweeps`}
-                      className="w-8 sm:w-10 text-center font-bold text-lg sm:text-xl text-yellow-300"
+                      className="w-7 sm:w-10 text-center font-bold text-lg sm:text-xl text-yellow-300"
                     >
                       {scope[p.id] || 0}
                     </span>
@@ -258,7 +263,7 @@ export default function RoundScoreModal({
                       type="button"
                       onClick={() => handleScopeChange(p.id, 1)}
                       aria-label={`Increase ${p.name}'s sweeps`}
-                      className="min-h-[44px] min-w-[44px] rounded-lg bg-emerald-700 border border-emerald-500 text-xl font-bold text-white hover:bg-emerald-600 active:scale-95 flex items-center justify-center shadow-xs focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none cursor-pointer transition-colors"
+                      className="min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] rounded-full bg-emerald-700 text-lg sm:text-xl font-bold text-white hover:bg-emerald-600 active:scale-95 flex items-center justify-center shadow-xs focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none cursor-pointer transition-colors"
                     >
                       +
                     </button>
