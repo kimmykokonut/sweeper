@@ -237,6 +237,9 @@ export default function GameSetup({
                 const defaultPlaceholder = isTeams
                   ? `Team ${index + 1}`
                   : `Player ${index + 1}`;
+                const currentValue = playerNames[index] ?? defaultPlaceholder;
+                const hasValue = Boolean(currentValue);
+
                 return (
                   <div
                     key={index}
@@ -248,18 +251,52 @@ export default function GameSetup({
                     >
                       {isTeams ? `Team ${index + 1}` : `Player ${index + 1}`}:
                     </label>
-                    <input
-                      id={`player-name-${index}`}
-                      type="text"
-                      maxLength={20}
-                      aria-label={`${isTeams ? "Team" : "Player"} ${index + 1} Name`}
-                      value={playerNames[index] ?? defaultPlaceholder}
-                      onChange={(e) => handleNameChange(index, e.target.value)}
-                      onFocus={(e) => e.target.select()}
-                      onClick={(e) => (e.target as HTMLInputElement).select()}
-                      placeholder={defaultPlaceholder}
-                      className="flex-1 min-w-0 rounded-xl bg-emerald-950/80 border border-emerald-600 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-white placeholder-emerald-500 focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none"
-                    />
+                    <div className="relative flex-1 min-w-0 flex items-center">
+                      <input
+                        id={`player-name-${index}`}
+                        type="text"
+                        maxLength={20}
+                        autoComplete="off"
+                        autoCorrect="off"
+                        spellCheck={false}
+                        aria-label={`${isTeams ? "Team" : "Player"} ${index + 1} Name`}
+                        value={currentValue}
+                        onChange={(e) => handleNameChange(index, e.target.value)}
+                        onFocus={(e) => {
+                          if (e.target.value === defaultPlaceholder) {
+                            e.target.select();
+                          }
+                        }}
+                        placeholder={defaultPlaceholder}
+                        className="w-full min-w-0 rounded-xl bg-emerald-950/80 border border-emerald-600 pl-3 sm:pl-4 pr-9 sm:pr-10 py-2 sm:py-3 text-sm sm:text-base text-white placeholder-emerald-500 focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none"
+                      />
+                      {hasValue && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            handleNameChange(index, "");
+                            document.getElementById(`player-name-${index}`)?.focus();
+                          }}
+                          aria-label={`Clear ${defaultPlaceholder} name`}
+                          className="absolute right-2 sm:right-2.5 p-1 rounded-full text-emerald-400 hover:text-white hover:bg-emerald-800/60 active:scale-95 transition-colors cursor-pointer"
+                        >
+                          <svg
+                            className="size-4"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            strokeWidth={2.5}
+                            aria-hidden="true"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M6 18L18 6M6 6l12 12"
+                            />
+                          </svg>
+                        </button>
+                      )}
+                    </div>
                   </div>
                 );
               })}
@@ -320,11 +357,13 @@ export default function GameSetup({
                     placeholder="21"
                     aria-label="Custom target score in points"
                     value={customTarget}
-                    onFocus={() => setIsCustomTarget(true)}
+                    onFocus={(e) => {
+                      setIsCustomTarget(true);
+                      e.target.select();
+                    }}
                     onClick={(e) => {
                       e.stopPropagation();
                       setIsCustomTarget(true);
-                      (e.target as HTMLInputElement).select();
                     }}
                     onChange={(e) => {
                       const val = e.target.value;

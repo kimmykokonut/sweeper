@@ -223,7 +223,7 @@ npm run preview
 - [x] **Phase 4**: Progressive Web App (PWA) with full offline Italian card precaching
 - [x] **Phase 5**: Game data persistence (`localStorage`) & active game resume flow
 - [x] **Phase 6**: Game history archive, head-to-head rivalry records & category dominance
-- [x] **Phase 7**: Comprehensive WCAG accessibility, 60 automated unit tests & CI pipeline
+- [x] **Phase 7**: Comprehensive WCAG accessibility, 64 automated unit tests & CI pipeline
 - [x] **Phase 8**: Match history backup, JSON export & cross-device restore with duplicate detection
 
 ### Stretch
