@@ -230,46 +230,57 @@ export default function RoundScoreModal({
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-2 sm:gap-2.5">
-              {players.map((p, index) => (
-                <div
-                  key={p.id}
-                  className={`flex flex-col items-center justify-between bg-emerald-900/80 border border-emerald-700 rounded-lg p-1.5 sm:p-3 ${
-                    players.length === 3 && index === 2 ? "col-span-2" : ""
-                  }`}
-                >
-                  <span
-                    className="font-semibold text-sm sm:text-base text-white truncate max-w-full mb-2 text-center"
-                    title={p.name}
+            <div
+              className={`grid gap-2 sm:gap-2.5 ${
+                players.length === 3
+                  ? "grid-cols-2 sm:grid-cols-3"
+                  : "grid-cols-2"
+              }`}
+            >
+              {players.map((p, index) => {
+                const isThirdInThree = players.length === 3 && index === 2;
+                return (
+                  <div
+                    key={p.id}
+                    className={`flex flex-col items-center justify-between bg-emerald-900/80 border border-emerald-700 rounded-lg p-1.5 sm:p-3 ${
+                      isThirdInThree
+                        ? "col-span-2 sm:col-span-1 max-w-[calc(50%-0.25rem)] sm:max-w-none mx-auto sm:mx-0 w-full"
+                        : ""
+                    }`}
                   >
-                    {p.name}
-                  </span>
-                  <div className="flex items-center sm:gap-1">
-                    <button
-                      type="button"
-                      onClick={() => handleScopeChange(p.id, -1)}
-                      aria-label={`Decrease ${p.name}'s sweeps`}
-                      className="min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] bg-emerald-800 rounded-full text-lg sm:text-xl font-bold text-white hover:bg-emerald-700 active:scale-95 flex items-center justify-center focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none cursor-pointer transition-colors"
-                    >
-                      -
-                    </button>
                     <span
-                      aria-label={`${p.name}: ${scope[p.id] || 0} sweeps`}
-                      className="w-7 sm:w-10 text-center font-bold text-lg sm:text-xl text-yellow-300"
+                      className="font-semibold text-sm sm:text-base text-white truncate max-w-full mb-2 text-center"
+                      title={p.name}
                     >
-                      {scope[p.id] || 0}
+                      {p.name}
                     </span>
-                    <button
-                      type="button"
-                      onClick={() => handleScopeChange(p.id, 1)}
-                      aria-label={`Increase ${p.name}'s sweeps`}
-                      className="min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] rounded-full bg-emerald-700 text-lg sm:text-xl font-bold text-white hover:bg-emerald-600 active:scale-95 flex items-center justify-center shadow-xs focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none cursor-pointer transition-colors"
-                    >
-                      +
-                    </button>
+                    <div className="flex items-center sm:gap-1">
+                      <button
+                        type="button"
+                        onClick={() => handleScopeChange(p.id, -1)}
+                        aria-label={`Decrease ${p.name}'s sweeps`}
+                        className="min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] bg-emerald-800 rounded-full text-lg sm:text-xl font-bold text-white hover:bg-emerald-700 active:scale-95 flex items-center justify-center focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none cursor-pointer transition-colors"
+                      >
+                        -
+                      </button>
+                      <span
+                        aria-label={`${p.name}: ${scope[p.id] || 0} sweeps`}
+                        className="w-7 sm:w-10 text-center font-bold text-lg sm:text-xl text-yellow-300"
+                      >
+                        {scope[p.id] || 0}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => handleScopeChange(p.id, 1)}
+                        aria-label={`Increase ${p.name}'s sweeps`}
+                        className="min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] rounded-full bg-emerald-700 text-lg sm:text-xl font-bold text-white hover:bg-emerald-600 active:scale-95 flex items-center justify-center shadow-xs focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none cursor-pointer transition-colors"
+                      >
+                        +
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 
@@ -410,7 +421,7 @@ export default function RoundScoreModal({
                   src={coinIcon}
                   alt=""
                   aria-hidden="true"
-                  className="h-7 w-auto rounded border border-yellow-400 shrink-0"
+                  className="h-7 w-auto rounded border border-yellow-300 shrink-0"
                 />
                 <div>
                   <h3 className="font-bold text-white text-base sm:text-lg">
@@ -572,53 +583,51 @@ export default function RoundScoreModal({
               </button>
             </div>
           </div>
-
-          {/* Points Breakdown Preview */}
-          <div className="rounded-xl bg-emerald-950/90 border border-emerald-700 p-3 sm:p-4">
-            <h4 className="text-xs sm:text-sm uppercase font-bold text-emerald-300 tracking-wider mb-2">
-              Round Points Summary
-            </h4>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-              {players.map((p) => {
-                const total = roundTotals[p.id] || 0;
-                return (
-                  <div
-                    key={p.id}
-                    className="flex flex-col items-center justify-center p-2 rounded-lg bg-emerald-900/70 border border-emerald-700"
-                  >
-                    <span className="text-xs sm:text-sm text-emerald-100 font-semibold truncate max-w-full">
-                      {p.name}
-                    </span>
-                    <span className="text-xl sm:text-2xl font-bold text-yellow-300">
-                      +{total} {total === 1 ? "pt" : "pts"}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
         </div>
 
         {/* Footer Actions */}
-        <div className="shrink-0 border-t border-emerald-800 bg-emerald-950/95 px-4 py-3 sm:px-6 space-y-2">
-          {!isRoundComplete && (
-            <p className="text-center text-xs sm:text-sm text-emerald-200 font-medium italic">
-              Select all 4 categories to save
-            </p>
-          )}
-          <button
-            type="button"
-            onClick={handleSave}
-            disabled={!isRoundComplete}
-            aria-disabled={!isRoundComplete}
-            className={`w-full min-h-[48px] rounded-xl py-3 font-bold shadow-lg transition-all text-base sm:text-lg focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none ${
-              isRoundComplete
-                ? "bg-yellow-400 text-emerald-950 hover:bg-yellow-300 hover:scale-[1.01] active:scale-95 cursor-pointer"
-                : "bg-emerald-950 border border-emerald-800 text-emerald-400 cursor-not-allowed opacity-60"
+        <div className="shrink-0 border-t border-emerald-800 bg-emerald-950/95 px-3 py-2.5 sm:px-6 sm:py-3 space-y-2">
+          {/* Pinned Round Points Summary */}
+          <div
+            className={`grid gap-1.5 sm:gap-2 ${
+              players.length === 3
+                ? "grid-cols-2 sm:grid-cols-3"
+                : "grid-cols-2 sm:grid-cols-4"
             }`}
           >
-            {existingRound ? "Update Round" : "Save Round"}
-          </button>
+            {players.map((p, index) => {
+              const total = roundTotals[p.id] || 0;
+              const isThirdInThree = players.length === 3 && index === 2;
+              return (
+                <div
+                  key={p.id}
+                  className={`flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-emerald-900/70 border border-emerald-700/80 text-xs sm:text-sm ${
+                    isThirdInThree
+                      ? "col-span-2 sm:col-span-1 max-w-[calc(50%-0.1875rem)] sm:max-w-none mx-auto sm:mx-0 w-full"
+                      : ""
+                  }`}
+                >
+                  <span className="text-emerald-100 font-semibold truncate mr-2">
+                    {p.name}
+                  </span>
+                  <span className="font-bold text-yellow-300 whitespace-nowrap shrink-0">
+                    +{total} {total === 1 ? "pt" : "pts"}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Save Button (only shown once all 4 categories are chosen) */}
+          {isRoundComplete && (
+            <button
+              type="button"
+              onClick={handleSave}
+              className="w-full min-h-[44px] rounded-xl py-2.5 font-bold shadow-lg transition-all text-base sm:text-lg bg-yellow-400 text-emerald-950 hover:bg-yellow-300 active:scale-95 cursor-pointer focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none"
+            >
+              {existingRound ? "Update Round" : "Save Round"}
+            </button>
+          )}
         </div>
       </div>
 
