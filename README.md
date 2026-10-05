@@ -56,8 +56,8 @@ Here is what Sweeper brings to your game table:
 
 ### 🏆 Full Scopa Scorecard (2–4 Players)
 
-- Set up matches for 2, 3, or 4 players (individuals or 2-teams-of-2) with custom names and target scores (11 pts or custom).
-- Score rounds with live point previews across all 5 official categories: **Scope (Sweeps)**, **Carte (Cards)**, **Denari (Coins)**, **Settebello (7 of Coins)**, and **Primiera**.
+- Set up matches for 2, 3, or 4 players (individuals or 2-teams-of-2) with custom names and target scores (11 pts or custom), plus auto-memory for recent player names.
+- **Compact Mobile Scoring**: Responsive multi-player sweep steppers, live round points summary pinned to the bottom, and a smart Save button that only reveals once all categories are decided.
 - Live leaderboard, progress bars, collapsible round breakdown, and instant victory banners.
 
 ### ⚡ Smart Count Verification Assistant
@@ -69,7 +69,8 @@ Here is what Sweeper brings to your game table:
 ### 🃏 Authentic Primiera Calculator (Standalone & Embedded)
 
 - Available as a standalone tab in bottom navigation or embedded right inside the round scoring dialog.
-- Authentic Italian regional deck imagery across all four suits (_Denari_, _Spade_, _Coppe_, _Bastoni_) with selectable deck styles (**Napoletane**, **Piacentine**, **Siciliane**, **Bergamasche**, **Sarde**, **Romagnole**, and **Bresciane**) and accurate Scopa Primiera point values ($7=21, 6=18, \dots$, face cards $=10$).
+- **Regional Italian Deck Switcher**: Quick-switch among 7 authentic regional deck styles (**Napoletane**, **Piacentine**, **Siciliane**, **Bergamasche**, **Sarde**, **Romagnole**, and **Bresciane**) directly from the Home screen, syncing card art across the calculator, scorecard, and home navigation.
+- Accurate Scopa Primiera point values ($7=21, 6=18, \dots$, face cards $=10$) with visual point tier badges (gold for high tier, mint for lower).
 - **Deck Uniqueness Locks**: Claimed cards automatically lock for other players with a `🔒 Taken by Player` badge.
 - **Direct Hand Transfer**: One-tap transfer from standalone calculator directly into a fresh Round 1 scorecard with the winner pre-selected.
 
