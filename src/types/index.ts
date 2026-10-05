@@ -58,6 +58,7 @@ export interface RoundEntry {
 export interface GameState {
   id: string;
   createdAt: number;
+  savedAt?: number;
   players: Player[];
   settings: GameSettings;
   rounds: RoundEntry[];
