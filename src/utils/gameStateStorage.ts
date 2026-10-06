@@ -44,6 +44,76 @@ export function clearGameState(): void {
   }
 }
 
+export const PAUSED_GAMES_STORAGE_KEY = "sweeper_paused_games";
+
+/**
+ * LocalStorage helpers for paused games played at a later date
+ */
+export function loadPausedGames(): GameState[] {
+  try {
+    const raw = localStorage.getItem(PAUSED_GAMES_STORAGE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+
+    return parsed.filter(
+      (g): g is GameState =>
+        Boolean(g) &&
+        typeof g === "object" &&
+        typeof g.id === "string" &&
+        Array.isArray(g.players) &&
+        g.players.length > 0 &&
+        Array.isArray(g.rounds)
+    );
+  } catch (err) {
+    console.error("Failed to load paused games from localStorage", err);
+    return [];
+  }
+}
+
+export function savePausedGame(game: GameState): GameState[] {
+  try {
+    const current = loadPausedGames();
+    const gameToSave: GameState = {
+      ...game,
+      savedAt: Date.now(),
+    };
+    const existingIndex = current.findIndex((g) => g.id === game.id);
+    let updated: GameState[];
+    if (existingIndex >= 0) {
+      updated = [...current];
+      updated[existingIndex] = gameToSave;
+    } else {
+      updated = [gameToSave, ...current];
+    }
+    localStorage.setItem(PAUSED_GAMES_STORAGE_KEY, JSON.stringify(updated));
+    return updated;
+  } catch (err) {
+    console.error("Failed to save paused game to localStorage", err);
+    return loadPausedGames();
+  }
+}
+
+export function deletePausedGame(id: string): GameState[] {
+  try {
+    const current = loadPausedGames();
+    const updated = current.filter((g) => g.id !== id);
+    localStorage.setItem(PAUSED_GAMES_STORAGE_KEY, JSON.stringify(updated));
+    return updated;
+  } catch (err) {
+    console.error("Failed to delete paused game from localStorage", err);
+    return loadPausedGames();
+  }
+}
+
+export function clearAllPausedGames(): void {
+  try {
+    localStorage.removeItem(PAUSED_GAMES_STORAGE_KEY);
+  } catch (err) {
+    console.error("Failed to clear all paused games from localStorage", err);
+  }
+}
+
 /**
  * Remembered player names helpers for GameSetup
  */

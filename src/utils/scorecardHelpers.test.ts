@@ -7,6 +7,10 @@ import {
   saveGameState,
   loadGameState,
   clearGameState,
+  loadPausedGames,
+  savePausedGame,
+  deletePausedGame,
+  clearAllPausedGames,
 } from "./scorecardHelpers";
 import type { GameState, Player, RoundEntry } from "../types";
 
@@ -258,6 +262,177 @@ describe("scorecardHelpers", () => {
         // missing rounds array
       });
       expect(loadGameState()).toBeNull();
+    });
+  });
+
+  describe("localStorage paused games helpers", () => {
+    let mockStorage: Record<string, string> = {};
+
+    beforeEach(() => {
+      mockStorage = {};
+      vi.stubGlobal("localStorage", {
+        getItem: (key: string) => mockStorage[key] ?? null,
+        setItem: (key: string, value: string) => {
+          mockStorage[key] = value.toString();
+        },
+        removeItem: (key: string) => {
+          delete mockStorage[key];
+        },
+        clear: () => {
+          mockStorage = {};
+        },
+      });
+    });
+
+    it("should return an empty array if no paused games exist", () => {
+      expect(loadPausedGames()).toEqual([]);
+    });
+
+    it("should save and load paused games with savedAt timestamp", () => {
+      const sampleGame: GameState = {
+        id: "game_paused_1",
+        createdAt: 1700000000,
+        players,
+        settings: { playerCount: 2, targetScore: 11 },
+        rounds: [],
+        isFinished: false,
+        winnerId: null,
+      };
+
+      const result = savePausedGame(sampleGame);
+      expect(result.length).toBe(1);
+      expect(result[0].id).toBe("game_paused_1");
+      expect(result[0].savedAt).toBeTypeOf("number");
+
+      const loaded = loadPausedGames();
+      expect(loaded.length).toBe(1);
+      expect(loaded[0].id).toBe("game_paused_1");
+    });
+
+    it("should update an existing paused game if saved with same ID", () => {
+      const sampleGame: GameState = {
+        id: "game_paused_1",
+        createdAt: 1700000000,
+        players,
+        settings: { playerCount: 2, targetScore: 11 },
+        rounds: [],
+        isFinished: false,
+        winnerId: null,
+      };
+      savePausedGame(sampleGame);
+
+      const updatedGame: GameState = {
+        ...sampleGame,
+        rounds: [
+          {
+            roundNumber: 1,
+            scope: { p1: 1, p2: 0 },
+            carteWinnerId: "p1",
+            denariWinnerId: "p2",
+            settebelloWinnerId: "p1",
+            primieraWinnerId: "p1",
+            roundTotals: { p1: 3, p2: 1 },
+            cumulativeTotals: { p1: 3, p2: 1 },
+          },
+        ],
+      };
+      savePausedGame(updatedGame);
+
+      const loaded = loadPausedGames();
+      expect(loaded.length).toBe(1);
+      expect(loaded[0].rounds.length).toBe(1);
+    });
+
+    it("should prepend new paused games so the most recently saved is first", () => {
+      const game1: GameState = {
+        id: "game_1",
+        createdAt: 1700000000,
+        players,
+        settings: { playerCount: 2, targetScore: 11 },
+        rounds: [],
+        isFinished: false,
+        winnerId: null,
+      };
+      const game2: GameState = {
+        id: "game_2",
+        createdAt: 1700001000,
+        players,
+        settings: { playerCount: 2, targetScore: 21 },
+        rounds: [],
+        isFinished: false,
+        winnerId: null,
+      };
+
+      savePausedGame(game1);
+      savePausedGame(game2);
+
+      const loaded = loadPausedGames();
+      expect(loaded.length).toBe(2);
+      expect(loaded[0].id).toBe("game_2");
+      expect(loaded[1].id).toBe("game_1");
+    });
+
+    it("should delete a paused game by id and keep others", () => {
+      const game1: GameState = {
+        id: "game_1",
+        createdAt: 1700000000,
+        players,
+        settings: { playerCount: 2, targetScore: 11 },
+        rounds: [],
+        isFinished: false,
+        winnerId: null,
+      };
+      const game2: GameState = {
+        id: "game_2",
+        createdAt: 1700001000,
+        players,
+        settings: { playerCount: 2, targetScore: 21 },
+        rounds: [],
+        isFinished: false,
+        winnerId: null,
+      };
+
+      savePausedGame(game1);
+      savePausedGame(game2);
+
+      const remaining = deletePausedGame("game_2");
+      expect(remaining.length).toBe(1);
+      expect(remaining[0].id).toBe("game_1");
+      expect(loadPausedGames().length).toBe(1);
+    });
+
+    it("should clear all paused games", () => {
+      const game1: GameState = {
+        id: "game_1",
+        createdAt: 1700000000,
+        players,
+        settings: { playerCount: 2, targetScore: 11 },
+        rounds: [],
+        isFinished: false,
+        winnerId: null,
+      };
+      savePausedGame(game1);
+      expect(loadPausedGames().length).toBe(1);
+
+      clearAllPausedGames();
+      expect(loadPausedGames()).toEqual([]);
+    });
+
+    it("should handle corrupted JSON gracefully in loadPausedGames", () => {
+      mockStorage["sweeper_paused_games"] = "corrupted-json{{{";
+      expect(loadPausedGames()).toEqual([]);
+    });
+
+    it("should filter out malformed items in paused games array", () => {
+      mockStorage["sweeper_paused_games"] = JSON.stringify([
+        null,
+        "string-item",
+        { id: "missing_players", rounds: [] },
+        { id: "valid_game", players, rounds: [] },
+      ]);
+      const loaded = loadPausedGames();
+      expect(loaded.length).toBe(1);
+      expect(loaded[0].id).toBe("valid_game");
     });
   });
 
