@@ -1,15 +1,43 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router";
 import type { GameState } from "../types";
-import { loadGameState } from "../utils/scorecardHelpers";
+import {
+  loadGameState,
+  savePausedGame,
+  clearGameState,
+} from "../utils/scorecardHelpers";
 import { getCardImage, useDeckStyle, DECK_OPTIONS } from "../utils/cardData";
-import swordIcon from "../assets/spada.png";
 import logo from "../assets/logo-192x192.png";
 
 function Home() {
-  const [activeGame] = useState<GameState | null>(() => loadGameState());
+  const [activeGame, setActiveGame] = useState<GameState | null>(() =>
+    loadGameState(),
+  );
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [deckStyle, setDeckStyle] = useDeckStyle();
   const [showDeckModal, setShowDeckModal] = useState(false);
+
+  const showToast = (text: string) => {
+    setToastMessage(text);
+    setTimeout(() => {
+      setToastMessage((prev) => (prev === text ? null : prev));
+    }, 4500);
+  };
+
+  const handlePauseActiveGame = () => {
+    if (!activeGame) return;
+    savePausedGame(activeGame);
+    clearGameState();
+    setActiveGame(null);
+    showToast("Game Saved! Find in History Tab");
+  };
+
+  const handleDiscardActiveGame = () => {
+    if (!activeGame) return;
+    clearGameState();
+    setActiveGame(null);
+    showToast("Unfinished game discarded");
+  };
 
   const assoDenari = getCardImage("coins", "ace", deckStyle);
   const setteBello = getCardImage("coins", "seven", deckStyle);
@@ -91,129 +119,243 @@ function Home() {
       {/* Main Content Area */}
       <div className="w-full max-w-sm sm:max-w-md my-auto flex flex-col items-center py-2">
         {/* Header / Branding */}
-        <div className="flex flex-col items-center text-center space-y-2 mb-6 sm:mb-8">
+        <div className="flex flex-col items-center text-center space-y-1 mb-5 sm:mb-6">
           <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
-            Benvenuti!
+            {activeGame && !activeGame.isFinished
+              ? "Bentornati!"
+              : "Benvenuti!"}
           </h1>
-          <p className="sm:text-lg text-emerald-200/90 max-w-xs sm:max-w-sm">
-            Your Scopa companion for keeping score and calculating Primiera
-            hands.
-          </p>
+          {(!activeGame || activeGame.isFinished) && (
+            <p className="sm:text-lg text-emerald-200/90 max-w-xs sm:max-w-sm mt-1">
+              Your Scopa companion for keeping score and calculating Primiera
+              hands.
+            </p>
+          )}
         </div>
 
-        {/* Active Game Quick-Resume Banner */}
-        {activeGame && !activeGame.isFinished && (
-          <Link
-            to="/score"
-            aria-label={`Resume game in progress, Round ${activeGame.rounds.length + 1}`}
-            className="w-full flex items-center justify-between p-2 sm:p-3 rounded-xl bg-emerald-950/90 border border-emerald-700/80 text-emerald-100 hover:bg-emerald-900/90 hover:border-yellow-400/70 focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none transition-all shadow-md hover:scale-[1.01] active:scale-99 mb-6 sm:mb-8"
+        {/* Status Toast Notification */}
+        {toastMessage && (
+          <div
+            role="status"
+            className="w-full mb-4 p-2.5 rounded-xl border border-emerald-500/80 bg-emerald-900/95 text-emerald-100 text-xs sm:text-sm flex items-center justify-between gap-2 shadow-lg animate-fade-in"
           >
-            <div className="flex items-center gap-2 min-w-0 flex-1 pr-2">
-              <div className="flex items-center justify-center size-8 sm:size-9 rounded-full bg-amber-50/95 border border-yellow-400 shadow-xs shrink-0 p-1">
-                <img
-                  src={swordIcon}
-                  alt=""
-                  aria-hidden="true"
-                  className="size-full object-contain"
-                />
-              </div>
-              <div className="min-w-0 flex flex-wrap items-baseline gap-x-1.5 leading-snug">
-                <span className="text-base sm:text-lg font-semibold whitespace-nowrap">
-                  Game in Progress
-                </span>
-                <span className="text-sm sm:text-base text-yellow-300 font-medium whitespace-nowrap">
-                  (Round {activeGame.rounds.length + 1})
-                </span>
-              </div>
+            <div className="flex items-center gap-2 min-w-0">
+              <span
+                className="text-emerald-400 font-bold text-base shrink-0"
+                aria-hidden="true"
+              >
+                ✓
+              </span>
+              <span className="font-semibold text-white">{toastMessage}</span>
             </div>
-            <span className="inline-flex items-center gap-1 text-yellow-400 font-bold shrink-0 text-base sm:text-lg ml-1">
-              Resume
-              <span aria-hidden="true">→</span>
-            </span>
-          </Link>
+            <button
+              type="button"
+              onClick={() => setToastMessage(null)}
+              aria-label="Dismiss notification"
+              className="text-emerald-300 hover:text-white text-xs font-bold px-1.5 py-0.5 rounded cursor-pointer shrink-0"
+            >
+              ✕
+            </button>
+          </div>
         )}
 
-        {/* Main Links as Playing Cards */}
-        <div className="grid grid-cols-2 gap-3 sm:gap-5 w-full">
-          {/* Card 1: Scorecard */}
-          <Link
-            to={
-              activeGame && !activeGame.isFinished
-                ? "/score?new=true"
-                : "/score"
-            }
-            aria-label="Scorecard: Keep score for your Scopa game"
-            className="group flex flex-col items-center cursor-pointer transition-all hover:-translate-y-1 active:scale-98 rounded-2xl focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none"
-          >
-            <img
-              src={assoDenari}
-              alt="Ace of coins - Scorecard"
-              className="w-full aspect-[250/413] object-contain rounded-xl shadow-xl shadow-black/40 ring-1 ring-black/15 group-hover:ring-2 group-hover:ring-yellow-400/80 group-hover:shadow-2xl transition-all duration-200"
-            />
-            <div className="mt-1 sm:mt-1.5 w-full min-h-[48px] rounded-xl bg-yellow-400 group-hover:bg-yellow-300 text-emerald-950 py-1.5 px-2 sm:py-2 sm:px-2.5 text-center transition-all shadow-md flex flex-col items-center justify-center">
-              <h2 className="text-base sm:text-lg font-extrabold leading-tight">
-                Scorecard
-              </h2>
-              <span className="text-xs sm:text-sm font-semibold text-emerald-900/90 mt-0.5">
-                {activeGame && !activeGame.isFinished
-                  ? "New Game"
-                  : "Start Game"}
-              </span>
-            </div>
-          </Link>
+        {/* When Game is In Progress: Show Active Match Card & Primiera Quick Access */}
+        {activeGame && !activeGame.isFinished ? (
+          <div className="w-full space-y-3 sm:space-y-3.5 animate-fade-in">
+            {/* Active Match Card */}
+            <div className="w-full relative rounded-2xl bg-emerald-950/90 border border-emerald-700/80 p-3.5 sm:p-4 shadow-xl space-y-3">
+              {/* Top-right Discard Button */}
+              <button
+                type="button"
+                onClick={handleDiscardActiveGame}
+                title="Discard this unfinished game"
+                aria-label="Discard unfinished game"
+                className="absolute top-2 right-2 sm:top-2.5 sm:right-2.5 text-emerald-400 hover:text-red-300 p-1.5 rounded-lg hover:bg-emerald-900/80 transition-colors cursor-pointer"
+              >
+                <svg
+                  className="size-4 sm:size-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                  />
+                </svg>
+              </button>
 
-          {/* Card 2: Primiera */}
-          <Link
-            to="/primiera"
-            aria-label="Primiera: Calculate highest hand score"
-            className="group flex flex-col items-center cursor-pointer transition-all hover:-translate-y-1 active:scale-98 rounded-2xl focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none"
-          >
-            <img
-              src={setteBello}
-              alt="Settebello card - Primiera calculator"
-              className="w-full aspect-[250/413] object-contain rounded-xl shadow-xl shadow-black/40 ring-1 ring-black/15 group-hover:ring-2 group-hover:ring-yellow-400/80 group-hover:shadow-2xl transition-all duration-200"
-            />
-            <div className="mt-1 sm:mt-1.5 w-full min-h-[48px] rounded-xl bg-yellow-400 group-hover:bg-yellow-300 text-emerald-950 py-1.5 px-2 sm:py-2 sm:px-2.5 text-center transition-all shadow-md flex flex-col items-center justify-center">
-              <h2 className="text-base sm:text-lg font-extrabold leading-tight">
-                Primiera
-              </h2>
-              <span className="text-xs sm:text-sm font-semibold text-emerald-900/90 mt-0.5">
-                Calculate Hand
-              </span>
-            </div>
-          </Link>
-        </div>
+              {/* Header with Playing Card Art & Match Info */}
+              <div className="flex items-center gap-3 pr-7 min-w-0">
+                <img
+                  src={assoDenari}
+                  alt=""
+                  aria-hidden="true"
+                  className="w-10 sm:w-11 aspect-[250/413] object-contain rounded-md shadow-md ring-1 ring-black/20 shrink-0"
+                />
+                <div className="min-w-0">
+                  <h2 className="text-base sm:text-lg font-bold text-white leading-tight">
+                    Game in Progress
+                  </h2>
+                  <p className="text-xs sm:text-sm text-yellow-300 font-medium mt-0.5">
+                    Left off on Round {activeGame.rounds.length + 1}
+                  </p>
+                  <p className="text-xs sm:text-sm text-emerald-100 mt-1 flex flex-wrap items-center gap-x-2">
+                    {activeGame.players.map((p, idx) => {
+                      const latestRound =
+                        activeGame.rounds[activeGame.rounds.length - 1];
+                      const score =
+                        latestRound?.cumulativeTotals[p.id] ?? 0;
+                      return (
+                        <span key={p.id} className="whitespace-nowrap">
+                          <span className="font-medium text-emerald-200/90">{p.name}: </span>
+                          <span className="text-yellow-300 font-bold">{score} pts</span>
+                          {idx < activeGame.players.length - 1 && (
+                            <span className="text-emerald-500/80 ml-2" aria-hidden="true">•</span>
+                          )}
+                        </span>
+                      );
+                    })}
+                  </p>
+                </div>
+              </div>
 
-        {/* Deck Style Pill Trigger */}
-        <div className="mt-4 sm:mt-5 flex justify-center w-full">
-          <button
-            type="button"
-            onClick={() => setShowDeckModal(true)}
-            aria-haspopup="dialog"
-            aria-expanded={showDeckModal}
-            aria-label={`Card deck: ${currentDeckOption.label}. Tap to change regional deck.`}
-            className="group inline-flex items-center gap-2 px-3.5 py-1.5 sm:py-2 rounded-full bg-emerald-950/80 hover:bg-emerald-900/90 border border-emerald-700/80 hover:border-yellow-400/80 text-emerald-100 text-sm sm:text-md font-semibold transition-all shadow-md active:scale-98 focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none cursor-pointer"
-          >
-            <span className="text-emerald-300/80 font-normal">Deck:</span>
-            <span className="text-yellow-300 font-bold">
-              {currentDeckOption.label}
-            </span>
-            <svg
-              className="size-3.5 sm:size-4 text-emerald-300/80 transition-transform group-hover:translate-y-0.5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2.5}
-              aria-hidden="true"
+              {/* Actions: Resume & Save for Later (Identical Heights) */}
+              <div className="flex items-center gap-2.5 pt-0.5">
+                <Link
+                  to="/score"
+                  aria-label={`Resume game in progress, Round ${activeGame.rounds.length + 1}`}
+                  className="flex-1 h-11 sm:h-12 box-border border border-transparent rounded-xl bg-yellow-400 hover:bg-yellow-300 text-emerald-950 font-bold text-sm sm:text-base flex items-center justify-center transition-transform hover:scale-[1.02] active:scale-98 shadow-md cursor-pointer"
+                >
+                  Resume
+                </Link>
+                <button
+                  type="button"
+                  onClick={handlePauseActiveGame}
+                  aria-label="Save game in progress to play later"
+                  className="flex-1 h-11 sm:h-12 box-border border border-emerald-600 rounded-xl bg-emerald-850 hover:bg-emerald-700 text-emerald-100 hover:text-white font-semibold text-sm sm:text-base flex items-center justify-center transition-colors cursor-pointer"
+                >
+                  Save for Later
+                </button>
+              </div>
+            </div>
+
+            {/* Compact Horizontal Primiera Card with Settebello */}
+            <Link
+              to="/primiera"
+              aria-label="Primiera: Calculate highest hand score"
+              className="w-full rounded-2xl bg-emerald-950/70 hover:bg-emerald-900/80 border border-emerald-800/80 hover:border-yellow-400/60 p-2.5 sm:p-3 flex items-center justify-between gap-3 shadow-md transition-all active:scale-98 group cursor-pointer"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M19 9l-7 7-7-7"
-              />
-            </svg>
-          </button>
-        </div>
+              <div className="flex items-center gap-3 min-w-0">
+                <img
+                  src={setteBello}
+                  alt="Settebello card - Primiera calculator"
+                  className="w-9 sm:w-10 aspect-[250/413] object-contain rounded-md shadow-md ring-1 ring-black/20 shrink-0 group-hover:scale-105 transition-transform"
+                />
+                <h2 className="text-base sm:text-lg font-bold text-white group-hover:text-yellow-300 transition-colors leading-tight">
+                  Primiera Calculator
+                </h2>
+              </div>
+              <div className="shrink-0 flex items-center justify-center size-8 sm:size-9 rounded-xl bg-yellow-400 group-hover:bg-yellow-300 text-emerald-950 font-bold transition-all shadow-xs">
+                <svg
+                  className="size-4 sm:size-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2.5}
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </div>
+            </Link>
+          </div>
+        ) : (
+          /* Standard 2-Card Grid & Deck Switcher when No Active Game */
+          <div className="w-full space-y-4 sm:space-y-5 animate-fade-in">
+            <div className="grid grid-cols-2 gap-3 sm:gap-5 w-full">
+              {/* Card 1: Scorecard */}
+              <Link
+                to="/score"
+                aria-label="Scorecard: Keep score for your Scopa game"
+                className="group flex flex-col items-center cursor-pointer transition-all hover:-translate-y-1 active:scale-98 rounded-2xl focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none"
+              >
+                <img
+                  src={assoDenari}
+                  alt="Ace of coins - Scorecard"
+                  className="w-full aspect-[250/413] object-contain rounded-xl shadow-xl shadow-black/40 ring-1 ring-black/15 group-hover:ring-2 group-hover:ring-yellow-400/80 group-hover:shadow-2xl transition-all duration-200"
+                />
+                <div className="mt-1 sm:mt-1.5 w-full min-h-[48px] rounded-xl bg-yellow-400 group-hover:bg-yellow-300 text-emerald-950 py-1.5 px-2 sm:py-2 sm:px-2.5 text-center transition-all shadow-md flex flex-col items-center justify-center">
+                  <h2 className="text-base sm:text-lg font-extrabold leading-tight">
+                    Scorecard
+                  </h2>
+                  <span className="text-xs sm:text-sm font-semibold text-emerald-900/90 mt-0.5">
+                    Start Game
+                  </span>
+                </div>
+              </Link>
+
+              {/* Card 2: Primiera */}
+              <Link
+                to="/primiera"
+                aria-label="Primiera: Calculate highest hand score"
+                className="group flex flex-col items-center cursor-pointer transition-all hover:-translate-y-1 active:scale-98 rounded-2xl focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none"
+              >
+                <img
+                  src={setteBello}
+                  alt="Settebello card - Primiera calculator"
+                  className="w-full aspect-[250/413] object-contain rounded-xl shadow-xl shadow-black/40 ring-1 ring-black/15 group-hover:ring-2 group-hover:ring-yellow-400/80 group-hover:shadow-2xl transition-all duration-200"
+                />
+                <div className="mt-1 sm:mt-1.5 w-full min-h-[48px] rounded-xl bg-yellow-400 group-hover:bg-yellow-300 text-emerald-950 py-1.5 px-2 sm:py-2 sm:px-2.5 text-center transition-all shadow-md flex flex-col items-center justify-center">
+                  <h2 className="text-base sm:text-lg font-extrabold leading-tight">
+                    Primiera
+                  </h2>
+                  <span className="text-xs sm:text-sm font-semibold text-emerald-900/90 mt-0.5">
+                    Calculate Hand
+                  </span>
+                </div>
+              </Link>
+            </div>
+
+            {/* Deck Style Pill Trigger */}
+            <div className="flex justify-center w-full">
+              <button
+                type="button"
+                onClick={() => setShowDeckModal(true)}
+                aria-haspopup="dialog"
+                aria-expanded={showDeckModal}
+                aria-label={`Card deck: ${currentDeckOption.label}. Tap to change regional deck.`}
+                className="group inline-flex items-center gap-2 px-3.5 py-1.5 sm:py-2 rounded-full bg-emerald-950/80 hover:bg-emerald-900/90 border border-emerald-700/80 hover:border-yellow-400/80 text-emerald-100 text-sm sm:text-md font-semibold transition-all shadow-md active:scale-98 focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none cursor-pointer"
+              >
+                <span className="text-emerald-300/80 font-normal">Deck:</span>
+                <span className="text-yellow-300 font-bold">
+                  {currentDeckOption.label}
+                </span>
+                <svg
+                  className="size-3.5 sm:size-4 text-emerald-300/80 transition-transform group-hover:translate-y-0.5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2.5}
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Regional Deck Selector Modal */}
