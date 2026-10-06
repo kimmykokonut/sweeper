@@ -9,13 +9,21 @@ import {
 interface GameSetupProps {
   existingGame: GameState | null;
   onResume: () => void;
+  onPauseForLater?: (game: GameState) => void;
+  onDiscardExisting?: () => void;
   onStartNewGame: (players: Player[], settings: GameSettings) => void;
+  toastMessage?: string | null;
+  onDismissToast?: () => void;
 }
 
 export default function GameSetup({
   existingGame,
   onResume,
+  onPauseForLater,
+  onDiscardExisting,
   onStartNewGame,
+  toastMessage,
+  onDismissToast,
 }: GameSetupProps) {
   const [playerCount, setPlayerCount] = useState<2 | 3 | 4>(2);
   const [isTeams, setIsTeams] = useState<boolean>(false);
@@ -98,9 +106,7 @@ export default function GameSetup({
       finalPlayers.map((p) => p.name),
     );
 
-    const finalTarget = isCustomTarget
-      ? parseInt(customTarget, 10) || 21
-      : 11;
+    const finalTarget = isCustomTarget ? parseInt(customTarget, 10) || 21 : 11;
 
     onStartNewGame(finalPlayers, {
       playerCount,
@@ -143,28 +149,94 @@ export default function GameSetup({
         ))}
       </div>
 
-      {/* 3. Form Card & Optional Resume Banner */}
+      {/* 3. Form Card & Optional Resume/Pause Banner */}
       <div className="w-full space-y-3 shrink-0">
-        {/* Resume In-Progress Game Banner */}
-        {existingGame && !existingGame.isFinished && (
-          <div className="rounded-xl border border-yellow-400/70 bg-emerald-950/90 px-3 py-2 shadow-md flex items-center justify-between mt-1">
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-1.5 text-yellow-300 font-semibold text-base sm:text-lg">
-                <span>Unfinished Game Found</span>
-              </div>
-              <p className="text-sm sm:text-base text-emerald-200 truncate">
-                {existingGame.players.map((p) => p.name).join(" vs ")} • Round{" "}
-                {existingGame.rounds.length + 1}
-              </p>
+        {/* Status Toast Notification */}
+        {toastMessage && (
+          <div
+            role="status"
+            className="w-full p-2.5 rounded-xl border border-emerald-500/80 bg-emerald-900/95 text-emerald-100 text-xs sm:text-sm flex items-center justify-between gap-2 shadow-lg animate-fade-in"
+          >
+            <div className="flex items-center gap-2 min-w-0">
+              <span
+                className="text-emerald-400 font-bold text-base shrink-0"
+                aria-hidden="true"
+              >
+                ✓
+              </span>
+              <span className="font-semibold text-white">{toastMessage}</span>
             </div>
-            <button
-              type="button"
-              onClick={onResume}
-              aria-label={`Resume unfinished game, Round ${existingGame.rounds.length + 1}`}
-              className="shrink-0 rounded-lg bg-yellow-400 px-3.5 py-2 min-h-[44px] text-sm sm:text-base font-bold text-emerald-950 hover:bg-yellow-300 focus-visible:ring-2 focus-visible:ring-yellow-300 focus-visible:outline-none shadow-sm cursor-pointer transition-transform hover:scale-105 active:scale-95 flex items-center justify-center"
-            >
-              Resume
-            </button>
+            {onDismissToast && (
+              <button
+                type="button"
+                onClick={onDismissToast}
+                aria-label="Dismiss notification"
+                className="text-emerald-300 hover:text-white text-xs font-bold px-1.5 py-0.5 rounded cursor-pointer shrink-0"
+              >
+                ✕
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* Resume or Pause In-Progress Game Banner */}
+        {existingGame && !existingGame.isFinished && (
+          <div className="rounded-xl border border-yellow-400/70 bg-emerald-950/90 p-3 sm:p-3.5 shadow-md space-y-2.5 mt-1 animate-fade-in">
+            <div className="flex items-start justify-between min-w-0">
+              <div className="min-w-0 flex-1 pr-2">
+                <div className="flex items-center gap-1.5 text-yellow-300 font-semibold text-base sm:text-lg">
+                  <span>Unfinished Game Found</span>
+                </div>
+                <p className="text-sm sm:text-base text-emerald-200 truncate">
+                  {existingGame.players.map((p) => p.name).join(" vs ")} • Round{" "}
+                  {existingGame.rounds.length + 1}
+                </p>
+              </div>
+              {onDiscardExisting && (
+                <button
+                  type="button"
+                  onClick={onDiscardExisting}
+                  title="Discard this unfinished game"
+                  aria-label="Discard unfinished game"
+                  className="text-emerald-400 hover:text-red-300 p-1.5 rounded-lg hover:bg-emerald-900/60 transition-colors cursor-pointer shrink-0 -mt-0.5"
+                >
+                  <svg
+                    className="size-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    />
+                  </svg>
+                </button>
+              )}
+            </div>
+            <div className="flex items-center gap-2 pt-0.5">
+              <button
+                type="button"
+                onClick={onResume}
+                aria-label={`Resume unfinished game, Round ${existingGame.rounds.length + 1}`}
+                className="flex-1 rounded-lg bg-yellow-400 px-3.5 py-2 min-h-[44px] text-sm sm:text-base font-bold text-emerald-950 hover:bg-yellow-300 focus-visible:ring-2 focus-visible:ring-yellow-300 focus-visible:outline-none shadow-sm cursor-pointer transition-transform hover:scale-[1.02] active:scale-98 flex items-center justify-center"
+              >
+                Resume
+              </button>
+              {onPauseForLater && (
+                <button
+                  type="button"
+                  onClick={() => onPauseForLater(existingGame)}
+                  aria-label="Save unfinished game to play later"
+                  className="flex-1 rounded-lg bg-emerald-800/90 border border-emerald-600 px-3.5 py-2 min-h-[44px] text-sm sm:text-base font-semibold text-emerald-100 hover:bg-emerald-700 hover:text-white focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none transition-colors cursor-pointer flex items-center justify-center"
+                >
+                  Save for Later
+                </button>
+              )}
+            </div>
           </div>
         )}
 
@@ -261,7 +333,9 @@ export default function GameSetup({
                         spellCheck={false}
                         aria-label={`${isTeams ? "Team" : "Player"} ${index + 1} Name`}
                         value={currentValue}
-                        onChange={(e) => handleNameChange(index, e.target.value)}
+                        onChange={(e) =>
+                          handleNameChange(index, e.target.value)
+                        }
                         onFocus={(e) => {
                           if (e.target.value === defaultPlaceholder) {
                             e.target.select();
@@ -275,7 +349,9 @@ export default function GameSetup({
                           type="button"
                           onClick={() => {
                             handleNameChange(index, "");
-                            document.getElementById(`player-name-${index}`)?.focus();
+                            document
+                              .getElementById(`player-name-${index}`)
+                              ?.focus();
                           }}
                           aria-label={`Clear ${defaultPlaceholder} name`}
                           className="absolute right-2 sm:right-2.5 p-1 rounded-full text-emerald-400 hover:text-white hover:bg-emerald-800/60 active:scale-95 transition-colors cursor-pointer"

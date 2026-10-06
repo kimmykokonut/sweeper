@@ -10,6 +10,7 @@ import {
   recalculateGame,
   saveFinishedGame,
   saveGameState,
+  savePausedGame,
 } from "../utils/scorecardHelpers";
 
 export default function ScoreCard() {
@@ -20,7 +21,9 @@ export default function ScoreCard() {
   const autoRoundParam = searchParams.get("round") === "1";
   const primieraParam = searchParams.get("primiera");
 
-  const [savedGame, setSavedGame] = useState<GameState | null>(() => loadGameState());
+  const [savedGame, setSavedGame] = useState<GameState | null>(() =>
+    loadGameState(),
+  );
   const [game, setGame] = useState<GameState | null>(() => {
     const saved = loadGameState();
     if (autoRoundParam && saved) {
@@ -32,21 +35,36 @@ export default function ScoreCard() {
     return null;
   });
 
-  const [initialPrimieraChoice, setInitialPrimieraChoice] = useState<string | "tie" | null>(
+  const [initialPrimieraChoice, setInitialPrimieraChoice] = useState<
+    string | "tie" | null
+  >(
     () =>
       primieraParam ||
-      (location.state as { initialPrimieraChoice?: string | "tie" | null } | null)
-        ?.initialPrimieraChoice ||
-      null
+      (
+        location.state as {
+          initialPrimieraChoice?: string | "tie" | null;
+        } | null
+      )?.initialPrimieraChoice ||
+      null,
   );
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(() => {
     return (
       autoRoundParam ||
-      Boolean((location.state as { autoOpenRound1?: boolean } | null)?.autoOpenRound1)
+      Boolean(
+        (location.state as { autoOpenRound1?: boolean } | null)?.autoOpenRound1,
+      )
     );
   });
   const [editingRound, setEditingRound] = useState<RoundEntry | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const showToast = (text: string) => {
+    setToastMessage(text);
+    setTimeout(() => {
+      setToastMessage((prev) => (prev === text ? null : prev));
+    }, 4500);
+  };
 
   useEffect(() => {
     if (autoRoundParam || primieraParam) {
@@ -73,6 +91,10 @@ export default function ScoreCard() {
     if (isExplicitNew) {
       setSearchParams({}, { replace: true });
     }
+    // Safeguard: auto-pause unfinished game with scored rounds so it isn't lost
+    if (savedGame && !savedGame.isFinished && savedGame.rounds.length > 0) {
+      savePausedGame(savedGame);
+    }
     const newGame: GameState = {
       id: `game_${Date.now()}`,
       createdAt: Date.now(),
@@ -83,6 +105,7 @@ export default function ScoreCard() {
       winnerId: null,
     };
     updateGame(newGame);
+    setToastMessage(null);
   };
 
   const handleResumeGame = () => {
@@ -94,9 +117,7 @@ export default function ScoreCard() {
     }
   };
 
-  const handleSaveRound = (
-    roundData: Omit<RoundEntry, "cumulativeTotals">
-  ) => {
+  const handleSaveRound = (roundData: Omit<RoundEntry, "cumulativeTotals">) => {
     if (!game) return;
 
     let updatedRounds: Array<
@@ -107,7 +128,7 @@ export default function ScoreCard() {
     if (editingRound) {
       // Replace existing round
       updatedRounds = game.rounds.map((r) =>
-        r.roundNumber === editingRound.roundNumber ? roundData : r
+        r.roundNumber === editingRound.roundNumber ? roundData : r,
       );
     } else {
       // Add new round
@@ -117,7 +138,7 @@ export default function ScoreCard() {
     const { recalculatedRounds, isFinished, winnerId } = recalculateGame(
       updatedRounds,
       game.players,
-      game.settings.targetScore
+      game.settings.targetScore,
     );
 
     const updatedGame: GameState = {
@@ -139,7 +160,7 @@ export default function ScoreCard() {
     const { recalculatedRounds, isFinished, winnerId } = recalculateGame(
       filtered,
       game.players,
-      game.settings.targetScore
+      game.settings.targetScore,
     );
 
     const updatedGame: GameState = {
@@ -155,8 +176,25 @@ export default function ScoreCard() {
   const handleResetGame = () => {
     if (game?.isFinished) {
       saveFinishedGame(game);
+      updateGame(null);
+    } else {
+      // Unfinished match: return to setup screen keeping savedGame in state/storage
+      // so user sees the Unfinished Game banner and can choose Resume, Save for Later, or Discard.
+      setGame(null);
     }
-    updateGame(null);
+  };
+
+  const handlePauseForLater = (gameToPause: GameState) => {
+    savePausedGame(gameToPause);
+    clearGameState();
+    setSavedGame(null);
+    showToast("Game saved! You can find in History Settings.");
+  };
+
+  const handleDiscardExisting = () => {
+    clearGameState();
+    setSavedGame(null);
+    showToast("Unfinished game discarded");
   };
 
   if (!game) {
@@ -164,7 +202,11 @@ export default function ScoreCard() {
       <GameSetup
         existingGame={savedGame}
         onResume={handleResumeGame}
+        onPauseForLater={handlePauseForLater}
+        onDiscardExisting={handleDiscardExisting}
         onStartNewGame={handleStartNewGame}
+        toastMessage={toastMessage}
+        onDismissToast={() => setToastMessage(null)}
       />
     );
   }
@@ -188,7 +230,9 @@ export default function ScoreCard() {
       {isModalOpen && (
         <RoundScoreModal
           players={game.players}
-          roundNumber={editingRound ? editingRound.roundNumber : game.rounds.length + 1}
+          roundNumber={
+            editingRound ? editingRound.roundNumber : game.rounds.length + 1
+          }
           existingRound={editingRound}
           initialPrimieraChoice={initialPrimieraChoice}
           onSave={(roundData) => {
