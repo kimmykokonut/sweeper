@@ -291,7 +291,7 @@ export default function GameHistory() {
       {toast && (
         <div
           role="status"
-          className={`mb-3 p-2 rounded-xl border text-sm sm:text-md flex items-center justify-between gap-2 shadow-lg animate-fade-in shrink-0 ${
+          className={`mb-3 p-2 rounded-xl border text-sm sm:text-base flex items-center justify-between gap-2 shadow-lg animate-fade-in shrink-0 ${
             toast.type === "error"
               ? "bg-red-900/90 border-red-600/80 text-red-200"
               : "bg-emerald-900/90 border-emerald-500/80 text-emerald-100"
@@ -337,7 +337,7 @@ export default function GameHistory() {
                 className="size-2 rounded-full bg-yellow-400 shrink-0"
                 aria-hidden="true"
               />
-              <h2 className="font-bold text-sm sm:text-md text-yellow-300 truncate">
+              <h2 className="font-bold text-sm sm:text-base text-yellow-300 truncate">
                 Unfinished Games ({pausedGames.length})
               </h2>
             </div>
@@ -399,7 +399,7 @@ export default function GameHistory() {
                           );
                         })}
                       </div>
-                      <p className="text-[11px] sm:text-xs text-emerald-300/80 mt-1">
+                      <p className="text-xs sm:text-sm text-emerald-300/80 mt-1">
                         On Round {game.rounds.length + 1} • Saved {savedTimeStr}
                       </p>
                     </div>
@@ -1286,14 +1286,14 @@ export default function GameHistory() {
               <button
                 type="button"
                 onClick={() => setShowClearModal(false)}
-                className="w-full min-h-[44px] rounded-xl bg-emerald-800/80 border border-emerald-600 py-2.5 text-sm font-bold text-emerald-100 hover:bg-emerald-700 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400"
+                className="w-full min-h-[44px] rounded-xl bg-emerald-800/80 border border-emerald-600 py-2.5 text-sm sm:text-base font-bold text-emerald-100 hover:bg-emerald-700 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={handleClearAll}
-                className="w-full min-h-[44px] rounded-xl bg-red-900 py-2.5 text-sm font-bold text-white hover:bg-red-700 border border-red-800/60 shadow-md transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400"
+                className="w-full min-h-[44px] rounded-xl bg-red-900 py-2.5 text-sm sm:text-base font-bold text-white hover:bg-red-700 border border-red-800/60 shadow-md transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400"
               >
                 Clear All
               </button>
@@ -1386,7 +1386,7 @@ export default function GameHistory() {
                     <button
                       type="button"
                       onClick={handleConfirmMerge}
-                      className="w-full min-h-[44px] py-2 px-3 rounded-xl bg-yellow-400 hover:bg-yellow-300 text-emerald-950 font-bold text-xs sm:text-sm shadow-md transition-all cursor-pointer flex flex-col items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                      className="w-full min-h-[44px] py-2 px-3 rounded-xl bg-yellow-400 hover:bg-yellow-300 text-emerald-950 font-bold text-sm sm:text-base shadow-md transition-all cursor-pointer flex flex-col items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
                     >
                       <span>Merge with Existing (Recommended)</span>
                       <span className="text-[11px] font-normal text-emerald-900">
@@ -1397,7 +1397,7 @@ export default function GameHistory() {
                     <button
                       type="button"
                       onClick={handleConfirmReplace}
-                      className="w-full min-h-[44px] py-2 px-3 rounded-xl bg-emerald-950 hover:bg-red-950/80 border border-emerald-700 hover:border-red-600/60 text-emerald-200 hover:text-red-200 font-bold text-xs sm:text-sm transition-all cursor-pointer flex flex-col items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400"
+                      className="w-full min-h-[44px] py-2 px-3 rounded-xl bg-emerald-950 hover:bg-red-950/80 border border-emerald-700 hover:border-red-600/60 text-emerald-200 hover:text-red-200 font-bold text-sm sm:text-base transition-all cursor-pointer flex flex-col items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400"
                     >
                       <span>Replace All History</span>
                       <span className="text-[11px] font-normal text-emerald-400/80">
@@ -1435,7 +1435,7 @@ export default function GameHistory() {
                       type="button"
                       onClick={handleExport}
                       disabled={history.length === 0}
-                      className="w-full min-h-[44px] py-2.5 px-4 rounded-xl bg-yellow-400 hover:bg-yellow-300 disabled:opacity-40 disabled:cursor-not-allowed text-emerald-950 font-bold text-xs sm:text-sm shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                      className="w-full min-h-[44px] py-2.5 px-4 rounded-xl bg-yellow-400 hover:bg-yellow-300 disabled:opacity-40 disabled:cursor-not-allowed text-emerald-950 font-bold text-sm sm:text-base shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
                     >
                       <span>Download Backup</span>
                     </button>
@@ -1468,7 +1468,7 @@ export default function GameHistory() {
                     <button
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
-                      className="w-full min-h-[44px] py-2.5 px-4 rounded-xl bg-emerald-800/90 hover:bg-emerald-700 text-white border border-emerald-600 font-bold text-xs sm:text-sm shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400"
+                      className="w-full min-h-[44px] py-2.5 px-4 rounded-xl bg-emerald-800/90 hover:bg-emerald-700 text-white border border-emerald-600 font-bold text-sm sm:text-base shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400"
                     >
                       <span>Select File (.json)</span>
                     </button>
@@ -1483,7 +1483,7 @@ export default function GameHistory() {
                           setShowSettingsModal(false);
                           setShowClearModal(true);
                         }}
-                        className="w-full min-h-[44px] py-2.5 px-4 rounded-xl bg-red-900/80 hover:bg-red-800 text-red-100 border border-red-700/70 font-bold text-xs sm:text-sm shadow-sm transition-all cursor-pointer flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400"
+                        className="w-full min-h-[44px] py-2.5 px-4 rounded-xl bg-red-900/80 hover:bg-red-800 text-red-100 border border-red-700/70 font-bold text-sm sm:text-base shadow-sm transition-all cursor-pointer flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400"
                       >
                         <span aria-hidden="true">⚠️</span>Delete History
                       </button>

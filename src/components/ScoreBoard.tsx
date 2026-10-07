@@ -76,10 +76,10 @@ export default function ScoreBoard({
       {/* Top Bar */}
       <div className="flex flex-wrap items-center justify-between gap-3 shrink-0">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
             Scopa Scorecard
           </h1>
-          <p className="text-xs sm:text-sm text-emerald-200">
+          <p className="text-sm sm:text-base text-emerald-200 mt-0.5">
             Playing to{" "}
             <span className="font-semibold text-yellow-300">
               {settings.targetScore} points
@@ -259,7 +259,7 @@ export default function ScoreBoard({
             <button
               type="button"
               onClick={() => setIsHistoryCollapsed(!isHistoryCollapsed)}
-              className="text-xs font-semibold text-emerald-300 hover:text-white px-3 py-2 min-h-[44px] rounded-lg bg-emerald-900/80 hover:bg-emerald-800 border border-emerald-700/60 focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none transition-colors cursor-pointer flex items-center gap-1.5"
+              className="text-xs sm:text-sm font-semibold text-emerald-300 hover:text-white px-3 py-2 min-h-[44px] rounded-lg bg-emerald-900/80 hover:bg-emerald-800 border border-emerald-700/60 focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none transition-colors cursor-pointer flex items-center gap-1.5"
               aria-expanded={!isHistoryCollapsed}
               aria-label={
                 isHistoryCollapsed

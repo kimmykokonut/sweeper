@@ -267,15 +267,26 @@ export default function PrimieraCalculator({
         }`}
       >
         <div className={isModal ? "pr-2 pt-1 sm:pt-0.5" : ""}>
-          <h2
-            id="primiera-calculator-title"
-            className="text-xl sm:text-2xl font-bold text-white leading-tight"
-          >
-            Primiera Calculator
-          </h2>
-          <p className="text-xs sm:text-sm text-emerald-200 mt-0.5">
-            {!isModal && "Select the highest card in each suit"}
-          </p>
+          {isModal ? (
+            <h2
+              id="primiera-calculator-title"
+              className="text-xl sm:text-2xl font-bold text-white leading-tight"
+            >
+              Primiera Calculator
+            </h2>
+          ) : (
+            <>
+              <h1
+                id="primiera-calculator-title"
+                className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight leading-tight"
+              >
+                Primiera Calculator
+              </h1>
+              <p className="text-sm sm:text-base text-emerald-200 mt-0.5">
+                Select the highest card in each suit
+              </p>
+            </>
+          )}
         </div>
 
         {isModal && onClose && (
@@ -396,16 +407,16 @@ export default function PrimieraCalculator({
               <button
                 type="button"
                 onClick={handleResetAllCards}
-                className="w-full min-h-[44px] py-2 px-3 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-yellow-300 font-bold text-sm transition-colors cursor-pointer text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400"
+                className="w-full min-h-[44px] py-2 px-3 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-yellow-300 font-bold text-sm sm:text-base transition-colors cursor-pointer text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400"
               >
                 Reset Hand
               </button>
               <button
                 type="button"
                 onClick={handleTransferToScorecard}
-                className="w-full min-h-[44px] py-2 px-3 rounded-xl bg-yellow-400 hover:bg-yellow-300 text-emerald-950 font-bold text-sm transition-colors cursor-pointer text-center shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                className="w-full min-h-[44px] py-2 px-3 rounded-xl bg-yellow-400 hover:bg-yellow-300 text-emerald-950 font-bold text-sm sm:text-base transition-colors cursor-pointer text-center shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
               >
-                Start scorecard
+                Start Scorecard
               </button>
             </div>
           )}
@@ -561,7 +572,7 @@ export default function PrimieraCalculator({
                       <span className="text-base sm:text-lg font-semibold text-white tracking-wide">
                         {suitInfo.displayName}
                       </span>
-                      <span className="text-xs  sm:text-sm font-normal text-emerald-300 mt-0.5">
+                      <span className="text-xs sm:text-sm font-normal text-emerald-300 mt-0.5">
                         Tap to choose
                       </span>
                     </div>

@@ -137,7 +137,7 @@ function Home() {
         {toastMessage && (
           <div
             role="status"
-            className="w-full mb-4 p-2.5 rounded-xl border border-emerald-500/80 bg-emerald-900/95 text-emerald-100 text-xs sm:text-sm flex items-center justify-between gap-2 shadow-lg animate-fade-in"
+            className="w-full mb-4 p-2.5 rounded-xl border border-emerald-500/80 bg-emerald-900/95 text-emerald-100 text-sm sm:text-base flex items-center justify-between gap-2 shadow-lg animate-fade-in"
           >
             <div className="flex items-center gap-2 min-w-0">
               <span
@@ -200,10 +200,10 @@ function Home() {
                   <h2 className="text-base sm:text-lg font-bold text-white leading-tight">
                     Game in Progress
                   </h2>
-                  <p className="text-xs sm:text-sm text-yellow-300 font-medium mt-0.5">
+                  <p className="text-sm sm:text-base text-yellow-300 font-medium mt-0.5">
                     Left off on Round {activeGame.rounds.length + 1}
                   </p>
-                  <p className="text-xs sm:text-sm text-emerald-100 mt-1 flex flex-wrap items-center gap-x-2">
+                  <p className="text-sm sm:text-base text-emerald-100 mt-1 flex flex-wrap items-center gap-x-2">
                     {activeGame.players.map((p, idx) => {
                       const latestRound =
                         activeGame.rounds[activeGame.rounds.length - 1];
@@ -332,7 +332,7 @@ function Home() {
                 aria-haspopup="dialog"
                 aria-expanded={showDeckModal}
                 aria-label={`Card deck: ${currentDeckOption.label}. Tap to change regional deck.`}
-                className="group inline-flex items-center gap-2 px-3.5 py-1.5 sm:py-2 rounded-full bg-emerald-950/80 hover:bg-emerald-900/90 border border-emerald-700/80 hover:border-yellow-400/80 text-emerald-100 text-sm sm:text-md font-semibold transition-all shadow-md active:scale-98 focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none cursor-pointer"
+                className="group inline-flex items-center gap-2 px-3.5 py-1.5 sm:py-2 rounded-full bg-emerald-950/80 hover:bg-emerald-900/90 border border-emerald-700/80 hover:border-yellow-400/80 text-emerald-100 text-sm sm:text-base font-semibold transition-all shadow-md active:scale-98 focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none cursor-pointer"
               >
                 <span className="text-emerald-300/80 font-normal">Deck:</span>
                 <span className="text-yellow-300 font-bold">
@@ -384,7 +384,7 @@ function Home() {
                 >
                   Card Deck Style
                 </h3>
-                <p className="text-xs text-emerald-300/80">
+                <p className="text-xs sm:text-sm text-emerald-300/80">
                   Select your preferred regional deck
                 </p>
               </div>
