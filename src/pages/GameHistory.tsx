@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from "react";
-import { Link } from "react-router";
-import type { FinishedGame } from "../types";
+import { Link, useNavigate } from "react-router";
+import type { FinishedGame, GameState } from "../types";
 import {
   clearGameHistory,
   deleteGameFromHistory,
@@ -12,16 +12,27 @@ import {
   mergeGameHistories,
   parseAndValidateHistoryBackup,
   saveGameHistory,
+  loadPausedGames,
+  deletePausedGame,
+  savePausedGame,
+  loadGameState,
+  saveGameState,
 } from "../utils/scorecardHelpers";
 import { getCardImage, useDeckStyle } from "../utils/cardData";
 import swordIcon from "../assets/spada.png";
 
 export default function GameHistory() {
+  const navigate = useNavigate();
   const [deckStyle] = useDeckStyle();
   const aceCoins = getCardImage("coins", "ace", deckStyle);
   const [history, setHistory] = useState<FinishedGame[]>(() =>
     loadGameHistory(),
   );
+  const [pausedGames, setPausedGames] = useState<GameState[]>(() =>
+    loadPausedGames(),
+  );
+  const [isPausedGamesExpanded, setIsPausedGamesExpanded] =
+    useState<boolean>(false);
   const [activeView, setActiveView] = useState<"head-to-head" | "all">(
     "head-to-head",
   );
@@ -86,6 +97,30 @@ export default function GameHistory() {
     deleteGameFromHistory(gameId);
     setHistory((prev) => prev.filter((g) => g.id !== gameId));
     setDeletingGameId(null);
+  };
+
+  const handleDeletePausedGame = (id: string) => {
+    deletePausedGame(id);
+    setPausedGames((prev) => prev.filter((g) => g.id !== id));
+    showToast("Unfinished game deleted", "success");
+  };
+
+  const handleResumePausedGame = (gameToResume: GameState) => {
+    const currentActive = loadGameState();
+    if (
+      currentActive &&
+      !currentActive.isFinished &&
+      currentActive.id !== gameToResume.id &&
+      currentActive.rounds.length > 0
+    ) {
+      savePausedGame(currentActive);
+    }
+
+    saveGameState(gameToResume);
+    deletePausedGame(gameToResume.id);
+    setPausedGames((prev) => prev.filter((g) => g.id !== gameToResume.id));
+
+    navigate("/score");
   };
 
   const handleClearAll = () => {
@@ -216,14 +251,9 @@ export default function GameHistory() {
     <div className="w-full max-w-xl mx-auto flex-1 flex flex-col px-3 sm:px-4 py-3 sm:py-5 text-white min-h-0 overflow-y-auto">
       {/* 1. Header Bar */}
       <div className="flex items-start justify-between mb-3 shrink-0">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight flex items-center gap-2">
-            Game History
-          </h1>
-          <p className="text-sm sm:text-base text-emerald-200 mt-0.5">
-            Archived games played on this device
-          </p>
-        </div>
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight flex items-center gap-2">
+          Game History
+        </h1>
         <button
           type="button"
           onClick={() => {
@@ -297,35 +327,164 @@ export default function GameHistory() {
         </div>
       )}
 
-      {/* 2. Empty State */}
-      {history.length === 0 ? (
-        <div className="flex-1 flex flex-col items-center justify-center text-center p-6 my-auto">
-          {/* Authentic Scopa Card Graphic with rounded corners and card shadow */}
-          <div className="mb-5 sm:mb-6 transition-transform duration-300 hover:scale-105">
-            <img
-              src={aceCoins}
-              alt=""
-              aria-hidden="true"
-              className="w-24 sm:w-28 aspect-[250/413] object-contain rounded-xl shadow-2xl shadow-black/70 ring-1 ring-white/15"
-            />
+      {/* 2. Unfinished Games Collapsible Section (if any exist) */}
+      {pausedGames.length > 0 && (
+        <div className="mb-2 rounded-2xl border border-emerald-700/80 bg-emerald-950/90 shadow-md overflow-hidden shrink-0 animate-fade-in">
+          {/* Header Bar */}
+          <div className="flex items-center justify-between p-2.5 sm:p-3.5 bg-emerald-950">
+            <div className="flex items-center gap-2 min-w-0">
+              <span
+                className="size-2 rounded-full bg-yellow-400 shrink-0"
+                aria-hidden="true"
+              />
+              <h2 className="font-bold text-sm sm:text-md text-yellow-300 truncate">
+                Unfinished Games ({pausedGames.length})
+              </h2>
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsPausedGamesExpanded((prev) => !prev)}
+              aria-expanded={isPausedGamesExpanded}
+              aria-label={
+                isPausedGamesExpanded
+                  ? "Collapse unfinished games"
+                  : "Expand unfinished games"
+              }
+              className="text-xs sm:text-sm font-semibold text-emerald-300 hover:text-white px-2.5 py-1 min-h-[36px] rounded-lg bg-emerald-900/80 hover:bg-emerald-800 border border-emerald-700/60 focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none transition-colors cursor-pointer flex items-center gap-1.5 shrink-0"
+            >
+              <span>{isPausedGamesExpanded ? "Hide" : "Show"}</span>
+              <span className="text-[10px] text-emerald-400">
+                {isPausedGamesExpanded ? "▲" : "▼"}
+              </span>
+            </button>
           </div>
 
-          <div className="space-y-1.5 max-w-xs mb-6">
+          {/* Expanded Games: Continuous Shared Background with Dividers */}
+          {isPausedGamesExpanded && (
+            <div className="divide-y divide-emerald-800/80 border-t border-emerald-800/80 bg-emerald-950/60 animate-fade-in">
+              {pausedGames.map((game) => {
+                const latestRound = game.rounds[game.rounds.length - 1];
+                const savedTimeStr = game.savedAt
+                  ? `${formatGameDate(game.savedAt)} • ${formatGameTime(game.savedAt)}`
+                  : formatGameDate(game.createdAt);
+
+                return (
+                  <div
+                    key={game.id}
+                    className="p-3 sm:p-3.5 relative space-y-2.5 transition-colors hover:bg-emerald-900/30"
+                  >
+                    {/* Top row: Combined Player Names & Live Scores (No Repetition!) */}
+                    <div className="min-w-0 pr-8">
+                      <div className="text-sm sm:text-base text-white flex flex-wrap items-center gap-x-2">
+                        {game.players.map((p, idx) => {
+                          const score =
+                            latestRound?.cumulativeTotals[p.id] ?? 0;
+                          return (
+                            <span key={p.id} className="whitespace-nowrap">
+                              <span className="font-semibold text-emerald-100">
+                                {p.name}:{" "}
+                              </span>
+                              <span className="text-yellow-300 font-bold">
+                                {score} pts
+                              </span>
+                              {idx < game.players.length - 1 && (
+                                <span
+                                  className="text-emerald-500/80 ml-2"
+                                  aria-hidden="true"
+                                >
+                                  •
+                                </span>
+                              )}
+                            </span>
+                          );
+                        })}
+                      </div>
+                      <p className="text-[11px] sm:text-xs text-emerald-300/80 mt-1">
+                        On Round {game.rounds.length + 1} • Saved {savedTimeStr}
+                      </p>
+                    </div>
+
+                    {/* Delete button (top-right corner) */}
+                    <button
+                      type="button"
+                      onClick={() => handleDeletePausedGame(game.id)}
+                      title="Delete this unfinished game"
+                      aria-label={`Delete unfinished game ${game.players.map((p) => p.name).join(" vs ")}`}
+                      className="absolute top-2.5 right-2.5 text-emerald-400 hover:text-red-300 p-1.5 rounded-lg hover:bg-emerald-900/80 transition-colors cursor-pointer"
+                    >
+                      <svg
+                        className="size-4 sm:size-4.5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                        aria-hidden="true"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                        />
+                      </svg>
+                    </button>
+
+                    {/* Cleaned-up Resume button (compact height, larger text, says 'Resume') */}
+                    <div className="pt-0.5">
+                      <button
+                        type="button"
+                        onClick={() => handleResumePausedGame(game)}
+                        aria-label={`Resume game ${game.players.map((p) => p.name).join(" vs ")}, Round ${game.rounds.length + 1}`}
+                        className="w-full min-h-[40px] rounded-xl bg-yellow-400 hover:bg-yellow-300 text-emerald-950 font-bold text-sm sm:text-base flex items-center justify-center transition-transform hover:scale-[1.01] active:scale-98 shadow-xs cursor-pointer"
+                      >
+                        Resume
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* 3. Empty State */}
+      {history.length === 0 ? (
+        <div
+          className={`flex flex-col items-center justify-center text-center p-6 ${
+            pausedGames.length > 0
+              ? "py-6 my-2 bg-emerald-950/40 rounded-2xl border border-emerald-800/60"
+              : "flex-1 my-auto"
+          }`}
+        >
+          {pausedGames.length === 0 && (
+            <div className="mb-5 sm:mb-6 transition-transform duration-300 hover:scale-105">
+              <img
+                src={aceCoins}
+                alt=""
+                aria-hidden="true"
+                className="w-24 sm:w-28 aspect-[250/413] object-contain rounded-xl shadow-2xl shadow-black/70 ring-1 ring-white/15"
+              />
+            </div>
+          )}
+
+          <div className="space-y-1.5 max-w-xs mb-4">
             <h2 className="text-lg sm:text-xl font-bold text-white tracking-tight">
               No Completed Games Yet
             </h2>
-            <p className="text-sm sm:text-base text-emerald-200 leading-relaxed">
+            <p className="text-xs sm:text-sm text-emerald-200 leading-relaxed">
               When a game finishes on the Scorecard, it will be automatically
               archived here so you can review player stats and records.
             </p>
           </div>
 
-          <Link
-            to="/score"
-            className="min-h-[44px] min-w-[200px] rounded-xl bg-yellow-400 px-6 py-2.5 font-bold text-emerald-950 text-base shadow-lg hover:bg-yellow-300 hover:scale-102 active:scale-98 focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none transition-all cursor-pointer flex items-center justify-center"
-          >
-            Go to Scorecard
-          </Link>
+          {pausedGames.length === 0 && (
+            <Link
+              to="/score"
+              className="min-h-[44px] min-w-[200px] rounded-xl bg-yellow-400 px-6 py-2.5 font-bold text-emerald-950 text-base shadow-lg hover:bg-yellow-300 hover:scale-102 active:scale-98 focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none transition-all cursor-pointer flex items-center justify-center"
+            >
+              Go to Scorecard
+            </Link>
+          )}
         </div>
       ) : (
         <>

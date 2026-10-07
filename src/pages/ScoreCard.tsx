@@ -188,7 +188,7 @@ export default function ScoreCard() {
     savePausedGame(gameToPause);
     clearGameState();
     setSavedGame(null);
-    showToast("Game saved! You can find in History Settings.");
+    showToast("Game saved! You can find in History to resume.");
   };
 
   const handleDiscardExisting = () => {
