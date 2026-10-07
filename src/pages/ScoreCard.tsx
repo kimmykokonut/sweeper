@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useLocation } from "react-router";
 import type { GameSettings, GameState, Player, RoundEntry } from "../types";
+import { useToast } from "../context/ToastContext";
 import GameSetup from "../components/GameSetup";
 import ScoreBoard from "../components/ScoreBoard";
 import RoundScoreModal from "../components/RoundScoreModal";
@@ -57,14 +58,7 @@ export default function ScoreCard() {
     );
   });
   const [editingRound, setEditingRound] = useState<RoundEntry | null>(null);
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
-
-  const showToast = (text: string) => {
-    setToastMessage(text);
-    setTimeout(() => {
-      setToastMessage((prev) => (prev === text ? null : prev));
-    }, 4500);
-  };
+  const { showToast, hideToast } = useToast();
 
   useEffect(() => {
     if (autoRoundParam || primieraParam) {
@@ -105,7 +99,7 @@ export default function ScoreCard() {
       winnerId: null,
     };
     updateGame(newGame);
-    setToastMessage(null);
+    hideToast();
   };
 
   const handleResumeGame = () => {
@@ -188,7 +182,7 @@ export default function ScoreCard() {
     savePausedGame(gameToPause);
     clearGameState();
     setSavedGame(null);
-    showToast("Game saved! You can find in History to resume.");
+    showToast("Game saved! Find in History to resume.");
   };
 
   const handleDiscardExisting = () => {
@@ -205,8 +199,6 @@ export default function ScoreCard() {
         onPauseForLater={handlePauseForLater}
         onDiscardExisting={handleDiscardExisting}
         onStartNewGame={handleStartNewGame}
-        toastMessage={toastMessage}
-        onDismissToast={() => setToastMessage(null)}
       />
     );
   }

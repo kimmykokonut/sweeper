@@ -12,8 +12,6 @@ interface GameSetupProps {
   onPauseForLater?: (game: GameState) => void;
   onDiscardExisting?: () => void;
   onStartNewGame: (players: Player[], settings: GameSettings) => void;
-  toastMessage?: string | null;
-  onDismissToast?: () => void;
 }
 
 export default function GameSetup({
@@ -22,8 +20,6 @@ export default function GameSetup({
   onPauseForLater,
   onDiscardExisting,
   onStartNewGame,
-  toastMessage,
-  onDismissToast,
 }: GameSetupProps) {
   const [playerCount, setPlayerCount] = useState<2 | 3 | 4>(2);
   const [isTeams, setIsTeams] = useState<boolean>(false);
@@ -151,33 +147,7 @@ export default function GameSetup({
 
       {/* 3. Form Card & Optional Resume/Pause Banner */}
       <div className="w-full space-y-3 shrink-0">
-        {/* Status Toast Notification */}
-        {toastMessage && (
-          <div
-            role="status"
-            className="w-full p-2.5 rounded-xl border border-emerald-500/80 bg-emerald-900/95 text-emerald-100 text-xs sm:text-sm flex items-center justify-between gap-2 shadow-lg animate-fade-in"
-          >
-            <div className="flex items-center gap-2 min-w-0">
-              <span
-                className="text-emerald-400 font-bold text-base shrink-0"
-                aria-hidden="true"
-              >
-                ✓
-              </span>
-              <span className="font-semibold text-white">{toastMessage}</span>
-            </div>
-            {onDismissToast && (
-              <button
-                type="button"
-                onClick={onDismissToast}
-                aria-label="Dismiss notification"
-                className="text-emerald-300 hover:text-white text-xs font-bold px-1.5 py-0.5 rounded cursor-pointer shrink-0"
-              >
-                ✕
-              </button>
-            )}
-          </div>
-        )}
+
 
         {/* Resume or Pause In-Progress Game Banner */}
         {existingGame && !existingGame.isFinished && (

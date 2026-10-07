@@ -19,10 +19,11 @@ import {
   saveGameState,
 } from "../utils/scorecardHelpers";
 import { getCardImage, useDeckStyle } from "../utils/cardData";
-import swordIcon from "../assets/spada.png";
+import { useToast } from "../context/ToastContext";
 
 export default function GameHistory() {
   const navigate = useNavigate();
+  const { showToast } = useToast();
   const [deckStyle] = useDeckStyle();
   const aceCoins = getCardImage("coins", "ace", deckStyle);
   const [history, setHistory] = useState<FinishedGame[]>(() =>
@@ -45,22 +46,11 @@ export default function GameHistory() {
   const [deletingGameId, setDeletingGameId] = useState<string | null>(null);
   const [showClearModal, setShowClearModal] = useState<boolean>(false);
   const [showSettingsModal, setShowSettingsModal] = useState<boolean>(false);
-  const [toast, setToast] = useState<{
-    text: string;
-    type?: "success" | "error";
-  } | null>(null);
   const [modalError, setModalError] = useState<string | null>(null);
   const [pendingImportGames, setPendingImportGames] = useState<
     FinishedGame[] | null
   >(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const showToast = (text: string, type: "success" | "error" = "success") => {
-    setToast({ text, type });
-    setTimeout(() => {
-      setToast((prev) => (prev?.text === text ? null : prev));
-    }, 4500);
-  };
 
   // Close modals on Escape key press
   useEffect(() => {
@@ -287,45 +277,7 @@ export default function GameHistory() {
         </button>
       </div>
 
-      {/* 1.1 Status Toast Banner on Main Page */}
-      {toast && (
-        <div
-          role="status"
-          className={`mb-3 p-2 rounded-xl border text-sm sm:text-base flex items-center justify-between gap-2 shadow-lg animate-fade-in shrink-0 ${
-            toast.type === "error"
-              ? "bg-red-900/90 border-red-600/80 text-red-200"
-              : "bg-emerald-900/90 border-emerald-500/80 text-emerald-100"
-          }`}
-        >
-          <div className="flex items-center gap-2.5 min-w-0">
-            {toast.type === "error" ? (
-              <span className="text-base shrink-0" aria-hidden="true">
-                ⚠️
-              </span>
-            ) : (
-              <div className="flex items-center justify-center size-7 rounded-full bg-amber-50/95 border border-yellow-400 shadow-xs shrink-0 p-0.5">
-                <img
-                  src={swordIcon}
-                  alt=""
-                  aria-hidden="true"
-                  className="size-full object-contain"
-                />
-              </div>
-            )}
-            <span className="font-medium truncate sm:whitespace-normal">
-              {toast.text}
-            </span>
-          </div>
-          <button
-            type="button"
-            onClick={() => setToast(null)}
-            aria-label="Dismiss notification"
-            className="text-emerald-300 hover:text-white text-xs font-bold px-1.5 py-0.5 rounded cursor-pointer shrink-0"
-          >
-            ✕
-          </button>
-        </div>
-      )}
+
 
       {/* 2. Unfinished Games Collapsible Section (if any exist) */}
       {pausedGames.length > 0 && (

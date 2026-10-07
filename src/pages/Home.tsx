@@ -7,29 +7,23 @@ import {
   clearGameState,
 } from "../utils/scorecardHelpers";
 import { getCardImage, useDeckStyle, DECK_OPTIONS } from "../utils/cardData";
+import { useToast } from "../context/ToastContext";
 import logo from "../assets/logo-192x192.png";
 
 function Home() {
   const [activeGame, setActiveGame] = useState<GameState | null>(() =>
     loadGameState(),
   );
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const { showToast } = useToast();
   const [deckStyle, setDeckStyle] = useDeckStyle();
   const [showDeckModal, setShowDeckModal] = useState(false);
-
-  const showToast = (text: string) => {
-    setToastMessage(text);
-    setTimeout(() => {
-      setToastMessage((prev) => (prev === text ? null : prev));
-    }, 4500);
-  };
 
   const handlePauseActiveGame = () => {
     if (!activeGame) return;
     savePausedGame(activeGame);
     clearGameState();
     setActiveGame(null);
-    showToast("Game Saved! Find in History Tab");
+    showToast("Game saved! Find in History to resume.");
   };
 
   const handleDiscardActiveGame = () => {
@@ -133,31 +127,7 @@ function Home() {
           )}
         </div>
 
-        {/* Status Toast Notification */}
-        {toastMessage && (
-          <div
-            role="status"
-            className="w-full mb-4 p-2.5 rounded-xl border border-emerald-500/80 bg-emerald-900/95 text-emerald-100 text-sm sm:text-base flex items-center justify-between gap-2 shadow-lg animate-fade-in"
-          >
-            <div className="flex items-center gap-2 min-w-0">
-              <span
-                className="text-emerald-400 font-bold text-base shrink-0"
-                aria-hidden="true"
-              >
-                ✓
-              </span>
-              <span className="font-semibold text-white">{toastMessage}</span>
-            </div>
-            <button
-              type="button"
-              onClick={() => setToastMessage(null)}
-              aria-label="Dismiss notification"
-              className="text-emerald-300 hover:text-white text-xs font-bold px-1.5 py-0.5 rounded cursor-pointer shrink-0"
-            >
-              ✕
-            </button>
-          </div>
-        )}
+
 
         {/* When Game is In Progress: Show Active Match Card & Primiera Quick Access */}
         {activeGame && !activeGame.isFinished ? (
