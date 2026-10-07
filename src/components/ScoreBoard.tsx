@@ -169,7 +169,7 @@ export default function ScoreBoard({
                 {isLeader && (
                   <div
                     aria-label="Current game leader"
-                    className="absolute -top-3 right-3 rounded-full bg-yellow-400 text-emerald-950 px-2 py-0.5 text-[11px] font-bold shadow-md flex items-center gap-1"
+                    className="absolute -top-2 right-3 rounded-full bg-yellow-400 text-emerald-950 px-2 py-0.5 text-xs font-semibold shadow-md flex items-center gap-1"
                   >
                     Leader
                   </div>
@@ -268,9 +268,16 @@ export default function ScoreBoard({
               }
             >
               <span>{isHistoryCollapsed ? "Show" : "Hide"}</span>
-              <span className="text-[10px] text-emerald-400">
-                {isHistoryCollapsed ? "▼" : "▲"}
-              </span>
+              <svg
+                className={`size-3.5 text-emerald-400 transition-transform ${isHistoryCollapsed ? "" : "rotate-180"}`}
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2.5}
+                aria-hidden="true"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
             </button>
           )}
         </div>
@@ -329,7 +336,7 @@ export default function ScoreBoard({
                             </span>
                             <span className="font-bold text-yellow-300 text-sm">
                               +{pts}{" "}
-                              <span className="text-[10px] text-emerald-400 font-normal">
+                              <span className="text-xs text-emerald-400 font-normal">
                                 ({cumTotal})
                               </span>
                             </span>
@@ -338,7 +345,7 @@ export default function ScoreBoard({
                           {/* Breakdown Badges */}
                           <div className="flex flex-wrap gap-1 items-center">
                             {scopeCount > 0 && (
-                              <span className="rounded bg-emerald-800 px-1.5 py-0.5 text-[10px] text-yellow-200 font-semibold inline-flex items-center gap-1">
+                              <span className="rounded bg-emerald-800 px-1.5 py-0.5 text-xs text-yellow-200 font-semibold inline-flex items-center gap-1">
                                 <span
                                   aria-hidden="true"
                                   className="text-xs sm:text-sm leading-none"
@@ -352,7 +359,7 @@ export default function ScoreBoard({
                               </span>
                             )}
                             {gotCarte && (
-                              <span className="rounded bg-amber-400/20 text-yellow-300 border border-yellow-400/40 px-1 py-0.5 text-[10px] font-semibold inline-flex items-center gap-1">
+                              <span className="rounded bg-amber-400/20 text-yellow-300 border border-yellow-400/40 px-1 py-0.5 text-xs font-semibold inline-flex items-center gap-1">
                                 <img
                                   src={kingSpadesImg}
                                   alt=""
@@ -363,7 +370,7 @@ export default function ScoreBoard({
                               </span>
                             )}
                             {gotDenari && (
-                              <span className="rounded bg-amber-400/20 text-yellow-300 border border-yellow-400/40 px-1 py-0.5 text-[10px] font-semibold inline-flex items-center gap-1">
+                              <span className="rounded bg-amber-400/20 text-yellow-300 border border-yellow-400/40 px-1 py-0.5 text-xs font-semibold inline-flex items-center gap-1">
                                 <img
                                   src={coinIcon}
                                   alt=""
@@ -374,17 +381,17 @@ export default function ScoreBoard({
                               </span>
                             )}
                             {gotSettebello && (
-                              <span className="rounded bg-emerald-800 px-1 py-0.5 text-[10px] text-yellow-200 font-semibold">
+                              <span className="rounded bg-emerald-800 px-1 py-0.5 text-xs text-yellow-200 font-semibold">
                                 ⭐ 7 Bello
                               </span>
                             )}
                             {gotPrimiera && (
-                              <span className="rounded bg-emerald-800 px-1 py-0.5 text-[10px] text-emerald-200">
+                              <span className="rounded bg-emerald-800 px-1 py-0.5 text-xs text-emerald-200">
                                 🏆 Primiera
                               </span>
                             )}
                             {pts === 0 && (
-                              <span className="text-[10px] text-emerald-500 italic">
+                              <span className="text-xs text-emerald-500 italic">
                                 No points
                               </span>
                             )}

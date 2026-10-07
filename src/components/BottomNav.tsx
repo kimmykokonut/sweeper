@@ -126,7 +126,7 @@ export default function BottomNav() {
                 <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-yellow-400 rounded-full shadow-xs" />
               )}
               {item.icon()}
-              <span className="text-[11px] leading-tight tracking-tight">
+              <span className="text-xs leading-tight tracking-tight">
                 {item.name}
               </span>
             </Link>

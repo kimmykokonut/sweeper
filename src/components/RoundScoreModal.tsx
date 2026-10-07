@@ -312,12 +312,16 @@ export default function RoundScoreModal({
                 className="text-xs sm:text-sm font-semibold text-yellow-300 hover:text-white hover:bg-emerald-800/80 flex items-center gap-1.5 bg-emerald-900/90 border border-emerald-600/80 px-2.5 py-1.5 min-h-[36px] rounded-lg focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none transition-colors cursor-pointer"
               >
                 <span>{showCountHelper ? "Hide Counts" : "Enter Count"}</span>
-                <span
-                  className="text-[10px] text-emerald-400"
+                <svg
+                  className={`size-3.5 text-emerald-400 transition-transform ${showCountHelper ? "rotate-180" : ""}`}
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2.5}
                   aria-hidden="true"
                 >
-                  {showCountHelper ? "▲" : "▼"}
-                </span>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
               </button>
             </div>
 
@@ -350,7 +354,7 @@ export default function RoundScoreModal({
                         >
                           <span className="truncate">{p.name}</span>
                           {isAutoFilled && (
-                            <span className="text-[10px] text-yellow-300 font-bold bg-emerald-950/80 px-1 py-0.5 rounded border border-yellow-400/50">
+                            <span className="text-xs text-yellow-300 font-semibold bg-emerald-950/80 px-1.5 py-0.5 rounded border border-yellow-400/50">
                               Auto
                             </span>
                           )}

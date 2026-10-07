@@ -355,9 +355,16 @@ export default function PrimieraCalculator({
               className="min-h-[44px] text-yellow-300 hover:text-yellow-200 font-bold flex items-center gap-1 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 rounded-lg px-2"
             >
               <span>Change</span>
-              <span className="text-xs" aria-hidden="true">
-                ▾
-              </span>
+              <svg
+                className="size-3.5 text-yellow-300"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2.5}
+                aria-hidden="true"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
             </button>
           </div>
         ))}

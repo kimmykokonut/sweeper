@@ -353,9 +353,16 @@ export default function GameHistory() {
               className="text-xs sm:text-sm font-semibold text-emerald-300 hover:text-white px-2.5 py-1 min-h-[36px] rounded-lg bg-emerald-900/80 hover:bg-emerald-800 border border-emerald-700/60 focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:outline-none transition-colors cursor-pointer flex items-center gap-1.5 shrink-0"
             >
               <span>{isPausedGamesExpanded ? "Hide" : "Show"}</span>
-              <span className="text-[10px] text-emerald-400">
-                {isPausedGamesExpanded ? "▲" : "▼"}
-              </span>
+              <svg
+                className={`size-3.5 text-emerald-400 transition-transform ${isPausedGamesExpanded ? "rotate-180" : ""}`}
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2.5}
+                aria-hidden="true"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
             </button>
           </div>
 
@@ -1389,7 +1396,7 @@ export default function GameHistory() {
                       className="w-full min-h-[44px] py-2 px-3 rounded-xl bg-yellow-400 hover:bg-yellow-300 text-emerald-950 font-bold text-sm sm:text-base shadow-md transition-all cursor-pointer flex flex-col items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
                     >
                       <span>Merge with Existing (Recommended)</span>
-                      <span className="text-[11px] font-normal text-emerald-900">
+                      <span className="text-xs font-normal text-emerald-900">
                         Adds new games and skips duplicate matches
                       </span>
                     </button>
@@ -1400,7 +1407,7 @@ export default function GameHistory() {
                       className="w-full min-h-[44px] py-2 px-3 rounded-xl bg-emerald-950 hover:bg-red-950/80 border border-emerald-700 hover:border-red-600/60 text-emerald-200 hover:text-red-200 font-bold text-sm sm:text-base transition-all cursor-pointer flex flex-col items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400"
                     >
                       <span>Replace All History</span>
-                      <span className="text-[11px] font-normal text-emerald-400/80">
+                      <span className="text-xs font-normal text-emerald-400/80">
                         Overwrites current device games with backup
                       </span>
                     </button>
@@ -1425,7 +1432,7 @@ export default function GameHistory() {
                       <p className="text-xs text-emerald-200 mt-0.5 leading-relaxed">
                         Download all {history.length} completed{" "}
                         {history.length === 1 ? "game" : "games"} as a{" "}
-                        <code className="bg-emerald-950 px-1 py-0.5 rounded text-[11px] text-yellow-300">
+                        <code className="bg-emerald-950 px-1 py-0.5 rounded text-xs text-yellow-300">
                           .json
                         </code>{" "}
                         file to save or transfer to another device.
@@ -1449,7 +1456,7 @@ export default function GameHistory() {
                       </h4>
                       <p className="text-xs text-emerald-200 mt-0.5 leading-relaxed">
                         Select a Sweeper backup file (
-                        <code className="bg-emerald-950 px-1 py-0.5 rounded text-[11px] text-yellow-300">
+                        <code className="bg-emerald-950 px-1 py-0.5 rounded text-xs text-yellow-300">
                           .json
                         </code>
                         ) exported from another device or browser.

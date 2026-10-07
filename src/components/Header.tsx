@@ -19,7 +19,7 @@ const Header = () => {
       </Link>
 
       <div className="flex items-center gap-2">
-        <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-200/90 bg-emerald-900/70 border border-emerald-700/70 px-2.5 py-0.5 rounded-full shadow-xs">
+        <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-200/90 bg-emerald-900/70 border border-emerald-700/70 px-2.5 py-0.5 rounded-full shadow-xs">
           Scopa Companion
         </span>
       </div>

@@ -223,7 +223,7 @@ function CardSelector({
                       takenBy ? "justify-center" : "justify-between"
                     } text-xs sm:text-sm font-bold rounded-md leading-tight mt-1 border ${
                       takenBy
-                        ? "bg-emerald-950/90 text-amber-300/90 border-emerald-800 text-[11px]"
+                        ? "bg-emerald-950/90 text-amber-300/90 border-emerald-800"
                         : "bg-emerald-950/90 text-emerald-100 border-emerald-800/80 shadow-xs"
                     }`}
                   >

@@ -441,7 +441,7 @@ function Home() {
                             {opt.label}
                           </span>
                           {isSelected && (
-                            <span className="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-yellow-400/20 text-yellow-300 border border-yellow-400/40 shrink-0">
+                            <span className="text-xs font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded bg-yellow-400/20 text-yellow-300 border border-yellow-400/40 shrink-0">
                               Active
                             </span>
                           )}
