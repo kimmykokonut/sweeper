@@ -86,17 +86,24 @@ Here is what Sweeper brings to your game table:
 - **Cross-Device Restore & Merge**: Transfer your match history between phones, tablets, or browsers with intelligent duplicate detection—choose to **Merge** new games safely or **Replace** completely.
 - **Defensive & Private**: 100% client-side validation against corrupted files with zero accounts, cloud tracking, or external server dependencies.
 
-### 📱 Mobile-First Emerald Felt Table & WCAG Accessibility
+### 📱 Mobile-First Design System & WCAG Accessibility
 
-- Immersive emerald-green card table theme with dynamic viewport sizing (`dvh`) tailored for small phones through ultra-tall screens.
-- **WCAG Compliant**: Flexible 44px touch targets on all interactive controls, high-contrast gold focus rings, high contrast text (> 7:1 AAA), and full screen-reader semantics.
+- Immersive emerald-green card table theme with dynamic viewport sizing (`dvh`) and responsive CSS grids (zero horizontal scrolling).
+- **Design Token Discipline**: Refactored static hardcoded magic values (e.g., arbitrary pixel sizes created by AI) into semantic, responsive Tailwind CSS tokens.
+- **Full WCAG 2.1 Audit**: Paired with AGY to achieve WCAG AAA contrast ratios (> 7:1), WCAG AA 44px minimum touch targets, and full screen-reader semantics (`role="status"`).
 - Consistent modal controls: tap the background or press `Escape` to dismiss.
 
-### 💾 Match Persistence & Crash Recovery
+### 💾 Match Persistence, Paused Games & Crash Recovery
 
 - Active games automatically persist to `localStorage` with defensive schema validation.
-- Quick-resume banner on the home screen lets you jump straight back into your match.
-- Styled fallback error screen with instant recovery options to return home or start a fresh match.
+- **Multi-Game Pause & Resume**: Pause in-progress games from the Home screen or Scorecard to finish later; review, resume, or delete unfinished matches in a dedicated collapsible drawer in Game History.
+- Quick-resume banner on the home screen lets you jump straight back into your active match.
+- Styled fallback error boundary with instant recovery options to return home or start fresh.
+
+### 🔔 Centralized Toast Architecture & Feedback
+
+- Non-blocking user feedback for saves, exports, and imports powered by a decoupled `ToastProvider` and typed `useToast` React Context hook.
+- Features CSS keyframe slide-in physics, debounced timer cleanup via `useRef` to prevent race conditions, and ARIA live regions.
 
 ### 📲 100% Offline Progressive Web App (PWA)
 
@@ -223,13 +230,13 @@ npm run preview
 - [x] **Phase 4**: Progressive Web App (PWA) with full offline Italian card precaching
 - [x] **Phase 5**: Game data persistence (`localStorage`) & active game resume flow
 - [x] **Phase 6**: Game history archive, head-to-head rivalry records & category dominance
-- [x] **Phase 7**: Comprehensive WCAG accessibility, 64 automated unit tests & CI pipeline
+- [x] **Phase 7**: Comprehensive WCAG accessibility audit (AAA/AA), 74 automated unit tests & CI pipeline
 - [x] **Phase 8**: Match history backup, JSON export & cross-device restore with duplicate detection
+- [x] **Phase 9**: Paused match manager, centralized toast Context architecture & Tailwind design token audit
 
 ### Stretch
 
 - [x] Regional Italian deck art selection (Napoletane, Piacentine, Siciliane, Bergamasche, Sarde, Romagnole, Bresciane)
-- [ ] Cribbage companion integration
 - [ ] Custom sound effects or haptic feedback for sweeps (Scope!) Animation?
 - [ ] Multi-device live game sync
 
